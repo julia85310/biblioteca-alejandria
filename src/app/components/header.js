@@ -1,26 +1,27 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "./contexts/AuthContext";
 const router = useRouter();
 const { user } = useContext(AuthContext);
 
 export default function Header({ubiHeader}){
+    const [menuHidden, setMenuHidden] = useState(true);
+
     function abrirMenu(){
-        
+        setMenuHidden(!menuHidden);
     }
 
     return <header>
         <img src="../logo.png"/> 
-        <nav>
+        <img className="block lg:hidden z-10" src="../iconos/icono-menu-hb.png" onClick={abrirMenu}></img>
+        <nav className={`${menuHidden ? 'hidden' : 'block'} z-20 lg:static lg:block flex flex-row lg:flex-column`}>
             <p onClick={()=>handleClickNav("Home", ubiHeader)}>Conócenos</p>
             <p onClick={()=>handleClickNav("Catalogo", ubiHeader)}>Catálogo</p>
             <p onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?"Mi perfil":!user.admin? "Mi perfil":"Panel de Administración"}</p>
         </nav>
-        <img src="../iconos/icono-menu-hb.png" onClick={abirMenu()}></img>
     </header>
 }
-
 
 function handleClickNav(botonNav, ubiHeader){
     if (botonNav != ubiHeader){
