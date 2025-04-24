@@ -15,7 +15,7 @@ export default function Header({ubiHeader}){
     return <header>
         <img src="../logo.png"/> 
         <img className="block lg:hidden z-10" src="../iconos/icono-menu-hb.png" onClick={abrirMenu}></img>
-        <nav className={`${menuHidden ? 'hidden' : 'block'} z-20 lg:static lg:block flex flex-row lg:flex-column`}>
+        <nav className={`${menuHidden ? 'hidden' : 'block'} z-20 lg:static lg:block flex flex-col lg:flex-row`}>
             <p onClick={()=>handleClickNav("Home", ubiHeader)}>Conócenos</p>
             <p onClick={()=>handleClickNav("Catalogo", ubiHeader)}>Catálogo</p>
             <p onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?"Mi perfil":!user.admin? "Mi perfil":"Panel de Administración"}</p>
