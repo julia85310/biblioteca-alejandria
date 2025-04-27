@@ -1,5 +1,5 @@
 
-export default function footer(){
+export default function Footer(){
     return <footer className="w-[100vw]">
         <ul>
             <li>Tlf: 955975895    8.30h - 22.00h</li>

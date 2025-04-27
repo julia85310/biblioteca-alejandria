@@ -1,30 +1,56 @@
-import Footer from "./components/footer"
-import Header from "./components/header"
-import { useState } from "react"
+'use client'
+import Footer from "./components/Footer"
+import Header from "./components/Header"
+import Evento from "./components/Evento"
+import { useState, useEffect } from "react"
 
 export default function Home() {
   const [eventos, setEventos] = useState([])
+  const [indexEvento, setIndexEvento] = useState(0)
+
+  useEffect(() => {
+    async function fetchData() {
+      const res = await fetch("/api/evento");
+      const data = await res.json();
+      setEventos(data)
+    }
+  
+    fetchData(); 
+  }, []);
+
+  function nextEvento(){
+    if(indexEvento == eventos.length - 1){
+      setIndexEvento(0)
+    }else{
+      setIndexEvento(indexEvento+1)
+    }
+  }
+
+  function previousEvento(){
+    if(indexEvento == 0){
+      setIndexEvento(eventos.length-1)
+    }else{
+      setIndexEvento(indexEvento-1)
+    }
+  }
 
   return <div className="w-[100vw] flex flex-col">
     <Header ubiHeader="Home"></Header>
     <main className="flex-1 flex flex-col lg:flex-row">
       <p className="lg:hidden block">Bienvenido a nuestra querida biblioteca</p>
       <div id="eventos">
-        {!eventos && <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>}
-        {eventos.map((evento) => {
-          const fecha = new Date(evento.fecha);
-          const fechaFormateada = fecha.toLocaleDateString('es-ES', {
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          });
-          return <div key={evento.id}>
-            <img src={evento.imagen_url} alt="Imagen del evento"></img>
-            <p>{fechaFormateada}</p>
-            <p>evento.descripcion</p>
-            <p>evento.titulo</p>
+        {!eventos? 
+          <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
+          <div>
+            <img src="/iconos/icono-pestaña.png" className="rotate-180" onClick={previousEvento}></img>
+            {eventos.map((evento) => {
+              if(evento.id == indexEvento){
+                return <Evento key={evento.id} evento={evento}></Evento>
+              }
+            })}
+            <img src="/iconos/icono-pestaña.png" onClick={nextEvento}></img>
           </div>
-        })}
+        }
       </div>
       <div id="descripcion">
         <p className="lg:block hidden">Bienvenido a nuestra querida biblioteca</p>
