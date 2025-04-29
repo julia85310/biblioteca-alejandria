@@ -5,17 +5,11 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #482A09;
   --font-lora: 'Lora', serif; 
   --font-assistant: 'Assistant', sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
 body {
   background: var(--background);
