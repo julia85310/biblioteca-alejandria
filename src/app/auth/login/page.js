@@ -70,7 +70,7 @@ export default function signupPage(){
                     value="Ok"
                 />
             </form>
-            <p onClick={() => router.push("../signup")}>No tengo una cuenta</p>
+            <p onClick={() => router.push("/auth/signup")}>No tengo una cuenta</p>
         </main>
         <Footer></Footer>
     </div>

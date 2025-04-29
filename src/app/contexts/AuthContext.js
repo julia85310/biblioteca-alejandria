@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   async function login(email, password, recuerdame) {
     try {
-      const { valid, message } = validarDatosRegistro(email, password);
+      const { valid, message } = validarDatosLogin(email, password);
 
       if (!valid) {
           return { success: valid, message: message }
@@ -88,7 +88,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signup, logout }}>
+    <AuthContext.Provider value={{ user, signup, logout, login }}>
       {children}
     </AuthContext.Provider>
   );
