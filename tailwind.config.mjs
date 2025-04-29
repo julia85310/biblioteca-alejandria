@@ -24,6 +24,7 @@ export default {
       },
       fontFamily: {
         lora: ['var(--font-lora)', 'serif'],
+        admin: ['var(--font-admin)', 'sans-serif'],
       },
       animation: {
       },

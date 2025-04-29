@@ -1,10 +1,16 @@
-import { Lora } from "next/font/google";
+import { Lora, Assistant } from "next/font/google";
 import "./globals.css";  
 import { AuthProvider } from "./contexts/AuthContext";
 
 const lora = Lora({
   variable: "--font-lora",  
   subsets: ["latin"],  
+});
+
+const assistant = Assistant({
+  weight: ["400", "700"], 
+  subsets: ["latin"],
+  variable: "--font-assistant", 
 });
 
 export const metadata = {
@@ -16,7 +22,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${lora.variable} antialiased`} 
+        className={`${lora.variable} ${assistant.variable} antialiased`} 
       >
         <AuthProvider>
           {children}
