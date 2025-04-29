@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(nombre, email, telefono, password),
+            body: JSON.stringify({nombre, email, telefono, password}),
         });
 
         const data = await response.json();

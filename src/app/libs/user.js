@@ -31,10 +31,10 @@ export function validarDatosRegistro( nombre, email, telefono, password ) {
         message: "Introduce un email válido para completar el registro." };
     }
   
-    const telefonoRegex = /^\d{3}\s\d{3}\s\d{3}$/;
+    const telefonoRegex = /^\d{9}$/;
     if (!telefonoRegex.test(telefono)) {
       return { valid: false, 
-        message: "Introduce un telefono válido para completar el registro (666 666 666)." };
+        message: "Introduce un telefono válido para completar el registro." };
     }
   
     const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;

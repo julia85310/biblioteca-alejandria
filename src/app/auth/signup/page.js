@@ -64,8 +64,8 @@ export default function signupPage(){
                     />
                     <label>Teléfono</label>
                     <input 
-                        type="text"
-                        placeholder="666 666 666" 
+                        type="tel"
+                        placeholder="612345678" 
                         onChange={(e) =>
                             setFormData({ ...formData, telefono: e.target.value })
                         }

@@ -7,7 +7,7 @@ import {validarDatosRegistro} from "@/app/libs/user";
  */
 export async function POST(request) {
     const { nombre, email, telefono, password } = await request.json();
-
+    console.log(nombre)
     // Validar datos requeridos
     const { valid, message } = validarDatosRegistro( nombre, email, telefono, password );
 

@@ -10,7 +10,7 @@ export async function POST(req) {
     const { email, password } = await req.json();
 
     // Validar datos requeridos
-    const { valid, message } = validarDatosLogin(email, password );
+    const { valid, message } = validarDatosLogin(email, password);
 
     if (!valid) {
         return new Response(JSON.stringify({ message }), {
