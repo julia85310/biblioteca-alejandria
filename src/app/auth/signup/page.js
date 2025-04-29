@@ -12,7 +12,7 @@ export default function signupPage(){
     const [formData, setFormData] = useState({ nombre: "", email: "", telefono:"", password:"", password2:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
-    function signup(e){
+    function signupRequest(e){
         e.preventDefault();
         const { formDataValidar, password2, recuerdame } = formData;
 
@@ -40,7 +40,7 @@ export default function signupPage(){
         <Header></Header>
         <main>
             <h1>Regístrate</h1>
-            <form onSubmit={(e) => signup(e)} className="flex flex-col lg:flex-row">
+            <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row">
                 <div>
                     <label>Nombre</label>
                     <input 
@@ -70,15 +70,15 @@ export default function signupPage(){
                 <div>
                     <label>Contraseña</label>
                     <input 
-                        type="text"
+                        type="password"
                         placeholder="Contraseña segura" 
                         onChange={(e) =>
                             setFormData({ ...formData, password: e.target.value })
                         }
                     />
-                    <label>Contraseña</label>
+                    <label>Repite la contraseña</label>
                     <input 
-                        type="text"
+                        type="password"
                         placeholder="Contraseña segura" 
                         onChange={(e) =>
                             setFormData({ ...formData, password2: e.target.value })
