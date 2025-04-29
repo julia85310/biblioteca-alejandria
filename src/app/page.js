@@ -42,13 +42,13 @@ export default function Home() {
         {!eventos? 
           <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
           <div>
-            <img src="/iconos/icono-pestaña.png" className="rotate-180" onClick={previousEvento}></img>
+            <img src="/iconos/icono-flecha.png" className="rotate-180" onClick={previousEvento}></img>
             {eventos.map((evento) => {
               if(evento.id == indexEvento){
                 return <Evento key={evento.id} evento={evento}></Evento>
               }
             })}
-            <img src="/iconos/icono-pestaña.png" onClick={nextEvento}></img>
+            <img src="/iconos/icono-flecha.png" onClick={nextEvento}></img>
           </div>
         }
       </div>

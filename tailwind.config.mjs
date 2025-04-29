@@ -10,11 +10,20 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        seashell: "#FFF6F2",
+        cafeNoir: '#482A09',
+        lion: '#BD9B83',
+        verde: '#31B855',
+        rojo: '#AA5253',
+        aliceBlue: '#E8F1F2',
+        columbiaBlue: '#a7c6da',
+        paynesGray: '#465C69',
+        linen: '#F3E8E2',
       },
       keyframes: {
       },
       fontFamily: {
-        prata: ['var(--font-prata)', 'serif'],
+        lora: ['var(--font-lora)', 'serif'],
       },
       animation: {
       },

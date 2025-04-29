@@ -1,15 +1,10 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { Lora } from "next/font/google";
+import "./globals.css";  
 import { AuthProvider } from "./contexts/AuthContext";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const lora = Lora({
+  variable: "--font-lora",  
+  subsets: ["latin"],  
 });
 
 export const metadata = {
@@ -21,7 +16,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${lora.variable} antialiased`} 
       >
         <AuthProvider>
           {children}
@@ -30,3 +25,4 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+
