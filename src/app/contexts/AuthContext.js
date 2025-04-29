@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
 
         if (response.status === 201) {
-            setUser({nombre, email, telefono, admin: false}); 
+            setUser({nombre, email, telefono, admin: false}); //Aun no se pueden crear cuentas de admin
             if (recuerdame){
                 guardarUsuario(user)
             }
