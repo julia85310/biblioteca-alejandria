@@ -1,16 +1,39 @@
 'use client'
-import Footer from "@/app/components/Footer"
-import Header from "@/app/components/Header"
+import Footer from "@/app/components/Footer.js"
+import { useRouter } from "next/navigation";
+import Header from "@/app/components/Header.js"
 import {AuthContext} from "../../contexts/AuthContext.js"
 import { useContext, useState} from "react";
+import {validarDatosRegistro} from "@/app/libs/user";
 
 export default function signupPage(){
+    const router = useRouter();
     const { signup } = useContext(AuthContext);
     const [formData, setFormData] = useState({ nombre: "", email: "", telefono:"", password:"", password2:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
-    function signup(){
+    function signup(e){
+        e.preventDefault();
+        const { formDataValidar, password2, recuerdame } = formData;
 
+        if (password2 != formData.password){
+            setMensaje("Las contraseñas no coinciden")
+        }else{
+            const { valid, message } = validarDatosRegistro(formDataValidar);
+
+            if (!valid) {
+                setMensaje(message)
+            }else{
+                const { success, message } = signup(formData.nombre, formData.email, formData.telefono, formData.password, recuerdame)
+                if (!success){
+                    setMensaje(message)
+                }else{
+                    //alerta personalizada
+                    alert("Te has registrado con éxito, ¡bienvenido!")
+                    router.push("../perfil");
+                }
+            }
+        }
     }
 
     return <div>
@@ -26,7 +49,6 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, nombre: e.target.value })
                         }
-                        required
                     />
                     <label>Email</label>
                     <input 
@@ -35,7 +57,6 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, email: e.target.value })
                         }
-                        required
                     />
                     <label>Teléfono</label>
                     <input 
@@ -44,7 +65,6 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, telefono: e.target.value })
                         }
-                        required
                     />
                 </div>
                 <div>
@@ -55,7 +75,6 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, password: e.target.value })
                         }
-                        required
                     />
                     <label>Contraseña</label>
                     <input 
@@ -64,7 +83,6 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, password2: e.target.value })
                         }
-                        required
                     />
                     <input 
                         type="checkbox"
