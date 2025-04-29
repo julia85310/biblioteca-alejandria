@@ -1,6 +1,6 @@
 import { supabase } from "@/app/libs/supabaseClient";
-import bcrypt from "bcrypt";
-import {validarDatosLogin} from "@/app/libs/user";
+import bcrypt from "bcryptjs"; // ← CAMBIADO
+import { validarDatosLogin } from "@/app/libs/user";
 
 /**
  * Inicio de sesión de un usuario.
@@ -8,22 +8,22 @@ import {validarDatosLogin} from "@/app/libs/user";
 export async function POST(req) {
   try {
     const { email, password } = await req.json();
-
+    console.log("email: " + email + "pass: " + password)
     // Validar datos requeridos
     const { valid, message } = validarDatosLogin(email, password);
 
     if (!valid) {
-        return new Response(JSON.stringify({ message }), {
-            status: 400,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+      return new Response(JSON.stringify({ message }), {
+        status: 400,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     }
 
     // Buscar usuario por email
     const { data: usuarios, error } = await supabase
-      .from("usuarios")
+      .from("usuario")
       .select("*")
       .eq("email", email)
       .limit(1);
@@ -52,7 +52,7 @@ export async function POST(req) {
 
     return new Response(JSON.stringify({
       message: "Inicio de sesión exitoso",
-      user: usuarioSinPassword
+      user: usuarioSinPassword,
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -66,3 +66,4 @@ export async function POST(req) {
     });
   }
 }
+

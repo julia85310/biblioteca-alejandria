@@ -19,6 +19,8 @@ export default function Header({ubiHeader}){
             }else if(botonNav == "Catalogo"){
                 router.push("../catalogo");
             }else if(botonNav == "Perfil"){
+                console.log("usuario:")
+                console.log(user)
                 if(!user){
                     router.push("../auth/login"); 
                 }else if(user.admin){

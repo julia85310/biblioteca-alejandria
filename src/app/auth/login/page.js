@@ -15,12 +15,12 @@ export default function signupPage(){
     async function loginRequest(e){
         e.preventDefault();
 
-        const { valid, message } = await validarDatosLogin(email, password);
+        const { valid, message } = await validarDatosLogin(formData.email, formData.password);
 
         if (!valid) {
             setMensaje(message)
         }else{
-            const { success, message } = await login(formData)
+            const { success, message } = await login(formData.email, formData.password, formData.recuerdame)
             if (!success){
                 setMensaje(message)
             }else{
@@ -48,7 +48,7 @@ export default function signupPage(){
                     />
                 </div>
                 <div>
-                    <img src="/iconos/icono-contraseña.png"></img>
+                    <img src="/iconos/icono-password.png"></img>
                     <input 
                         type="password"
                         placeholder="Su contraseña" 

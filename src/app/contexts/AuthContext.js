@@ -11,7 +11,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const storedUser = localStorage.getItem('usuario');
     if (storedUser) {
-      console.log("usuario cargado de localStorage")
+      console.log("usuario cargado de localStorage:")
+      console.log(JSON.parse(storedUser))
       setUser(JSON.parse(storedUser));
     }
   }, []);
@@ -37,7 +38,7 @@ export const AuthProvider = ({ children }) => {
         if (response.status === 201) {
           setUser({nombre, email, telefono, admin: false}); //Aun no se pueden crear cuentas de admin
           if (recuerdame){
-              guardarUsuario(user)
+              guardarUsuario({nombre, email, telefono, admin: false})
           }
           return { success: true, message: data.message };
         } else {
@@ -68,7 +69,7 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200) {
         setUser(data.user);
         if (recuerdame){
-          guardarUsuario(user);
+          guardarUsuario(data.user);
         } 
         return { success: true, message: data.message };
       } else {
