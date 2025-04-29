@@ -9,7 +9,7 @@ export async function POST(request) {
     const { nombre, email, telefono, password } = await request.json();
 
     // Validar datos requeridos
-    const { valid, message } = validarDatosRegistro({ nombre, email, telefono, password });
+    const { valid, message } = validarDatosRegistro( nombre, email, telefono, password );
 
     if (!valid) {
         return new Response(JSON.stringify({ message }), {

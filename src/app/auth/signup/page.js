@@ -12,22 +12,26 @@ export default function signupPage(){
     const [formData, setFormData] = useState({ nombre: "", email: "", telefono:"", password:"", password2:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
-    function signupRequest(e){
+    async function signupRequest(e){
+        console.log("boton pulsado")
         e.preventDefault();
-        const { formDataValidar, password2, recuerdame } = formData;
 
-        if (password2 != formData.password){
+        if (formData.password2 != formData.password){
             setMensaje("Las contraseñas no coinciden")
         }else{
-            const { valid, message } = validarDatosRegistro(formDataValidar);
+            const { valid, message } = await validarDatosRegistro(formData.nombre, formData.email, formData.telefono, formData.password);
 
             if (!valid) {
                 setMensaje(message)
             }else{
-                const { success, message } = signup(formData.nombre, formData.email, formData.telefono, formData.password, recuerdame)
+                console.log("datos validos")
+                const { success, message } = await signup(formData.nombre, formData.email, formData.telefono, formData.password, formData.recuerdame)
+                console.log(message)
                 if (!success){
+                    console.log("error en authcontext: " + message)
                     setMensaje(message)
                 }else{
+                    console.log("registro exitoso")
                     //alerta personalizada
                     alert("Te has registrado con éxito, ¡bienvenido!")
                     router.push("../../perfil");

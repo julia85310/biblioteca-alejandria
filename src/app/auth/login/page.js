@@ -12,15 +12,15 @@ export default function signupPage(){
     const [formData, setFormData] = useState({ email: "", password:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
-    function loginRequest(e){
+    async function loginRequest(e){
         e.preventDefault();
 
-        const { valid, message } = validarDatosLogin(email, password);
+        const { valid, message } = await validarDatosLogin(email, password);
 
         if (!valid) {
             setMensaje(message)
         }else{
-            const { success, message } = login(formData)
+            const { success, message } = await login(formData)
             if (!success){
                 setMensaje(message)
             }else{

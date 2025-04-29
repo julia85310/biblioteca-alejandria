@@ -7,7 +7,7 @@
  * @param {nombre, email, telefono, contraseña}  
  * @returns {valid: boolean, message}
  */
-function validarDatosRegistro({ nombre, email, telefono, password }) {
+export function validarDatosRegistro( nombre, email, telefono, password ) {
     if (!nombre) {
       return { valid: false, 
         message: "Introduce tu nombre para completar el registro." };
@@ -38,7 +38,7 @@ function validarDatosRegistro({ nombre, email, telefono, password }) {
     }
   
     const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
-    if (!passwordRegex.test(contraseña)) {
+    if (!passwordRegex.test(password)) {
       return { valid: false, 
         message: "La contraseña debe tener mínimo 6 caracteres, al menos un número y una letra." };
     }
@@ -47,15 +47,14 @@ function validarDatosRegistro({ nombre, email, telefono, password }) {
 }
 
 /**
- * Valida los datos del registro:
+ * Valida los datos del login:
  * - que existan
  * - que email sea valido
- * - que telefono sea valido (673 828 834)
  * - que la contraseña sea de longitud 6 minimo y tenga un numero y una letra
  * @param {nombre, email, telefono, contraseña}  
  * @returns {valid: boolean, message}
  */
-function validarDatosLogin({email, password}) {
+export function validarDatosLogin(email, password) {
   if (!email) {
     return { valid: false, 
       message: "Introduce tu email para completar el inicio de sesión." };
@@ -72,7 +71,7 @@ function validarDatosLogin({email, password}) {
   }
 
   const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
-  if (!passwordRegex.test(contraseña)) {
+  if (!passwordRegex.test(password)) {
     return { valid: false, 
       message: "Credenciales incorrectas." };
   }
