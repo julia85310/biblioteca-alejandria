@@ -30,7 +30,7 @@ export default function signupPage(){
                 }else{
                     //alerta personalizada
                     alert("Te has registrado con éxito, ¡bienvenido!")
-                    router.push("../perfil");
+                    router.push("../../perfil");
                 }
             }
         }

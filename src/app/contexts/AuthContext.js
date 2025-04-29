@@ -1,6 +1,6 @@
 'use client'
 import { createContext, useState, useEffect } from 'react';
-import {validarDatosRegistro} from "@/app/libs/user";
+import {validarDatosRegistro, validarDatosLogin} from "@/app/libs/user";
 
 export const AuthContext = createContext();
 
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
             return { success: valid, message: message }
         }
         
-        const response = await fetch("/api/auth", {
+        const response = await fetch("/api/auth/signup", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -47,6 +47,36 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: "Error al registrar usuario" };
     }
   };
+
+  async function login(email, password, recuerdame) {
+    try {
+      const { valid, message } = validarDatosRegistro(email, password);
+
+      if (!valid) {
+          return { success: valid, message: message }
+      }
+
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+        setUser(data.user);
+        if (recuerdame){
+          guardarUsuario(user);
+        } 
+        return { success: true, message: data.message };
+      } else {
+        return { success: false, message: data.message };
+      }
+    } catch {
+      return { success: false, message: "Error al iniciar sesión" };
+    }
+  }
 
   const guardarUsuario = (usuario) => {
     localStorage.setItem('usuario', JSON.stringify(usuario));

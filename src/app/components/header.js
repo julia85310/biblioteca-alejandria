@@ -31,7 +31,7 @@ function handleClickNav(botonNav, ubiHeader){
             router.push("../catalogo");
         }else if(botonNav == "Perfil"){
             if(!user){
-                router.push("../authentication/signin"); 
+                router.push("../auth/login"); 
             }else if(user.admin){
                 router.push("../admin");
             }else{

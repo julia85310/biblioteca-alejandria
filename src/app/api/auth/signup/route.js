@@ -3,12 +3,6 @@ import bcrypt from "bcryptjs";
 import {validarDatosRegistro} from "@/app/libs/user";
 
 /**
- * Inicio de sesion de un usuario. 
- */
-export async function GET(){
-}
-
-/**
  * Registro de usuario.
  */
 export async function POST(request) {

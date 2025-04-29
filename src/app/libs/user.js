@@ -4,8 +4,8 @@
  * - que email sea valido
  * - que telefono sea valido (673 828 834)
  * - que la contraseña sea de longitud 6 minimo y tenga un numero y una letra
- * @param {} param0 
- * @returns 
+ * @param {nombre, email, telefono, contraseña}  
+ * @returns {valid: boolean, message}
  */
 function validarDatosRegistro({ nombre, email, telefono, password }) {
     if (!nombre) {
@@ -44,4 +44,38 @@ function validarDatosRegistro({ nombre, email, telefono, password }) {
     }
   
     return { valid: true };
+}
+
+/**
+ * Valida los datos del registro:
+ * - que existan
+ * - que email sea valido
+ * - que telefono sea valido (673 828 834)
+ * - que la contraseña sea de longitud 6 minimo y tenga un numero y una letra
+ * @param {nombre, email, telefono, contraseña}  
+ * @returns {valid: boolean, message}
+ */
+function validarDatosLogin({email, password}) {
+  if (!email) {
+    return { valid: false, 
+      message: "Introduce tu email para completar el inicio de sesión." };
   }
+  if (!password) {
+    return { valid: false, 
+      message: "Introduce tu contraseña para completar el inicio de sesión." };
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) {
+    return { valid: false, 
+      message: "Credenciales incorrectas." };
+  }
+
+  const passwordRegex = /^(?=.*\d)(?=.*[a-zA-Z]).{6,}$/;
+  if (!passwordRegex.test(contraseña)) {
+    return { valid: false, 
+      message: "Credenciales incorrectas." };
+  }
+
+  return { valid: true };
+}
