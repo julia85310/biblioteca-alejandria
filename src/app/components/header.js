@@ -32,13 +32,14 @@ export default function Header({ubiHeader}){
         }
     }
 
-    return <header className={`flex flex-row px-12 pt-10 justify-between pb-6 ${user?.admin ? "bg-[var(--aliceBlue)]" : "bg-[var(--seashell)]"}`}>
-        <img src="../logo.png" className="w-[10vw]"/> 
-        <img className="block lg:hidden z-10" src="../iconos/icono-menu-hb.png" onClick={abrirMenu}></img>
-        <nav className={`${menuHidden ? 'hidden' : 'flex'}  z-20 lg:static lg:flex flex-col lg:flex-row justify-end items-end gap-16 px-18`}>
-            <p onClick={()=>handleClickNav("Home", ubiHeader)}>Conócenos</p>
-            <p onClick={()=>handleClickNav("Catalogo", ubiHeader)}>Catálogo</p>
-            <p onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?.admin ? "Panel de Administración" : "Mi perfil"}</p>
+    return <header className={`relative flex flex-row items-center lg:items-end px-6 pt-6 lg:px-12 lg:pt-10 justify-between pb-6 ${user?.admin ? "bg-[var(--aliceBlue)]" : "bg-[var(--seashell)]"}`}>
+        <img src="../logo.png" className="w-24 lg:w-40"/> 
+        <img className={`${!menuHidden && 'hidden'} lg:hidden z-10 w-12 h-10`} src="../iconos/icono-menu-hb.png" onClick={abrirMenu}></img>
+        <nav className={`${menuHidden ? 'hidden' : 'flex'} lg:border-0 pr-12 border-[var(--cafeNoir)] border-2 rounded-xl z-50 ${user?.admin ? "bg-[var(--aliceBlue)]" : "bg-[var(--seashell)]"} pl-12 py-8 top-6 right-4 pr-4 text-center lg:text-base text-sm gap-6 lg:relative absolute z-20 lg:static lg:flex flex-col lg:flex-row justify-end items-end lg:gap-18 lg:px-16 lg:pb-2`}>
+            <img className={`${menuHidden && 'hidden'} w-4 absolute top-3 right-3`} onClick={() => setMenuHidden(!menuHidden)} src="/iconos/icono-close.png"></img>
+            <p className="w-full" onClick={()=>handleClickNav("Home", ubiHeader)}>Conócenos</p>
+            <p className="w-full" onClick={()=>handleClickNav("Catalogo", ubiHeader)}>Catálogo</p>
+            <p className="w-full" onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?.admin ? "Panel de Administración" : "Mi perfil"}</p>
         </nav>
     </header>
 }
