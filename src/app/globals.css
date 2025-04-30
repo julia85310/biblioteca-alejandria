@@ -29,3 +29,34 @@ body {
 .font-admin {
   font-family: var(--font-assistant);
 }
+
+.underline-animate {
+  position: relative;
+}
+
+.underline-animate {
+  position: relative;
+}
+
+.underline-animate::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; 
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 110%;
+  height: 2px;
+  background-color: currentColor;
+  transform-origin: center;
+  transition: transform 0.3s ease;
+  pointer-events: none;
+}
+
+.underline-animate:hover::after,
+.underline-animate.animate::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+.underline-animate.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
