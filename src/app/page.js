@@ -20,16 +20,16 @@ export default function Home() {
   }, []);
 
   function nextEvento(){
-    if(indexEvento == eventos.length - 1){
-      setIndexEvento(0)
+    if(indexEvento == eventos.length){
+      setIndexEvento(1)
     }else{
       setIndexEvento(indexEvento+1)
     }
   }
 
   function previousEvento(){
-    if(indexEvento == 0){
-      setIndexEvento(eventos.length-1)
+    if(indexEvento == 1){
+      setIndexEvento(eventos.length)
     }else{
       setIndexEvento(indexEvento-1)
     }
@@ -42,14 +42,14 @@ export default function Home() {
       <div id="eventos">
         {!eventos? 
           <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
-          <div>
-            <img src="/iconos/icono-flecha.png" className="rotate-180" onClick={previousEvento}></img>
+          <div className="flex flex-row items-center">
+            <img src="/iconos/icono-flecha.png" className="w-6 h-6 rotate-180" onClick={previousEvento}></img>
             {eventos.map((evento) => {
               if(evento.id == indexEvento){
                 return <Evento key={evento.id} evento={evento}></Evento>
               }
             })}
-            <img src="/iconos/icono-flecha.png" onClick={nextEvento}></img>
+            <img className="w-6 h-6" src="/iconos/icono-flecha.png" onClick={nextEvento}></img>
           </div>
         }
       </div>

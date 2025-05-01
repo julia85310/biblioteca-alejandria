@@ -60,3 +60,14 @@ body {
 .underline-animate.active::after {
   transform: translateX(-50%) scaleX(1);
 }
+
+/* Personaliza la parte que se mueve dentro de la barra (thumb) */
+.elemento-con-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--cafeNoir);
+  border-radius: 10px;
+}
+
+/* Hacer la pista (área donde se mueve la barra) transparente */
+.elemento-con-scroll::-webkit-scrollbar-track {
+  background-color: transparent;
+}
