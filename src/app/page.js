@@ -19,9 +19,9 @@ export default function Home() {
     fetchData(); 
   }, []);
 
-  return <div className="w-[100vw] flex flex-col bg-[var(--seashell)]">
+  return <div className="w-[100vw] h-[100vh] flex flex-col bg-[var(--seashell)] ">
     <Header ubiHeader="Home"></Header>
-    <main className="flex-1 flex flex-col lg:flex-row">
+    <main className="flex-1 flex flex-col lg:flex-row justify-around">
       <h2 className="lg:hidden block font-bold text-xl ml-6 mt-2">Bienvenido a nuestra <br/> querida biblioteca</h2>
       <div id="eventos">
         {!eventos? 

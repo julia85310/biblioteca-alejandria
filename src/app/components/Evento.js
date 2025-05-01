@@ -13,7 +13,7 @@ export default function Evento({evento}){
         </div>
 
         <div id="movil" className="lg:hidden flex flex-col z-10 mt-4 ml-4 bg-[var(--lion)] ">
-            <img className="-mt-4 -ml-4 z-20 relative max-w-[18rem] h-auto object-contain" src={evento.imagen_url} alt="Imagen del evento"></img>
+            <img className="-mt-4 -ml-4 z-20 relative max-w-[80vw] h-auto object-contain" src={evento.imagen_url} alt="Imagen del evento"></img>
             <p className="mr-2 relative z-20 text-end text-white mr-2 mt-5 text-sm ">{evento.fechaFormateada}</p>
             <p className="relative z-20 text-center px-4 py-4">{evento.titulo}</p>
             <p className="text-[var(--seashell)] text-center leading-loose relative z-20 elemento-con-scroll overflow-y-auto whitespace-pre-line text-xs px-6 pb-6">{evento.descripcion}</p>
