@@ -19,22 +19,6 @@ export default function Home() {
     fetchData(); 
   }, []);
 
-  function nextEvento(){
-    if(indexEvento == eventos.length){
-      setIndexEvento(1)
-    }else{
-      setIndexEvento(indexEvento+1)
-    }
-  }
-
-  function previousEvento(){
-    if(indexEvento == 1){
-      setIndexEvento(eventos.length)
-    }else{
-      setIndexEvento(indexEvento-1)
-    }
-  }
-
   return <div className="w-[100vw] flex flex-col">
     <Header ubiHeader="Home"></Header>
     <main className="flex-1 flex flex-col lg:flex-row">
@@ -43,13 +27,13 @@ export default function Home() {
         {!eventos? 
           <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
           <div className="flex flex-row items-center">
-            <img src="/iconos/icono-flecha.png" className="w-6 h-6 rotate-180" onClick={previousEvento}></img>
+            <img src="/iconos/icono-flecha.png" className={`${indexEvento == 1 && "invisible"} w-6 h-6 rotate-180`} onClick={() => setIndexEvento(indexEvento-1)}></img>
             {eventos.map((evento) => {
               if(evento.id == indexEvento){
                 return <Evento key={evento.id} evento={evento}></Evento>
               }
             })}
-            <img className="w-6 h-6" src="/iconos/icono-flecha.png" onClick={nextEvento}></img>
+            <img className={`${indexEvento == eventos.length && "invisible"} w-6 h-6`} src="/iconos/icono-flecha.png" onClick={() => setIndexEvento(indexEvento+1)}></img>
           </div>
         }
       </div>
