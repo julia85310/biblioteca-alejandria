@@ -19,10 +19,10 @@ export default function Home() {
     fetchData(); 
   }, []);
 
-  return <div className="w-[100vw] flex flex-col">
+  return <div className="w-[100vw] flex flex-col bg-[var(--seashell)]">
     <Header ubiHeader="Home"></Header>
     <main className="flex-1 flex flex-col lg:flex-row">
-      <h2 className="lg:hidden block">Bienvenido a nuestra querida biblioteca</h2>
+      <h2 className="lg:hidden block font-bold text-xl ml-6 mt-2">Bienvenido a nuestra <br/> querida biblioteca</h2>
       <div id="eventos">
         {!eventos? 
           <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
@@ -39,10 +39,11 @@ export default function Home() {
       </div>
       <div id="descripcion">
         <h2 className="lg:block hidden">Bienvenido a nuestra querida biblioteca</h2>
-        <p>Con 70 años de historia, somos un espacio dedicado al conocimiento y al entretenimiento, con un catálogo muy amplio que abarca desde literatura clásica hasta ciencia, arte, historia y mucho más.<br/>
-          Estamos ubicados en Calle de los Álamos, 42, Villa Nieve, donde los libros siguen cobrando vida cada día. Desde esta página puedes explorar nuestro catálogo, reservar ejemplares y consultar si tienes libros pendientes de devolución, para que otras personas también puedan disfrutarlos.<br/>
-          Además, organizamos eventos culturales, talleres y encuentros literarios que mantienen viva la biblioteca y fomentan la pasión por la lectura.<br/>
-          ¡Descubre tu próximo libro con nosotros!</p><br/>
+        <p className="text-center px-8 py-6"><b>Con 70 años de historia</b>, somos un espacio dedicado al conocimiento y al entretenimiento, con un catálogo muy amplio que abarca desde literatura clásica hasta ciencia, arte, historia y mucho más.<br/><br/>
+          Estamos ubicados en <b>Calle de los Álamos, 42, Villa Nieve</b>, donde los libros siguen cobrando vida cada día. Desde esta página puedes explorar nuestro catálogo, <b>reservar</b> ejemplares y <b>consultar</b> si tienes libros pendientes de devolución, para que otras personas también puedan disfrutarlos.<br/><br/>
+          Además, organizamos <b>eventos</b> culturales, talleres y encuentros literarios que mantienen viva la biblioteca y fomentan la pasión por la lectura.<br/><br/>
+          <b>¡Descubre tu próximo libro con nosotros!</b>
+        </p>
       </div>
     </main>
     <Footer></Footer>
