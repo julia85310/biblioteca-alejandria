@@ -6,13 +6,14 @@ import { useState, useEffect } from "react"
 
 export default function Home() {
   const [eventos, setEventos] = useState([])
-  const [indexEvento, setIndexEvento] = useState(0)
+  const [indexEvento, setIndexEvento] = useState(1)
 
   useEffect(() => {
     async function fetchData() {
       const res = await fetch("/api/evento");
       const data = await res.json();
       setEventos(data)
+      console.log(data)
     }
   
     fetchData(); 

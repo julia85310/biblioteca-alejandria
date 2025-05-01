@@ -15,8 +15,8 @@ export async function GET(){
         return Response.json({ error: error.message }, { status: 500 });
     }
     
-    for (const evento in data){
-        evento.fecha = formatearFechaBonita(evento.fecha)
+    for (const evento of data){
+        evento.fechaFormateada = formatearFechaBonita(new Date(evento.fecha))
     }
 
     return Response.json(data);
@@ -30,6 +30,6 @@ function formatearFechaBonita(fecha) {
     const dia = fecha.getDate();
     const mes = meses[fecha.getMonth()];
     const anio = fecha.getFullYear();
-  
-    return `${dia} de ${mes} de ${anio}`;
+    const fechaFormateada = `${dia} de ${mes} de ${anio}`
+    return fechaFormateada;
 }
