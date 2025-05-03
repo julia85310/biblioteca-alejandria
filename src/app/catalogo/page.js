@@ -28,9 +28,9 @@ export default function CatalogoPage() {
             setLibros(data)
             console.log(data)
 
-            const generosUnicos = [...new Set(data.map(libro => libro.genero))];
-            const autoresUnicos = [...new Set(data.map(libro => libro.autor))];
-            const disponibilidadesUnicas = [...new Set(data.map(libro => libro.disponibilidad))];
+            const generosUnicos = [...new Set(data.map(libro => libro.genero))].sort();
+            const autoresUnicos = [...new Set(data.map(libro => libro.autor))].sort();
+            const disponibilidadesUnicas = [...new Set(data.map(libro => libro.disponibilidad))].sort();
 
             setGeneros(generosUnicos);
             setAutores(autoresUnicos);
@@ -80,39 +80,44 @@ export default function CatalogoPage() {
                 <div className="flex flex-row md:text-base lg:text-sm text-sm lg:gap-20 gap-3 justify-around lg:mr-16 mb-4 mt-4 lg:mt-0">
                     <div>
                         <p className="">Género</p>
-                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-6`} value={filtroGenero} onChange={(e) => setFiltroGenero(e.target.value)}>
+                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-1 lg:pr-4`} value={filtroGenero} onChange={(e) => setFiltroGenero(e.target.value)}>
                             <option value={"all"}>Todos</option>
                             {generos.map((genero) =>
-                                <option value={genero}>{genero}</option>
+                                <option key={genero} value={genero}>{genero}</option>
                             )}
                         </select>
                     </div>
                     <div >
                         <p>Autor</p>
-                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-6`} value={filtroAutor} onChange={(e) => setFiltroAutor(e.target.value)}>
+                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-1 lg:pr-4`} value={filtroAutor} onChange={(e) => setFiltroAutor(e.target.value)}>
                             <option value={"all"}>Todos</option>
                             {autores.map((autor) =>
-                                <option value={autor}>{autor}</option>
+                                <option key={autor} value={autor}>{autor}</option>
                             )}
                         </select>
                     </div>
                     <div>
                         <p>Disponibilidad</p>
-                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-6`} value={filtroDisponible} onChange={(e) => setFiltroDisponible(e.target.value)}>
+                        <select className={`${bgFilters} text-[var(--chamoise)] text-xs flex border-[var(--chamoise)] border rounded-2xl mt-1 pl-1 pr-1 lg:pr-4`} value={filtroDisponible} onChange={(e) => setFiltroDisponible(e.target.value)}>
                             <option value={"all"}>Todos</option>
                             {disponibilidades.map((disponibilidad) =>
-                                <option value={disponibilidad}>{disponibilidad}</option>
+                                <option key={disponibilidad} value={disponibilidad}>{disponibilidad}</option>
                             )}
                         </select>
                     </div>
                 </div>
             </div>
-            <div className="flex-1 flex items-center justify-center">
-                {libros.length == 0 && <h1 className="pb-20 text-center px-14">Lamentablemente, <b>no tenemos este libro</b>, pero nuestras páginas están llenas de otros títulos. ¡Echa un vistazo!</h1>}
-                <div>
-                    <div className="overflow-y-auto grid grid-cols-2 lg:grid-cols-6">
+            <div className="flex-1 flex">
+                <div className=" flex items-center justify-center">
+                    {!modoAdmin && libros.length == 0 && <h1 className="pb-20 text-center px-14">Lamentablemente, <b>no tenemos este libro</b>, pero nuestras páginas están llenas de otros títulos. ¡Echa un vistazo!</h1>}
+                    {modoAdmin && libros.length == 0 && <h1 className="pb-20 text-center px-14">Libro no encontrado</h1>}
+                </div>
+                <div className={`${libros.length == 0 && "hidden"}`}>
+                    <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-3">
                         {libros.map((libro) =>
-                            <Libro libro={libro}
+                            <Libro
+                                key={libro.id} 
+                                libro={libro}
                                 admin={modoAdmin}></Libro>
                         )}
                     </div>

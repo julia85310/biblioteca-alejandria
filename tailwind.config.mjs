@@ -22,6 +22,7 @@ export default {
         darkSeashell: "var(--darkSeashell)",
         darkAliceBlue: "var(--darkAliceBlue)",
         chamoise: "var(--chamoise)",
+        ecru: "var(--ecru)",
       },
       keyframes: {
       },

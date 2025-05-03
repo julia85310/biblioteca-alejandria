@@ -27,7 +27,7 @@ export default function Home() {
         {!eventos? 
           <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
           <div className="flex flex-row items-center">
-            <img src="/iconos/icono-flecha.png" className={`${indexEvento == 1 && "invisible"} w-6 h-6 rotate-180`} onClick={() => setIndexEvento(indexEvento-1)}></img>
+            <img src="/iconos/icono-flecha.png" className={`mr-2 ${indexEvento == 1 && "invisible"} w-6 h-6 rotate-180`} onClick={() => setIndexEvento(indexEvento-1)}></img>
             {eventos.map((evento) => {
               if(evento.id == indexEvento){
                 return <Evento key={evento.id} evento={evento}></Evento>
