@@ -27,11 +27,9 @@ export default function Header({ubiHeader}){
                 if(!user){
                     router.push("../auth/login"); 
                 }else if(user.admin){
-                    alert("No implementado")
-                    //router.push("../admin");
+                    router.push("../admin");
                 }else{
-                    alert("No implementado")
-                    //router.push("../perfil");
+                    router.push("../perfil");
                 }
             }
         }

@@ -89,6 +89,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('usuario');
     setUser(null);
+    console.log("Sesion cerrada")
   };
 
   return (
