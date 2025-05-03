@@ -19,6 +19,9 @@ export default {
         columbiaBlue: "var(--columbiaBlue)",
         paynesGray: "var(--paynesGray)",
         linen: "var(--linen)",
+        darkSeashell: "var(--darkSeashell)",
+        darkAliceBlue: "var(--darkAliceBlue)",
+        chamoise: "var(--chamoise)",
       },
       keyframes: {
       },
