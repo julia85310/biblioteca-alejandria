@@ -40,72 +40,96 @@ export default function signupPage(){
         }
     }
 
-    return <div>
+    return <div className="min-h-[100vh] flex flex-col">
         <Header></Header>
-        <main>
-            <h1>Regístrate</h1>
-            <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row">
-                <div>
-                    <label>Nombre</label>
-                    <input 
-                        type="text"
-                        placeholder="Nombre Apellido Apellido2" 
-                        onChange={(e) =>
-                            setFormData({ ...formData, nombre: e.target.value })
-                        }
-                    />
-                    <label>Email</label>
-                    <input 
-                        type="email"
-                        placeholder="correoejemplo@ejemplo.com" 
-                        onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                        }
-                    />
-                    <label>Teléfono</label>
-                    <input 
-                        type="tel"
-                        placeholder="612345678" 
-                        onChange={(e) =>
-                            setFormData({ ...formData, telefono: e.target.value })
-                        }
-                    />
-                </div>
-                <div>
-                    <label>Contraseña</label>
-                    <input 
-                        type="password"
-                        placeholder="Contraseña segura" 
-                        onChange={(e) =>
-                            setFormData({ ...formData, password: e.target.value })
-                        }
-                    />
-                    <label>Repite la contraseña</label>
-                    <input 
-                        type="password"
-                        placeholder="Contraseña segura" 
-                        onChange={(e) =>
-                            setFormData({ ...formData, password2: e.target.value })
-                        }
-                    />
-                    <input 
-                        type="checkbox"
-                        required
-                    /><label>Acepto los términos y condiciones</label>
-                    <input 
-                        type="checkbox"
-                        onChange={(e) =>
-                            setFormData({ ...formData, recuerdame: e.target.checked })
-                        }
-                        checked
-                    /><label>Recuérdame</label>
-                    <input 
-                        type="submit"
-                        value="Ok"
-                    />
-                </div>
-                {mensaje && <h2>{mensaje}</h2>}
-            </form>
+        <main className="flex-1 bg-[var(--seashell)] px-10 flex flex-col">
+            <h1 className="text-xl font-bold">Regístrate</h1>
+            <div className="flex-1 flex justify-center items-center">
+                <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row lg:gap-32 border rounded p-6">
+                    <div className="lg:flex lg:flex-col lg:gap-6">
+                        <div className="flex flex-col">
+                            <label>Nombre</label>
+                            <input 
+                                className="inputsignup"
+                                type="text"
+                                placeholder="Nombre Apellido Apellido2" 
+                                onChange={(e) =>
+                                    setFormData({ ...formData, nombre: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label>Email</label>
+                            <input 
+                                className="inputsignup"
+                                type="email"
+                                placeholder="correoejemplo@ejemplo.com" 
+                                onChange={(e) =>
+                                    setFormData({ ...formData, email: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label>Teléfono</label>
+                            <input 
+                                className="inputsignup"
+                                type="tel"
+                                placeholder="612345678" 
+                                onChange={(e) =>
+                                    setFormData({ ...formData, telefono: e.target.value })
+                                }
+                            />
+                        </div>
+                    </div>
+                    <div className="lg:flex lg:flex-col lg:gap-6">
+                        <div className="flex flex-col">
+                            <label>Contraseña</label>
+                            <input 
+                                className="inputsignup"
+                                type="password"
+                                placeholder="Contraseña segura" 
+                                onChange={(e) =>
+                                    setFormData({ ...formData, password: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div className="flex flex-col">
+                            <label>Repite la contraseña</label>
+                            <input 
+                                className="inputsignup"
+                                type="password"
+                                placeholder="Contraseña segura" 
+                                onChange={(e) =>
+                                    setFormData({ ...formData, password2: e.target.value })
+                                }
+                            />
+                        </div>
+                        <div>
+                            <div>
+                                <input 
+                                    type="checkbox"
+                                    required
+                                /><label>Acepto los términos y condiciones</label>
+                            </div>
+                            <div>
+                                <input 
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setFormData({ ...formData, recuerdame: e.target.checked })
+                                    }
+                                    checked={formData.recuerdame}
+                                /><label>Recuérdame</label>
+                            </div>
+                            <input 
+                                className="bg-[var(--seashell)] border rounded-4xl px-4 py-1"
+                                type="submit"
+                                value="Ok"
+                            />
+                        </div>
+                    </div>
+                    {mensaje && <h2>{mensaje}</h2>}
+                </form>
+            </div>
         </main>
         <Footer></Footer>
     </div>

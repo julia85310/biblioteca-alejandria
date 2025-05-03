@@ -66,7 +66,7 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, recuerdame: e.target.checked })
                         }
-                        className="mr-2 accent-[var(--seashell)] rounded"
+                        className="accent-[var(--seashell)]"
                         checked
                     /><label className="font-admin text-[var(--seashell)] md:text-base lg:text-xs text-sm">Recuérdame</label>
                 </div>
