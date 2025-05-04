@@ -41,7 +41,7 @@ export default function signupPage(){
     }
 
     return <div className="min-h-[100vh] flex flex-col">
-        <Header></Header>
+        <MyHeader></MyHeader>
         <main className="flex-1 bg-[var(--seashell)] px-10 flex flex-col">
             <h1 className="text-xl font-bold">Regístrate</h1>
             <div className="flex-1 flex justify-center items-center flex-col gap-3">
