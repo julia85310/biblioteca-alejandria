@@ -1,0 +1,23 @@
+{
+  "name": "biblioteca-alejandria",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
+    "bcryptjs": "^3.0.2",
+    "next": "15.3.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.4",
+    "tailwindcss": "^4",
+    "tailwindcss-cli": "^0.1.2"
+  }
+}
