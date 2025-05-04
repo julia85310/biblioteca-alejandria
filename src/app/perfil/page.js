@@ -16,6 +16,7 @@ export default function PerfilPage(){
 
     return <div>
         <Header ubiHeader="Perfil"></Header>
+        <h1>Pagina no implementada</h1>
         <img src="/iconos/icono-logout.png" onClick={cerrarSesion}></img>
         <Footer></Footer>
     </div>

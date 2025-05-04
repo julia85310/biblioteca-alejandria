@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from "next/navigation";
 
-export default function Libro({libro, admin}){
+export default function Libro({libro, admin, onDelete}){
     const router = useRouter();
 
     async function handleClickButton(){
@@ -18,7 +18,8 @@ export default function Libro({libro, admin}){
                     });
                 
                     if (res.ok) {
-                        alert(`${libro.id} eliminado correctamente`)
+                        alert(`${libro.titulo} eliminado correctamente`)
+                        onDelete?.(libro.id);
                     } else {
                         alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
                     }

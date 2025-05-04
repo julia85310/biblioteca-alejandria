@@ -44,9 +44,9 @@ export default function signupPage(){
         <Header></Header>
         <main className="flex-1 bg-[var(--seashell)] px-10 flex flex-col">
             <h1 className="text-xl font-bold">Regístrate</h1>
-            <div className="flex-1 flex justify-center items-center">
-                <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row lg:gap-32 border rounded p-6">
-                    <div className="lg:flex lg:flex-col lg:gap-6">
+            <div className="flex-1 flex justify-center items-center flex-col gap-3">
+                <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row lg:gap-32 border rounded p-6 gap-6">
+                    <div className="flex flex-col gap-6">
                         <div className="flex flex-col">
                             <label>Nombre</label>
                             <input 
@@ -81,7 +81,7 @@ export default function signupPage(){
                             />
                         </div>
                     </div>
-                    <div className="lg:flex lg:flex-col lg:gap-6">
+                    <div className="flex flex-col gap-6">
                         <div className="flex flex-col">
                             <label>Contraseña</label>
                             <input 
@@ -107,12 +107,14 @@ export default function signupPage(){
                         <div>
                             <div>
                                 <input 
+                                    className="mr-2 accent-[var(--lion)] rounded"
                                     type="checkbox"
                                     required
                                 /><label>Acepto los términos y condiciones</label>
                             </div>
                             <div>
                                 <input 
+                                    className="mr-2 accent-[var(--lion)] rounded"
                                     type="checkbox"
                                     onChange={(e) =>
                                         setFormData({ ...formData, recuerdame: e.target.checked })
@@ -121,14 +123,14 @@ export default function signupPage(){
                                 /><label>Recuérdame</label>
                             </div>
                             <input 
-                                className="bg-[var(--seashell)] border rounded-4xl px-4 py-1"
+                                className="bg-[var(--seashell)] border rounded-4xl px-4 py-1 mt-4"
                                 type="submit"
                                 value="Ok"
                             />
                         </div>
                     </div>
-                    {mensaje && <h2>{mensaje}</h2>}
                 </form>
+                {mensaje && <h2 className="font-bold text-sm">{mensaje}</h2>}
             </div>
         </main>
         <Footer></Footer>

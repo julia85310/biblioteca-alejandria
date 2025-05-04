@@ -59,6 +59,11 @@ export default function CatalogoPage() {
     }, [filtroGenero, filtroAutor, filtroDisponible, filtroTitulo, allLibros]);
 
 
+    function onDelete(id){
+        setLibros(prev => prev.filter(libro => libro.id !== id));
+        setAllLibros(prev => prev.filter(libro => libro.id !== id));
+    }
+
     return <div className="min-h-[100vh] flex flex-col">
         <Header ubiHeader="Catalogo"></Header>
         <main className={`flex flex-col flex-1 ${modoAdmin? "bg-[var(--aliceBlue)]": "bg-[var(--seashell)]"}`}>
@@ -116,6 +121,7 @@ export default function CatalogoPage() {
                     <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-3">
                         {libros.map((libro) =>
                             <Libro
+                                onDelete={onDelete}
                                 key={libro.id} 
                                 libro={libro}
                                 admin={modoAdmin}></Libro>

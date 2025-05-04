@@ -6,9 +6,9 @@ import {AuthContext} from "../../contexts/AuthContext.js"
 import { useContext, useState} from "react";
 import {validarDatosLogin} from "@/app/libs/user";
 
-export default function signupPage(){
+export default function loginPage(){
     const router = useRouter();
-    const { login } = useContext(AuthContext);
+    const { login, user } = useContext(AuthContext);
     const [formData, setFormData] = useState({ email: "", password:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
@@ -26,7 +26,7 @@ export default function signupPage(){
             }else{
                 //alerta personalizada
                 alert("¡Bienvenido de nuevo!")
-                router.push("../../perfil");
+                router.push("/");
             }
         }
         
@@ -66,8 +66,8 @@ export default function signupPage(){
                         onChange={(e) =>
                             setFormData({ ...formData, recuerdame: e.target.checked })
                         }
-                        className="accent-[var(--seashell)]"
-                        checked
+                        className="mr-2 rounded accent-[var(--seashell)]"
+                        checked={formData.recuerdame}
                     /><label className="font-admin text-[var(--seashell)] md:text-base lg:text-xs text-sm">Recuérdame</label>
                 </div>
                 <div className="flex justify-end">
