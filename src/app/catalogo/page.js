@@ -130,6 +130,6 @@ export default function CatalogoPage() {
                 </div>
             </div>
         </main>
-        {!modoAdmin && <Footer/>}
+        {!modoAdmin && <MyFooter/>}
     </div>
 }
