@@ -1,7 +1,7 @@
 'use client'
-import Footer from "@/app/components/Footer.js"
+import MyFooter from "@/app/components/MyFooter.js"
 import { useRouter } from "next/navigation";
-import Header from "@/app/components/Header.js"
+import MyHeader from "@/app/components/MyHeader.js"
 import {AuthContext} from "../../contexts/AuthContext.js"
 import { useContext, useState} from "react";
 import {validarDatosRegistro} from "@/app/libs/user";
@@ -133,6 +133,6 @@ export default function signupPage(){
                 {mensaje && <h2 className="font-bold text-sm">{mensaje}</h2>}
             </div>
         </main>
-        <Footer></Footer>
+        <MyFooter/>
     </div>
 }

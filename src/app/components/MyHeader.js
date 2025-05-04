@@ -3,7 +3,7 @@ import { useRouter } from "next/navigation";
 import { useContext, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 
-export default function Header({ubiHeader}){
+export default function MyHeader({ubiHeader}){
     const { user } = useContext(AuthContext);
     const [menuHidden, setMenuHidden] = useState(true);
     const [animating, setAnimating] = useState("");

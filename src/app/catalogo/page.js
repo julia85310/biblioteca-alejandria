@@ -1,7 +1,7 @@
 'use client'
-import Footer from "../components/Footer";
+import MyFooter from "../components/MyFooter";
 import Libro from "../components/Libro"
-import Header from "../components/Header"
+import MyHeader from "../components/MyHeader"
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../contexts/AuthContext";
 
@@ -65,7 +65,7 @@ export default function CatalogoPage() {
     }
 
     return <div className="min-h-[100vh] flex flex-col">
-        <Header ubiHeader="Catalogo"></Header>
+        <MyHeader ubiHeader="Catalogo"></MyHeader>
         <main className={`flex flex-col flex-1 ${modoAdmin? "bg-[var(--aliceBlue)]": "bg-[var(--seashell)]"}`}>
             <div className="flex lg:flex-row flex-col justify-between">
                 <div className="flex lg:justify-center lg:items-center ">

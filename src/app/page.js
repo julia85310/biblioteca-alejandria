@@ -1,6 +1,6 @@
 'use client'
-import Footer from "./components/Footer"
-import Header from "./components/Header"
+import MyFooter from "./components/MyFooter"
+import MyHeader from "./components/MyHeader"
 import Evento from "./components/Evento"
 import { useState, useEffect } from "react"
 
@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return <div className="lg:h-[100vh] w-[100%] h-[100%] flex flex-col bg-[var(--seashell)] ">
-    <Header ubiHeader="Home"></Header>
+    <MyHeader ubiHeader="Home"></MyHeader>
     <main className="flex-1 flex flex-col lg:flex-row justify-around px-2">
       <h2 className="lg:hidden block font-bold text-xl ml-6 mt-2">Bienvenido a nuestra <br/> querida biblioteca</h2>
       <div id="eventos">
@@ -46,6 +46,6 @@ export default function Home() {
         </p>
       </div>
     </main>
-    <Footer></Footer>
+    <MyFooter></MyFooter>
   </div>
 }

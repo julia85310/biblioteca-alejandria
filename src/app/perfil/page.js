@@ -1,7 +1,7 @@
 'use client'
 import { AuthContext } from "../contexts/AuthContext"
-import Header from "../components/Header"
-import Footer from "../components/Footer"
+import MyHeader from "../components/MyHeader"
+import MyFooter from "../components/MyFooter"
 import { useContext } from "react"
 import { useRouter } from "next/navigation";
 
@@ -15,9 +15,9 @@ export default function PerfilPage(){
     }
 
     return <div>
-        <Header ubiHeader="Perfil"></Header>
+        <MyHeader ubiHeader="Perfil"></MyHeader>
         <h1>Pagina no implementada</h1>
         <img src="/iconos/icono-logout.png" onClick={cerrarSesion}></img>
-        <Footer></Footer>
+        <MyFooter/>
     </div>
 }

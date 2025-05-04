@@ -1,7 +1,7 @@
 'use client'
-import Footer from "@/app/components/Footer.js"
+import MyFooter from "@/app/components/MyFooter.js"
 import { useRouter } from "next/navigation";
-import Header from "@/app/components/Header.js"
+import MyHeader from "@/app/components/MyHeader.js"
 import {AuthContext} from "../../contexts/AuthContext.js"
 import { useContext, useState} from "react";
 import {validarDatosLogin} from "@/app/libs/user";
@@ -33,7 +33,7 @@ export default function loginPage(){
     }
 
     return <div className="min-h-[100vh] flex flex-col">
-        <Header ubiHeader="Perfil"></Header>
+        <MyHeader ubiHeader="Perfil"></MyHeader>
         <main className="py-4 pb-8 lg:py-4 lg:pb-8 md:py-6 md:px-20 w-[100%] h-[100%] bg-[var(--seashell)] flex-1 flex flex-col justify-center items-center">
             <form onSubmit={(e) => loginRequest(e)} className="lg:w-[30%] md:w-[60%] w-[75%] px-8 rounded-xl mb-2 py-8 bg-[var(--lion)] flex flex-col gap-4 lg:gap-4 md:gap-8">
                 <h1 className="mb-4 text-white text-center lg:text-xl text-xl md:text-2xl font-bold">Inicia Sesión</h1>
@@ -80,6 +80,6 @@ export default function loginPage(){
             </form>
             <p className="underline underline-offset-4 lg:text-sm md:text-base text-sm mt-4" onClick={() => router.push("/auth/signup")}>No tengo una cuenta</p>
         </main>
-        <Footer></Footer>
+        <MyFooter/>
     </div>
 }
