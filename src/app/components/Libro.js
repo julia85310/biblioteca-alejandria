@@ -1,34 +1,31 @@
 'use client'
 import { useRouter } from "next/navigation";
+import { deleteLibro } from "../libs/libro";
 
-export default function Libro({libro, admin, onDelete}){
+export default function Libro({libro, admin, onDelete, user}){
     const router = useRouter();
 
     async function handleClickButton(){
         if(admin){
-            const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar ${libro.titulo}? Esta acción es irreversible.`);
-            if (confirmed) {
-                try {
-                    const res = await fetch("/api/libro", {
-                        method: 'DELETE',
-                        headers: {
-                        'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({'id': libro.id}),
-                    });
-                
-                    if (res.ok) {
-                        alert(`${libro.titulo} eliminado correctamente`)
-                        onDelete?.(libro.id);
-                    } else {
-                        alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
-                    }
-                } catch (error) {
+            try {
+                const res = await deleteLibro();
+            
+                if (res.ok) {
+                    alert(`${libro.titulo} eliminado correctamente`)
+                    onDelete?.(libro.id);
+                } else {
                     alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
                 }
+            } catch (error) {
+                alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
             }
         }else{
-            router.push(`/catalogo/${libro.id}/reserva`);
+            if(user){
+                router.push(`/catalogo/${libro.id}/reserva`);
+            }else{
+                router.push(`/auth/login`)
+            }
+            
         }
     }
 

@@ -6,6 +6,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const modoAdmin = user?.admin === true;
 
   // Cargar el usuario desde localStorage al iniciar la aplicación
   useEffect(() => {
@@ -93,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signup, logout, login }}>
+    <AuthContext.Provider value={{ user, signup, logout, login, modoAdmin }}>
       {children}
     </AuthContext.Provider>
   );

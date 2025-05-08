@@ -6,6 +6,7 @@ import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../contexts/AuthContext";
 
 
+
 export default function CatalogoPage() {
     const [filtroTitulo, setFiltroTitulo] = useState("")
     const [allLibros, setAllLibros] = useState([]);
@@ -16,8 +17,7 @@ export default function CatalogoPage() {
     const [filtroGenero, setFiltroGenero] = useState("all");
     const [filtroAutor, setFiltroAutor] = useState("all");
     const [filtroDisponible, setFiltroDisponible] = useState("all");
-    const { user } = useContext(AuthContext);
-    const modoAdmin = user?.admin === true;
+    const { modoAdmin, user } = useContext(AuthContext);
     const bgFilters = modoAdmin? 'bg-[var(--darkAliceBlue)]': 'bg-[var(--darkSeashell)]';
 
     useEffect(() => {
@@ -121,6 +121,7 @@ export default function CatalogoPage() {
                     <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-3">
                         {libros.map((libro) =>
                             <Libro
+                                user={user}
                                 onDelete={onDelete}
                                 key={libro.id} 
                                 libro={libro}

@@ -1,4 +1,5 @@
 import { supabase } from "@/app/libs/supabaseClient";
+import { formatearFechaBonita } from "@/app/libs/libro";
 
 /**
  * Devuelve todos los libros.
@@ -17,6 +18,11 @@ export async function GET(request) {
 
     if (error) {
         return Response.json({ error: error.message }, { status: 500 });
+    }
+
+    console.log(data[0].fecha_adquisicion)
+    if (id) {
+        data[0].fecha_adquisicion = formatearFechaBonita(data[0].fecha_adquisicion)
     }
 
     return Response.json(data);
