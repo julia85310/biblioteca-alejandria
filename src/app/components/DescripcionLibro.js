@@ -1,9 +1,8 @@
 
 export default function DescripcionLibro({libro}){
-    
 
-    return <div className="flex flex-col justify-between text-xs lg:text-base h-[100%] py-4">
-        <div className="flex flex-col gap-3">
+    return <div className="lg:-mt-4 flex flex-col justify-between text-[2.3vw] lg:text-sm lg:gap-4 gap-6 py-4">
+        <div className="flex flex-col gap-3 lg:gap-1">
             <div id="editorial" className="flex gap-1">
                 <p className="text-[var(--lion)]">Editorial: </p>
                 <p>{libro.editorial}</p>
@@ -24,10 +23,10 @@ export default function DescripcionLibro({libro}){
                 <p>{libro.genero}</p>
             </div>
         </div>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 lg:gap-1">
             <div id="valor" className="flex gap-1">
                 <p className="text-[var(--lion)]">Valor: </p>
-                <p>{libro.valor}</p>
+                <p>{libro.valor} €</p>
             </div>
             <div id="condicion" className="flex gap-1">
                 <p className="text-[var(--lion)]">Condición: </p>

@@ -50,14 +50,14 @@ export default function LibroPage(props){
 
     return <div className={`${fondo} min-h-[100vh] flex flex-col`}>
         <MyHeader ubiHeader=""/>
-        {libro?<main className="flex-1 flex flex-col p-6 gap-8">
-            <h1 className="text-2xl font-bold">{libro.titulo}</h1>
-            <div className="flex flex-col lg:flex-row pl-4 gap-8">
-                <div className="flex flex-col gap-2">
-                    <div className="flex flex-row gap-4">
-                        <img className="object-contain w-42" src={libro.imagen_url}></img>
+        {libro?<main className="flex-1 flex flex-col p-6 lg:pt-4 gap-4 lg:pl-16">
+            <h1 className="text-2xl font-bold lg:text-3xl">{libro.titulo}</h1>
+            <div className="flex flex-col lg:flex-row pl-4 lg:pl-2 gap-8">
+                <div className="flex flex-col gap-2 lg:gap-3 ">
+                    <div className="flex flex-row gap-4 lg:gap-8 items-start">
+                        <img className="object-contain lg:w-34 w-[38vw]" src={libro.imagen_url}></img>
                         <div id="descripPC" 
-                            className="hidden flex-1 overflow-y-auto elemento-con-scroll">
+                            className="hidden w-[37vw] pr-12 mt-4 pb-8 text-sm text-[var(--lion)] lg:block h-[28vh] overflow-y-auto elemento-con-scroll">
                             {libro.descripcion}
                         </div>
                         <div id="caracteristicasMovil" 
@@ -65,7 +65,7 @@ export default function LibroPage(props){
                             <DescripcionLibro libro={libro}></DescripcionLibro>
                         </div>
                     </div>
-                    <div className="flex flex-row text-[var(--lion)] text-[2.5vw] justify-between items-center">
+                    <div className="flex flex-row text-[var(--lion)] text-[2.4vw] lg:text-base lg:pr-10 pr-5 justify-between items-center lg:-ml-4">
                         <div id="disponibilidad" className="flex justify-between items-center">
                             <div className={`${libro.disponibilidad == "Disponible"? "bg-[var(--verde)]": "bg-[var(--rojo)]"} w-4 h-4 rounded-xl`}></div>
                             <p className="ml-1">{libro.disponibilidad}</p>
@@ -83,17 +83,17 @@ export default function LibroPage(props){
                         </div>
                     </div>
                 </div>
-                <div className="flex flex-col gap-12">
+                <div className="flex flex-col gap-12 lg:gap-4">
                     <div id="DescripMovil" 
-                        className="h-[19vh] lg:hidden overflow-y-auto elemento-con-scroll text-sm text-[var(--lion)] pr-14">
+                        className="h-[19vh] lg:hidden overflow-y-auto elemento-con-scroll text-[3vw] text-[var(--lion)] pr-14">
                         {libro.descripcion}
                     </div>
                     <div id="caracteristicasPC" 
-                        className="hidden">
+                        className="hidden lg:block">
                         <DescripcionLibro libro={libro}></DescripcionLibro>
                     </div>
                     <div className="flex justify-end lg:justify-start">
-                        <button className={`${modoAdmin? "bg-[var(--lion)]": "bg-[var(--ecru)]"} text-2xl text-[var(--seashell)] px-4 py-2 rounded-3xl`} onClick={handleClickButton}>{modoAdmin? "Eliminar": "Reservar"}</button>
+                        <button className={`${modoAdmin? "bg-[var(--lion)]": "bg-[var(--ecru)]"} lg:text-xl lg:py-1 text-2xl text-[var(--seashell)] px-4 py-2 rounded-3xl`} onClick={handleClickButton}>{modoAdmin? "Eliminar": "Reservar"}</button>
                     </div>
                 </div>
             </div>

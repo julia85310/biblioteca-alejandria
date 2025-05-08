@@ -21,6 +21,7 @@
   --darkAliceBlue: #E4E9E8;
   --chamoise: #957261;
   --ecru:#D7AF70;
+  --scroll: #E6D3C8;
 }
 
 
@@ -75,7 +76,7 @@ html, body {
 
 /* Personaliza la parte que se mueve dentro de la barra (thumb) */
 .elemento-con-scroll::-webkit-scrollbar-thumb {
-  background-color: var(--cafeNoir);
+  background-color: var(--scroll);
   border-radius: 10px;
 }
 
