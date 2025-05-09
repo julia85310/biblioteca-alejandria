@@ -1,3 +1,6 @@
+import { supabase } from "@/app/libs/supabaseClient";
+import { formatearFechaBonita } from "./libro";
+
 /**
  * Valida los datos del registro:
  * - que existan
@@ -77,4 +80,54 @@ export function validarDatosLogin(email, password) {
   }
 
   return { valid: true };
+}
+
+/**
+ * Funcion que determina si un usuario es válido para hacer una reserva.
+ * Esto se da cuando:
+ * - Fecha de penalización < hoy
+ * - El usuario no tiene un libro cuya fecha de devolución > hoy y condicion = "no devuelto"
+ * - El usuario tiene libros reservados(libros cuya fecha_adquisicion > hoy 
+ *    (si es igual mirar si el libro está disponible)) < num_max_reservas
+ */
+export async function user_valido_reserva(idUsuario){
+  const hoy = new Date().toISOString().split('T')[0];
+  
+  //usuario no penalizado
+  const { data: user, error } = await supabase.from('usuario').select('*').eq('id', idUsuario).single();
+
+  if(error){
+    console.log(error)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+  
+  if (!user){
+    console.log("Usuario no encontrado")
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  if (user.fecha_penalizacion >= hoy){
+    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
+  }
+  
+  //usuario con libros no devueltos
+  const { data: libros, error2 } = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .eq('condicion', 'no devuelto')
+    .gt('fecha_adquisicion', hoy);
+
+  if(error2){
+    console.log(error2)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  if (libros.length > 0){
+    throw new Error("Tienes libros no devueltos. Por favor, devuélvelos lo antes posible.");
+  }
+
+  //usuario 
+
+  
 }

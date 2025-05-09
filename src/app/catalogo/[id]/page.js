@@ -4,12 +4,14 @@ import { useEffect, useState, useContext, use } from "react";
 import { AuthContext } from "@/app/contexts/AuthContext";
 import MyFooter from "@/app/components/MyFooter";
 import DescripcionLibro from "@/app/components/DescripcionLibro";
+import { useRouter } from "next/navigation";
 
 export default function LibroPage(props){
     const params = use(props.params);
     const id = params.id;
     const [libro, setLibro] = useState(null);
     const {user, modoAdmin} = useContext(AuthContext);
+    const router = useRouter();
 
     const fondo = modoAdmin? 
             "bg-[var(--aliceBlue)]"
@@ -19,7 +21,7 @@ export default function LibroPage(props){
         async function fetchData() {
             const res = await fetch("/api/libro?id=" + id);
             const data = await res.json();
-            setLibro(data[0])
+            setLibro(data);
         }
         
         fetchData(); 

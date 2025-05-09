@@ -5,8 +5,6 @@ import MyHeader from "../components/MyHeader"
 import { useState, useEffect, useContext } from "react"
 import { AuthContext } from "../contexts/AuthContext";
 
-
-
 export default function CatalogoPage() {
     const [filtroTitulo, setFiltroTitulo] = useState("")
     const [allLibros, setAllLibros] = useState([]);
