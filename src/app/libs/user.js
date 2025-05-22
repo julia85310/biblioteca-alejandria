@@ -110,24 +110,79 @@ export async function user_valido_reserva(idUsuario){
     throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
   }
   
-  //usuario con libros no devueltos
-  const { data: libros, error2 } = await supabase
+  //usuario con libros no devueltos (fecha de devolución > hoy)
+  const { data: librosEnPosesion, error2 } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
     .eq('condicion', 'no devuelto')
-    .gt('fecha_adquisicion', hoy);
+    .gt('fecha_devolucion', hoy);
 
   if(error2){
     console.log(error2)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  if (libros.length > 0){
+  if (librosEnPosesion.length > 0){
     throw new Error("Tienes libros no devueltos. Por favor, devuélvelos lo antes posible.");
   }
 
-  //usuario 
+  //maximo de libros para reservar de esta persona
+  const { data: maxLibrosReservar, error5 } = await supabase
+    .from('usuario')
+    .select('num_max_reservas')
+    .eq('usuario', idUsuario);
 
+  if(error5){
+    console.log(error5)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  //usuario con libros reservados máximos (fecha adquisicion > hoy)
+  const { data: librosReservados, error3 } = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .gt('fecha_adquisicion', hoy);
+
+  if(error3){
+    console.log(error3)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  let librosReservadosCount = 0;
+  if(librosReservados.length >= maxLibrosReservar){
+    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
+  }else{
+    librosReservadosCount = librosReservados.length;
+  }
+
+  //usuario con libros reservados para hoy
+  const { data: librosReservadosHoy, error4 } = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .eq('fecha_adquisicion', hoy);
+
+  if(error4){
+    console.log(error4)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
   
+  /*si la fecha de la reserva es para hoy, miramos si ya estan como no devuelto 
+  (ya se han recogido y no cuenta como reserva si no como devolucion) o si siguen como
+  reservado*/
+  if(librosReservadosHoy.length > 0){
+    librosReservadosHoy.forEach((libroReservado) => {
+      if(libroReservado.condicion == "reservado"){
+        librosReservadosCount++;
+      }
+    })
+  }
+
+  if(librosReservadosCount >= maxLibrosReservar){
+    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
+  }
+  
+  return true;
 }
