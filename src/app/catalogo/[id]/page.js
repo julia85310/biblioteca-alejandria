@@ -42,7 +42,13 @@ export default function LibroPage(props){
             }
         }else{
             if(user){
-                router.push(`/catalogo/${libro.id}/reserva`);
+                const res = await fetch("/api/reserva?u=" + user.id);
+                if(res.ok){
+                    router.push(`/catalogo/${libro.id}/reserva`);
+                }else{
+                    const errorData = await res.json();
+                    alert(errorData.error);
+                }
             }else{
                 router.push(`/auth/login`)
             }

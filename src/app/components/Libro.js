@@ -5,7 +5,8 @@ import { deleteLibro } from "../libs/libro";
 export default function Libro({libro, admin, onDelete, user}){
     const router = useRouter();
 
-    async function handleClickButton(){
+    async function handleClickButton(e){
+        e.stopPropagation();
         if(admin){
             try {
                 const res = await deleteLibro();
@@ -21,7 +22,13 @@ export default function Libro({libro, admin, onDelete, user}){
             }
         }else{
             if(user){
-                router.push(`/catalogo/${libro.id}/reserva`);
+                const res = await fetch("/api/reserva?u=" + user.id);
+                if(res.ok){
+                    router.push(`/catalogo/${libro.id}/reserva`);
+                }else{
+                    const errorData = await res.json();
+                    alert(errorData.error);
+                }
             }else{
                 router.push(`/auth/login`)
             }
@@ -41,7 +48,7 @@ export default function Libro({libro, admin, onDelete, user}){
                 </div>
             </div>
             <div className="flex justify-end">
-                <button className={`${admin? "bg-[var(--chamoise)]": "bg-[var(--ecru)]"} text-[var(--seashell)] px-2 rounded-xl`} onClick={handleClickButton}>{admin? "Eliminar": "Reservar"}</button>
+                <button className={`${admin? "bg-[var(--chamoise)]": "bg-[var(--ecru)]"} text-[var(--seashell)] px-2 rounded-xl`} onClick={(e) => handleClickButton(e)}>{admin? "Eliminar": "Reservar"}</button>
             </div>
         </div>
     </div> 

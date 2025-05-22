@@ -84,32 +84,59 @@ export function validarDatosLogin(email, password) {
 
 /**
  * Funcion que determina si un usuario es válido para hacer una reserva.
+ * Devuelve un error si no es válido con el mensaje descriptivo.
  * Esto se da cuando:
  * - Fecha de penalización < hoy
  * - El usuario no tiene un libro cuya fecha de devolución > hoy y condicion = "no devuelto"
  * - El usuario tiene libros reservados(libros cuya fecha_adquisicion > hoy 
  *    (si es igual mirar si el libro está disponible)) < num_max_reservas
  */
-export async function user_valido_reserva(idUsuario){
-  const hoy = new Date().toISOString().split('T')[0];
-  
+export async function userValidoReserva(idUsuario){
   //usuario no penalizado
-  const { data: user, error } = await supabase.from('usuario').select('*').eq('id', idUsuario).single();
+  await filterUsuarioPenalizado(idUsuario)
+  
+  //usuario sin libros no devueltos
+  await filterUsuarioLibrosNoDevueltos(idUsuario)
 
-  if(error){
-    console.log(error)
+  //maximo de libros para reservar de esta persona
+  let maxLibrosReservar = await getMaxLibrosReservar(idUsuario)
+
+  let librosReservadosCount = await getLibrosReservados(idUsuario);
+
+  if(librosReservadosCount >= maxLibrosReservar){
+    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
+  }
+
+  return true;
+}
+
+/**
+ * Devuelve los libros maximos que una persona puede reservar simultaneamente
+ * @param {*} idUsuario 
+ * @returns 
+ */
+export async function getMaxLibrosReservar(idUsuario){
+  const { data: maxLibrosReservar, error5 } = await supabase
+    .from('usuario')
+    .select('num_max_reservas')
+    .eq('usuario', idUsuario);
+
+  if(error5){
+    console.log(error5)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
-  
-  if (!user){
-    console.log("Usuario no encontrado")
-    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
-  }
 
-  if (user.fecha_penalizacion >= hoy){
-    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
-  }
-  
+  return maxLibrosReservar;
+}
+
+/**
+ * Funcion que mira si el usuario tiene libros no devueltos.
+ * Devuelve el error o un true si no tiene.
+ * @param {*} idUsuario 
+ */
+export async function filterUsuarioLibrosNoDevueltos(idUsuario){
+  const hoy = new Date().toISOString().split('T')[0];
+
   //usuario con libros no devueltos (fecha de devolución > hoy)
   const { data: librosEnPosesion, error2 } = await supabase
     .from('usuario_libro')
@@ -127,16 +154,43 @@ export async function user_valido_reserva(idUsuario){
     throw new Error("Tienes libros no devueltos. Por favor, devuélvelos lo antes posible.");
   }
 
-  //maximo de libros para reservar de esta persona
-  const { data: maxLibrosReservar, error5 } = await supabase
-    .from('usuario')
-    .select('num_max_reservas')
-    .eq('usuario', idUsuario);
+  return true;
+}
 
-  if(error5){
-    console.log(error5)
+/**
+ * Funcion que mira si el usuario existe y si no esta penalizado.
+ * Devuelve el error o un true si existe y no está penalizado.
+ * @param {*} idUsuario 
+ */
+export async function filterUsuarioPenalizado(idUsuario){
+  const hoy = new Date().toISOString().split('T')[0];
+  const { data: user, error } = await supabase.from('usuario').select('*').eq('id', idUsuario).single();
+
+  if(error){
+    console.log(error)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
+  
+  if (!user){
+    console.log("Usuario no encontrado")
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  if (user.fecha_penalizacion >= hoy){
+    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
+  }
+
+  return true;
+}
+
+/**
+ * Funcion que devuelve el numero de libros que tiene una persona en reserva.
+ * @param {} idUsuario 
+ * @returns 
+ */
+export async function getLibrosReservados(idUsuario) {
+  const hoy = new Date().toISOString().split('T')[0];
+  let librosReservadosCount = 0;
 
   //usuario con libros reservados máximos (fecha adquisicion > hoy)
   const { data: librosReservados, error3 } = await supabase
@@ -150,12 +204,7 @@ export async function user_valido_reserva(idUsuario){
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  let librosReservadosCount = 0;
-  if(librosReservados.length >= maxLibrosReservar){
-    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
-  }else{
-    librosReservadosCount = librosReservados.length;
-  }
+  librosReservadosCount = librosReservados.length;
 
   //usuario con libros reservados para hoy
   const { data: librosReservadosHoy, error4 } = await supabase
@@ -180,9 +229,5 @@ export async function user_valido_reserva(idUsuario){
     })
   }
 
-  if(librosReservadosCount >= maxLibrosReservar){
-    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
-  }
-  
-  return true;
+  return librosReservadosCount;
 }
