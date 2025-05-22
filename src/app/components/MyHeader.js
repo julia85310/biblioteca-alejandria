@@ -26,18 +26,18 @@ export default function MyHeader({ubiHeader}){
             setAnimating(botonNav);
             setTimeout(() => setAnimating(""), 300);
             if(botonNav == "Home"){
-                router.push("../");
+                router.push("/");
             }else if(botonNav == "Catalogo"){
-                router.push("../catalogo");
+                router.push("/catalogo");
             }else if(botonNav == "Perfil"){
                 console.log("usuario:")
                 console.log(user)
                 if(!user){
-                    router.push("../auth/login"); 
+                    router.push("/auth/login"); 
                 }else if(user.admin){
-                    router.push("../admin");
+                    router.push("/admin");
                 }else{
-                    router.push("../perfil");
+                    router.push("/perfil");
                 }
             }
         }

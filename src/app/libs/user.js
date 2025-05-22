@@ -92,6 +92,7 @@ export function validarDatosLogin(email, password) {
  *    (si es igual mirar si el libro está disponible)) < num_max_reservas
  */
 export async function userValidoReserva(idUsuario){
+  console.log("iduser:" + idUsuario)
   //usuario no penalizado
   await filterUsuarioPenalizado(idUsuario)
   
@@ -100,8 +101,11 @@ export async function userValidoReserva(idUsuario){
 
   //maximo de libros para reservar de esta persona
   let maxLibrosReservar = await getMaxLibrosReservar(idUsuario)
+  console.log("max libros que puedes reservar:" + maxLibrosReservar)
+  console.log(maxLibrosReservar)
 
   let librosReservadosCount = await getLibrosReservados(idUsuario);
+  console.log("libros reservados:" + librosReservadosCount)
 
   if(librosReservadosCount >= maxLibrosReservar){
     throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
@@ -119,14 +123,15 @@ export async function getMaxLibrosReservar(idUsuario){
   const { data: maxLibrosReservar, error5 } = await supabase
     .from('usuario')
     .select('num_max_reservas')
-    .eq('usuario', idUsuario);
+    .eq('id', idUsuario)
+    .single();
 
   if(error5){
     console.log(error5)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  return maxLibrosReservar;
+  return maxLibrosReservar.num_max_reservas;
 }
 
 /**
@@ -185,49 +190,49 @@ export async function filterUsuarioPenalizado(idUsuario){
 
 /**
  * Funcion que devuelve el numero de libros que tiene una persona en reserva.
+ * - Solo valida la condicion "reservado", para evitar libros adquiridos
  * @param {} idUsuario 
  * @returns 
  */
 export async function getLibrosReservados(idUsuario) {
+  const hoy = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+
+  const { data: librosReservados, error } = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .eq('condicion', 'reservado')
+    .gte('fecha_adquisicion', hoy);
+
+  if (error) {
+    console.error(error);
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  return librosReservados.length;
+}
+
+/**
+ * Devuelve los libros en posesion, que son libros con fecha_adquisicion <= hoy
+ * y fecha_devolucion >= hoy. 
+ * - Solo valida la condicion "no devuelto", para evitar libros no adquiridos(ya devueltos o en reserva)
+ * @param {} idUsuario 
+ */
+export async function getLibrosPosesion(idUsuario){
   const hoy = new Date().toISOString().split('T')[0];
-  let librosReservadosCount = 0;
 
-  //usuario con libros reservados máximos (fecha adquisicion > hoy)
-  const { data: librosReservados, error3 } = await supabase
+  const { data: librosEnPosesion, error} = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
-    .gt('fecha_adquisicion', hoy);
+    .eq('condicion', 'no devuelto')
+    .lte('fecha_adquisicion', hoy)
+    .gte('fecha_devolucion', hoy);
 
-  if(error3){
-    console.log(error3)
+  if(error){
+    console.log(error)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  librosReservadosCount = librosReservados.length;
-
-  //usuario con libros reservados para hoy
-  const { data: librosReservadosHoy, error4 } = await supabase
-    .from('usuario_libro')
-    .select('*')
-    .eq('usuario', idUsuario)
-    .eq('fecha_adquisicion', hoy);
-
-  if(error4){
-    console.log(error4)
-    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
-  }
-  
-  /*si la fecha de la reserva es para hoy, miramos si ya estan como no devuelto 
-  (ya se han recogido y no cuenta como reserva si no como devolucion) o si siguen como
-  reservado*/
-  if(librosReservadosHoy.length > 0){
-    librosReservadosHoy.forEach((libroReservado) => {
-      if(libroReservado.condicion == "reservado"){
-        librosReservadosCount++;
-      }
-    })
-  }
-
-  return librosReservadosCount;
+  return librosEnPosesion.length;
 }

@@ -4,6 +4,7 @@ import MyHeader from "@/app/components/MyHeader";
 
 import { AuthContext } from "@/app/contexts/AuthContext";
 import { useContext, useState, use, useEffect } from "react";
+
 export default function ReservaPage(props){
     const params = use(props.params);
     const id = params.id;
@@ -15,21 +16,31 @@ export default function ReservaPage(props){
     const [librosEnReserva, setLibrosEnReserva] = useState(0)
     const [alertaHidden, setAlertaHidden] = useState(true)
 
+    //hay que hacer comprobaciones de cuando hay errores con esto
     useEffect(() => {
-        async function fetchData() {
+        if (!user) return;
+        async function fetchDataLibro() {
             const res = await fetch("/api/libro?id=" + id);
             const data = await res.json();
             setLibro(data)
         }
-        
-        fetchData(); 
-    }, [])
+
+        async function fetchDataUser() {
+            const res = await fetch("/api/userdata?u=" + user.id);
+            const data = await res.json();
+            setLibrosEnPropiedad(data.librosEnPosesion)
+            setLibrosEnReserva(data.librosReservados)
+            console.log(data)
+        }
+
+        fetchDataUser();
+        fetchDataLibro(); 
+    }, [user])
 
     function reservar(){
 
     }
-
-
+    
     return <div>
         <MyHeader></MyHeader>
         {libro? <main className="flex flex-col">

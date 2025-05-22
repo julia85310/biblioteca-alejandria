@@ -1,9 +1,10 @@
-import { supabase } from "@/app/libs/supabaseClient";
+import { getFechasInvalidas } from "@/app/libs/libro";
 import { userValidoReserva } from "@/app/libs/user";
 
 /**
  * Si hay filtro de usuario: Devuelve un error si el usuario no puede reservar el libro.
  * Si hay filtro de libro: Devuelve las fechas en las que el libro no se puede reservar.
+ * Fechas ocupadas: [[fechaAdq, fechaDev], [fechaAdq, fechaDev]...]
  */
 export async function GET(request) {
     const { searchParams } = new URL(request.url);
@@ -12,7 +13,19 @@ export async function GET(request) {
 
     try{
         if (id_user){
-            await userValidoReserva(id_user)
+            const data = await userValidoReserva(id_user)
+            
+            return new Response(JSON.stringify(data), {
+            headers: { 'Content-Type': 'application/json' },
+            });
+        }
+
+        if (id_libro){
+            const fechasOcupadas = await getFechasInvalidas(id_libro)
+            
+            return new Response(JSON.stringify(fechasOcupadas), {
+            headers: { 'Content-Type': 'application/json' },
+            });
         }
     }catch(error) {  
         return new Response(
