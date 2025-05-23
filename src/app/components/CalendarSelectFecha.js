@@ -4,32 +4,45 @@ import 'react-calendar/dist/Calendar.css';
 import {
   isBefore,
   isAfter,
-  isWithinInterval,
-  addDays,
-  format
+  addDays
 } from 'date-fns';
 
 export default function CalendarSelectFecha({handleDateClick, diasLibro, intervalosRestringidos}){
     const [selectedStart, setSelectedStart] = useState(null);
     const [selectedRange, setSelectedRange] = useState([]);
 
-    const today = new Date();
+    const today = useMemo(() => {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        return d;
+    }, []);
     const maxDate = addDays(today, 180);
 
     const intervalosDate = useMemo(() =>
-        intervalosRestringidos.map(([start, end]) => ({
-            start: new Date(start),
-            end: new Date(end)
-        }
-    )), [intervalosRestringidos]);
+        intervalosRestringidos.map(([start, end]) => {
+            const fechaStart = new Date(start.slice(0, 10)); // solo 'YYYY-MM-DD'
+            const fechaEnd = new Date(end.slice(0, 10));
+
+            return {
+                start: new Date(fechaStart.setHours(0, 0, 0, 0)),
+                end: new Date(fechaEnd.setHours(0, 0, 0, 0)),
+            };
+        }),
+        [intervalosRestringidos]
+    );
+
+    console.log(intervalosDate)
 
     //mira si una fecha esta deshabilitada (mas de 6 meses, pasada o en el rango restringido)
-    function isInDisabledRange (date){
+    function isInDisabledRange(date) {
+        const localDate = new Date(date);
+        localDate.setHours(0, 0, 0, 0);
+
         return (
-            isBefore(date, today) ||
-            isAfter(date, maxDate) ||
+            isBefore(localDate, today) ||
+            isAfter(localDate, maxDate) ||
             intervalosDate.some(interval =>
-                isWithinInterval(date, interval)
+                localDate >= interval.start && localDate <= interval.end
             )
         );
     }
@@ -158,6 +171,12 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 color: #aaa;
                 cursor: not-allowed;
             }
+
+            /* Quitar fondo amarillo de hoy */
+            .react-calendar__tile--now {
+                background-color: var(--darkSeashell) !important;
+                color: inherit !important;
+            }
             `}
             </style>
 
@@ -169,7 +188,10 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 tileClassName={({ date, view }) => {
                     if (view !== 'month') return;
 
-                    if (isInDisabledRange(date)) return 'occupied';
+                    if (isInDisabledRange(date)){
+                        return 'occupied';
+                    } 
+                        
 
                     if (selectedRange.find(d => d.toDateString() === date.toDateString())) {
                         return 'selected';

@@ -42,30 +42,42 @@ export function formatearFechaBonita(fecha) {
  * (condicion = "reservado"). Si la reserva no se ha efectuado, este registro no se incluye.
  * @param {} idLibro 
  */
-export async function getFechasInvalidas(idLibro){
-  const hoy = new Date().toISOString().split('T')[0];
+export async function getFechasInvalidas(idLibro) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
   const { data: registrosLibro, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('libro', idLibro)
-    .gt('fecha_devolucion', hoy);
+    .gt('fecha_devolucion', hoy.toISOString().split('T')[0]);
 
-  if(error){
-    console.log(error)
+  if (error) {
+    console.log(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  let registrosLibrosFilter = []
+  console.log("Registros sin filtrar:", registrosLibro);
 
-  registrosLibro.forEach((registro) => {
-    const fechaAdq = new Date(registro.fecha_adquisicion);
-    const diferenciaDias = (hoy - fechaAdq) / (1000 * 60 * 60 * 24);
-    //filtro que quita a una posible reserva actual no efectuada
-    if (diferenciaDias < 2 || registro.condicion != "reservado") {
-      registrosLibrosFilter.push([fechaAdq, registro.fecha_devolucion])
-    }
-  })
+  const registrosFiltrados = registrosLibro
+    .filter((registro) => {
+      const fechaAdq = new Date(registro.fecha_adquisicion);
+      fechaAdq.setHours(0, 0, 0, 0);
+      const diferenciaDias = (hoy - fechaAdq) / (1000 * 60 * 60 * 24);
+      const excluir = diferenciaDias >= 2 && registro.condicion !== "reservado";
+      return !excluir;
+    })
+    .map((registro) => {
+      const fechaAdq = new Date(registro.fecha_adquisicion);
+      fechaAdq.setHours(0, 0, 0, 0);
 
-  return registrosLibrosFilter;
+      // Parsear fecha_devolucion manualmente (evitar interpretación como UTC)
+      const [year, month, day] = registro.fecha_devolucion.split('-').map(Number);
+      const fechaDev = new Date(year, month - 1, day, 12); 
 
+      return [fechaAdq, fechaDev];
+    });
+
+  console.log("Registros filtrados:", registrosFiltrados);
+  return registrosFiltrados;
 }

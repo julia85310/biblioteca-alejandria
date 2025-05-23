@@ -108,7 +108,7 @@ export async function userValidoReserva(idUsuario){
   console.log("libros reservados:" + librosReservadosCount)
 
   if(librosReservadosCount >= maxLibrosReservar){
-    throw new Error("No puedes reservar más libros, has alcanzado el máximo.");
+    throw new Error("Por el momento no puedes reservar más libros, has alcanzado el máximo.");
   }
 
   return true;

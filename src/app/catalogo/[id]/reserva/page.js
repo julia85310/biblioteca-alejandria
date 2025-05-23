@@ -4,16 +4,18 @@ import MyFooter from "@/app/components/MyFooter";
 import MyHeader from "@/app/components/MyHeader";
 
 import { format } from 'date-fns';
+import { useRouter } from "next/navigation";
 import { AuthContext } from "@/app/contexts/AuthContext";
 import { useContext, useState, use, useEffect } from "react";
 
 export default function ReservaPage(props){
+    const router = useRouter();
     const params = use(props.params);
     const id = params.id;
     const [libro, setLibro] = useState(null);
     const {user} = useContext(AuthContext);
-    const [fechaAdquisicion, setFechaAdquisicion] = useState("DD/MM/AAAA")
-    const [fechaDevolucion, setFechaDevolucion] = useState("DD/MM/AAAA")
+    const [fechaAdquisicion, setFechaAdquisicion] = useState('')
+    const [fechaDevolucion, setFechaDevolucion] = useState('')
     const [librosEnPropiedad, setLibrosEnPropiedad] = useState(0)
     const [librosEnReserva, setLibrosEnReserva] = useState(0)
     const [alertaHidden, setAlertaHidden] = useState(true)
@@ -22,6 +24,11 @@ export default function ReservaPage(props){
     useEffect(() => {
         async function fetchDataLibro() {
             const res = await fetch("/api/libro?id=" + id);
+            if(!res.ok){
+                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                router.push("/catalogo")
+                return
+            }
             const data = await res.json();
             setLibro(data)
         }
@@ -33,19 +40,30 @@ export default function ReservaPage(props){
         if (!libro) return;
         async function fetchIntervaloLiboOcupado(){
             const res = await fetch("/api/reserva?l=" + libro.id);
+            if(!res.ok){
+                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                router.push("/catalogo")
+                return
+            }
             const data = await res.json();
             setIntervalosRestrigidos(data)
+            console.log(data)
         }
-
+        
         fetchIntervaloLiboOcupado()
+        
     }, [libro])
 
-    //hay que hacer comprobaciones de cuando hay errores con esto
     useEffect(() => {
         if (!user) return;
 
         async function fetchDataUser() {
             const res = await fetch("/api/userdata?u=" + user.id);
+            if(!res.ok){
+                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                router.push("/catalogo")
+                return
+            }
             const data = await res.json();
             setLibrosEnPropiedad(data.librosEnPosesion)
             setLibrosEnReserva(data.librosReservados)
@@ -55,13 +73,41 @@ export default function ReservaPage(props){
          
     }, [user])
 
-    function reservar(){
-        
+    async function reservar(){
+        if (!fechaAdquisicion || !fechaDevolucion){
+            alert("Selecciona la fecha en la que deseas adquirir el libro.")
+            return
+        }
+        const body = {
+            usuario: user.id,
+            libro: libro.id,
+            fecha_adquisicion: fechaAdquisicion,
+            fecha_devolucion: fechaDevolucion
+        }   
+        console.log(body)
+        try {
+            const response = await fetch("/api/reserva", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                alert("Reserva realizada con éxito. ¡Gracias!")
+                router.push("/catalogo")
+            } else {
+                alert(data.error);
+            }
+        } catch {
+            alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
+        }
     }
 
     function handleClickCalendarDay(fechaInicio, fechaFin) {
-        setFechaAdquisicion(format(fechaInicio, 'dd/MM/yyyy'));
-        setFechaDevolucion(format(fechaFin, 'dd/MM/yyyy'));
+        setFechaAdquisicion(fechaInicio);
+        setFechaDevolucion(fechaFin);
     }
     
     return <div>
@@ -107,12 +153,12 @@ export default function ReservaPage(props){
                                 <button id="alertaButton" onClick={() => setAlertaHidden(!alertaHidden)}>!</button>
                                 <div className="flex flex-col">
                                     <p>Fecha de adquisición</p>
-                                    <p>{fechaAdquisicion}</p>
+                                    <p>{fechaAdquisicion? format(fechaAdquisicion, 'dd/MM/yyyy'): "DD/MM/AAAA"}</p>
                                 </div>
                             </div>
                             <div id="fechaDevolucion" className="flex flex-col">
                                 <p>Fecha de devolución</p>
-                                <p>{fechaDevolucion}</p>
+                                <p>{fechaDevolucion? format(fechaDevolucion, 'dd/MM/yyyy'): "DD/MM/AAAA"}</p>
                             </div>
                         </div>
                     </div>
@@ -133,12 +179,12 @@ export default function ReservaPage(props){
                                     <button id="alertaButton" onClick={() => setAlertaHidden(!alertaHidden)}>!</button>
                                     <div className="flex flex-col">
                                         <p>Fecha de adquisición</p>
-                                        <p>{fechaAdquisicion}</p>
+                                        <p>{fechaAdquisicion? format(fechaAdquisicion, 'dd/MM/yyyy'): "DD/MM/AAAA"}</p>
                                     </div>
                             </div>
                             <div id="fechaDevolucion" className="flex flex-col">
                                 <p>Fecha de devolución</p>
-                                <p>{fechaDevolucion}</p>
+                                <p>{fechaDevolucion? format(fechaDevolucion, 'dd/MM/yyyy'): "DD/MM/AAAA"}</p>
                             </div>
                         </div>
                     </div>
