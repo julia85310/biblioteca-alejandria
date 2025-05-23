@@ -22,12 +22,13 @@ export async function GET(request) {
 
         if (id_libro){
             const fechasOcupadas = await getFechasInvalidas(id_libro)
-            
+            console.log(fechasOcupadas)
             return new Response(JSON.stringify(fechasOcupadas), {
             headers: { 'Content-Type': 'application/json' },
             });
         }
     }catch(error) {  
+        console.log(error)
         return new Response(
             JSON.stringify({ error: error.message }),
             { status: 500, headers: { 'Content-Type': 'application/json' } }

@@ -1,4 +1,4 @@
-
+import { supabase } from "@/app/libs/supabaseClient";
 export async function deleteLibro(libro){
   const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar ${libro.titulo}? Esta acción es irreversible.`);
   if (confirmed) {

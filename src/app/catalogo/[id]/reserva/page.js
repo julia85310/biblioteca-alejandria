@@ -1,7 +1,9 @@
 'use client'
+import CalendarSelectFecha from "@/app/components/CalendarSelectFecha";
 import MyFooter from "@/app/components/MyFooter";
 import MyHeader from "@/app/components/MyHeader";
 
+import { format } from 'date-fns';
 import { AuthContext } from "@/app/contexts/AuthContext";
 import { useContext, useState, use, useEffect } from "react";
 
@@ -15,15 +17,32 @@ export default function ReservaPage(props){
     const [librosEnPropiedad, setLibrosEnPropiedad] = useState(0)
     const [librosEnReserva, setLibrosEnReserva] = useState(0)
     const [alertaHidden, setAlertaHidden] = useState(true)
+    const [intervalosRestringidos, setIntervalosRestrigidos] = useState([])
 
-    //hay que hacer comprobaciones de cuando hay errores con esto
     useEffect(() => {
-        if (!user) return;
         async function fetchDataLibro() {
             const res = await fetch("/api/libro?id=" + id);
             const data = await res.json();
             setLibro(data)
         }
+        fetchDataLibro();
+    }, [])
+
+
+    useEffect(() => {
+        if (!libro) return;
+        async function fetchIntervaloLiboOcupado(){
+            const res = await fetch("/api/reserva?l=" + libro.id);
+            const data = await res.json();
+            setIntervalosRestrigidos(data)
+        }
+
+        fetchIntervaloLiboOcupado()
+    }, [libro])
+
+    //hay que hacer comprobaciones de cuando hay errores con esto
+    useEffect(() => {
+        if (!user) return;
 
         async function fetchDataUser() {
             const res = await fetch("/api/userdata?u=" + user.id);
@@ -32,13 +51,17 @@ export default function ReservaPage(props){
             setLibrosEnReserva(data.librosReservados)
             console.log(data)
         }
-
         fetchDataUser();
-        fetchDataLibro(); 
+         
     }, [user])
 
     function reservar(){
+        
+    }
 
+    function handleClickCalendarDay(fechaInicio, fechaFin) {
+        setFechaAdquisicion(format(fechaInicio, 'dd/MM/yyyy'));
+        setFechaDevolucion(format(fechaFin, 'dd/MM/yyyy'));
     }
     
     return <div>
@@ -95,7 +118,11 @@ export default function ReservaPage(props){
                     </div>
                     <div id="calendario" className="flex flex-col">
                         <p>Seleccionar la fecha de adquisición</p>
-                        {/*calendario aqui*/}
+                        <CalendarSelectFecha 
+                            handleDateClick={handleClickCalendarDay}
+                            intervalosRestringidos={intervalosRestringidos}
+                            diasLibro={libro.dias_prestamo}
+                        ></CalendarSelectFecha>
                     </div>
                     <div id="fechasyMovilAlerta" className="flex flex-row">
                         <div id="alertaMovil" className={`${alertaHidden? "hidden": "block"} lg:hidden`}>

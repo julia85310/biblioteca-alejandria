@@ -15,6 +15,7 @@ export default {
         lion: "var(--lion)",
         verde: "var(--verde)",
         rojo: "var(--rojo)",
+        rojoTransparente: "var(--rojoTransparente)",
         aliceBlue: "var(--aliceBlue)",
         columbiaBlue: "var(--columbiaBlue)",
         paynesGray: "var(--paynesGray)",
