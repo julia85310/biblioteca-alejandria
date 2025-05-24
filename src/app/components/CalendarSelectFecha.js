@@ -77,7 +77,7 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
         handleDateClick(date, fechaFin);
     };
 
-    return <div className="m-4 max-w-md mx-auto border border-[var(--lion)] rounded-2xl border-5">
+    return <div className="m-4 lg:w-[24vw]  max-w-md mx-auto border border-[var(--lion)] rounded-2xl border-5">
         <div className='border border-[var(--darkSeashell)] rounded-2xl border-3'>
             <style>
             {`
@@ -88,14 +88,15 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 width: 100%;
             }
 
-            /* Días del calendario */
             .react-calendar__tile {
-                display: block;
-                box-sizing: border-box;
-                padding: 1rem;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center;
+                padding: 0.5rem;
                 border-radius: 9999px;
                 width: 100%;
-                text-align: center;
+                height: 100%;
                 transition: background-color 0.2s ease;
             }
 
@@ -143,12 +144,6 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 gap: 0.6rem;
             }
 
-            /* Hover sobre días */
-            .react-calendar__tile:hover {
-                background-color: var(--darkSeashell) !important;
-                color: inherit;
-            }
-
             /* Hover en selección de mes/año/década */
             .react-calendar__tile--hasActive:hover,
             .react-calendar__year-view__months__month:hover,
@@ -164,6 +159,7 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 box-shadow: none !important;
                 outline: none !important;
             }
+            
 
             /* Flechas de navegación desactivadas */
             .react-calendar__navigation button:disabled {
@@ -177,6 +173,47 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
                 background-color: var(--darkSeashell) !important;
                 color: inherit !important;
             }
+
+            .react-calendar__tile.selected:hover {
+                background-color: var(--lion) !important;
+                color: white !important;
+            }
+
+            .react-calendar__tile:not(.selected):not(.occupied):hover {
+                background-color: var(--darkSeashell) !important;
+                color: inherit !important;
+            }
+
+            @media (min-width: 1024px) {
+                /* Contenedor general */
+                .react-calendar {
+                    padding: 0.3rem;
+                    font-size: 0.7rem; /* fallback base */
+                }
+
+                /* Flechas de navegación y mes actual */
+                .react-calendar__navigation button {
+                    font-size: 0.65rem !important; /* más pequeño */
+                    padding: 0rem 0rem !important;
+                }
+
+                .react-calendar__navigation__label {
+                    font-size: 0.8rem !important;
+                }
+
+                /* Días de la semana (Lun, Mar, etc.) */
+                .react-calendar__month-view__weekdays abbr {
+                    font-size: 0.65rem !important;
+                    font-weight: 500;
+                }
+
+                /* Números de días */
+                .react-calendar__tile {
+                    font-size: 0.7rem !important;
+                    padding: 0.3rem !important;
+                }
+            }
+                
             `}
             </style>
 
