@@ -110,9 +110,9 @@ export default function ReservaPage(props){
         setFechaDevolucion(fechaFin);
     }
     
-    return <div className="min-h-[100vh]">
+    return <div className="min-h-[100vh] flex flex-col">
         <MyHeader></MyHeader>
-        {libro? <main className="flex flex-col bg-[var(--seashell)] lg:pt-4">
+        {libro? <main className="flex-1 flex flex-col bg-[var(--seashell)] lg:pt-4">
             <div className="flex flex-col lg:flex-row mx-6 gap-4 lg:justify-between lg:gap-2">
                 <div id="infoLibro" className="flex flex-col gap-4 lg:ml-6">
                     <h1 className="text-xl lg:ml-14"><b>Reserva de <i>{libro.titulo}</i></b></h1>
