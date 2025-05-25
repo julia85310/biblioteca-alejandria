@@ -104,7 +104,7 @@ export async function userValidoReserva(idUsuario){
   console.log("max libros que puedes reservar:" + maxLibrosReservar)
   console.log(maxLibrosReservar)
 
-  let librosReservadosCount = await getLibrosReservados(idUsuario);
+  let librosReservadosCount = (await getLibrosReservados(idUsuario)).length;
   console.log("libros reservados:" + librosReservadosCount)
 
   if(librosReservadosCount >= maxLibrosReservar){
@@ -120,18 +120,65 @@ export async function userValidoReserva(idUsuario){
  * @returns 
  */
 export async function getMaxLibrosReservar(idUsuario){
-  const { data: maxLibrosReservar, error5 } = await supabase
+  const { data: maxLibrosReservar, error } = await supabase
     .from('usuario')
     .select('num_max_reservas')
     .eq('id', idUsuario)
     .single();
 
-  if(error5){
-    console.log(error5)
+  if(error){
+    console.log(error)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
   return maxLibrosReservar.num_max_reservas;
+}
+
+/**
+ * Devuelve los libros maximos que una persona puede poseer simultaneamente
+ * @param {*} idUsuario 
+ * @returns 
+ */
+export async function getMaxLibrosPrestados(idUsuario){
+  const { data: maxLibrosPrestados, error } = await supabase
+    .from('usuario')
+    .select('num_max_prestamos')
+    .eq('id', idUsuario)
+    .single();
+
+  if(error){
+    console.log(error)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  return maxLibrosPrestados.num_max_prestamos;
+}
+
+/**
+ * Devuelve los libros que un usuario ha tenido en el pasado (devolucion menor que hoy)
+ * Excepcion: los libros que aun tengan la condicion reservado (no se ha realizado el prestamo)
+ * y hayan pasado mas de dos dias desde la fecha de adquisicion
+ * @param {*} idUsuario 
+ * @returns 
+ */
+export async function getHistorial(idUsuario){
+  const today = new Date().toISOString().split('T')[0]; 
+  const haceDosDias = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(); 
+
+  const { data: historial, error } = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .or(
+      `and(fecha_devolucion.lt.${today},condicion.neq.reservado),and(condicion.eq.reservado,fecha_adquisicion.lt.${haceDosDias})`
+    );
+
+  if(error){
+    console.log(error)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  return historial;
 }
 
 /**
@@ -195,21 +242,25 @@ export async function filterUsuarioPenalizado(idUsuario){
  * @returns 
  */
 export async function getLibrosReservados(idUsuario) {
-  const hoy = new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+  const hoy = new Date();
+  const limite = new Date(hoy);
+  limite.setDate(hoy.getDate() - 2);
+
+  const limiteStr = limite.toISOString().split('T')[0]; // YYYY-MM-DD
 
   const { data: librosReservados, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
     .eq('condicion', 'reservado')
-    .gte('fecha_adquisicion', hoy);
+    .gt('fecha_adquisicion', limiteStr); // fecha_adquisicion > limite
 
   if (error) {
     console.error(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  return librosReservados.length;
+  return librosReservados;
 }
 
 /**
@@ -219,6 +270,31 @@ export async function getLibrosReservados(idUsuario) {
  * @param {} idUsuario 
  */
 export async function getLibrosPosesion(idUsuario){
+  const hoy = new Date().toISOString().split('T')[0];
+
+  const { data: librosEnPosesion, error} = await supabase
+    .from('usuario_libro')
+    .select('*')
+    .eq('usuario', idUsuario)
+    .eq('condicion', 'no devuelto')
+    .lte('fecha_adquisicion', hoy)
+    .gte('fecha_devolucion', hoy);
+
+  if(error){
+    console.log(error)
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  return librosEnPosesion;
+}
+
+/**
+ * Devuelve los libros en posesion, que son libros con fecha_adquisicion <= hoy
+ * y fecha_devolucion >= hoy. 
+ * - Solo valida la condicion "no devuelto", para evitar libros no adquiridos(ya devueltos o en reserva)
+ * @param {} idUsuario 
+ */
+export async function getLibrosHistorial(idUsuario){
   const hoy = new Date().toISOString().split('T')[0];
 
   const { data: librosEnPosesion, error} = await supabase

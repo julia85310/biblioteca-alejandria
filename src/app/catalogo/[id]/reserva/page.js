@@ -47,6 +47,7 @@ export default function ReservaPage(props){
             }
             const data = await res.json();
             setIntervalosRestrigidos(data)
+            console.log("Intervalos restringidos")
             console.log(data)
         }
         
@@ -65,8 +66,9 @@ export default function ReservaPage(props){
                 return
             }
             const data = await res.json();
-            setLibrosEnPropiedad(data.librosEnPosesion)
-            setLibrosEnReserva(data.librosReservados)
+            setLibrosEnPropiedad(data.librosEnPosesion.length)
+            setLibrosEnReserva(data.librosReservados.length)
+            console.log("moreuserdata:")
             console.log(data)
         }
         fetchDataUser();
