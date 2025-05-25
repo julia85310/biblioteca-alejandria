@@ -21,6 +21,11 @@ export default function CatalogoPage() {
     useEffect(() => {
         async function fetchData() {
             const res = await fetch("/api/libro");
+            if(!res.ok){
+                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                router.push("/")
+                return
+            }
             const data = await res.json();
             setAllLibros(data)
             setLibros(data)

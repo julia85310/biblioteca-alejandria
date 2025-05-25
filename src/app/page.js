@@ -11,6 +11,10 @@ export default function Home() {
   useEffect(() => {
     async function fetchData() {
       const res = await fetch("/api/evento");
+      if(!res.ok){
+          alert("Ha ocurrido un error cargando los eventos. Intentelo de nuevo mas tarde")
+          return
+      }
       const data = await res.json();
       setEventos(data)
       console.log(data)

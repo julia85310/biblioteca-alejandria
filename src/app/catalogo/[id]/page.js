@@ -20,6 +20,11 @@ export default function LibroPage(props){
     useEffect(() => {
         async function fetchData() {
             const res = await fetch("/api/libro?id=" + id);
+            if(!res.ok){
+                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                router.push("/catalogo")
+                return
+            }
             const data = await res.json();
             setLibro(data);
         }
