@@ -1,8 +1,13 @@
 import {  getHistorial, getMaxLibrosPrestados, getLibrosPosesion, getLibrosReservados, getMaxLibrosReservar } from "@/app/libs/user";
 
 /**
- * Devuelve los libros reservados y en posesion actuales.
- * Data {librosEnPosesion: , librosReservados: }
+ * Devuelve los libros reservados y en posesion actuales, los maximos del usuario de
+ * reserva y prestamo y el historial.
+ * Data {librosEnPosesion: librosEnPosesion, 
+            librosReservados: librosReservados,
+            maxLibrosReservar: maxLibrosReservar,
+            maxLibrosPrestar: maxLibrosPrestar,
+            historial: historial}
  */
 export async function GET(request){
     const { searchParams } = new URL(request.url);
