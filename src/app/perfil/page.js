@@ -63,13 +63,20 @@ export default function PerfilPage(){
          
     }, [user])
 
+
     function cerrarSesion(){
         logout();
         router.push("/")
     }
 
+    useEffect(() => {
+        if (!loading && !user) {
+            router.push("/");
+        }
+    }, [loading, user]);
+
     if (loading) return null; //aqui va el futuro spinner
-    if (!user) router.push("/");
+    if (!user) return null;
     if (!moreUserData) return null;
 
     return <div className="min-h-[100vh] flex flex-col bg-[var(--seashell)] ">
