@@ -1,16 +1,27 @@
 import { supabase } from "@/app/libs/supabaseClient";
+import { formatearFechaBonita } from "@/app/libs/libro";
 
 /**
  * Devuelve todos los libros.
  */
-export async function GET(){
+export async function GET(request) {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
 
-    const { data, error } = await supabase
-        .from('libro')
-        .select('*');
+    let query = supabase.from('libro').select('*');
+
+    if (id) {
+        query = query.eq('id', id).single();
+    }
+
+    const { data, error } = await query;
 
     if (error) {
         return Response.json({ error: error.message }, { status: 500 });
+    }
+
+    if (id) {
+        data.fecha_adquisicion = formatearFechaBonita(data.fecha_adquisicion)
     }
 
     return Response.json(data);
