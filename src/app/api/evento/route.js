@@ -1,4 +1,5 @@
 import { supabase } from "@/app/libs/supabaseClient";
+import { formatearFechaBonita } from "@/app/libs/libro";
 
 /**
  * Devuelve todos los eventos con la fecha formateada
@@ -22,14 +23,3 @@ export async function GET(){
     return Response.json(data);
 }
 
-function formatearFechaBonita(fecha) {
-    const meses = [
-      'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
-      'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
-    ];
-    const dia = fecha.getDate();
-    const mes = meses[fecha.getMonth()];
-    const anio = fecha.getFullYear();
-    const fechaFormateada = `${dia} de ${mes} de ${anio}`
-    return fechaFormateada;
-}

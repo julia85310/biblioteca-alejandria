@@ -6,6 +6,8 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const modoAdmin = user?.admin === true;
+  const [loading, setLoading] = useState(true);
 
   // Cargar el usuario desde localStorage al iniciar la aplicación
   useEffect(() => {
@@ -15,6 +17,7 @@ export const AuthProvider = ({ children }) => {
       console.log(JSON.parse(storedUser))
       setUser(JSON.parse(storedUser));
     }
+    setLoading(false);
   }, []);
 
   async function signup(nombre, email, telefono, password, recuerdame){
@@ -93,7 +96,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signup, logout, login }}>
+    <AuthContext.Provider value={{loading, user, signup, logout, login, modoAdmin }}>
       {children}
     </AuthContext.Provider>
   );
