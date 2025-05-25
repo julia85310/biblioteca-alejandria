@@ -48,29 +48,66 @@ export default function PerfilPage(){
         router.push("/")
     }
 
+    //libros en posesion e historial cuya condicion no sea reservado
+    function getTotalLibrosPrestados(){
+        let totalLibrosPrestados = 0;
+        moreUserData.historial.map(libro => {
+            if(libro.condicion != "reservado"){
+                totalLibrosPrestados++;
+            }
+        })
+        totalLibrosPrestados = totalLibrosPrestados + moreUserData.librosEnPosesion.length;
+        return totalLibrosPrestados;
+    }
+
+    //mira si el usuario esta penalizado
+    function estaPenalizado() {
+        const hoy = new Date();
+        const fechaPenalizacion = new Date(user.fecha_penalizacion);
+
+        hoy.setHours(0, 0, 0, 0);
+
+        return hoy < fechaPenalizacion;
+    }
+    
+    const totalLibrosPrestados = getTotalLibrosPrestados();
+    const penalizado = estaPenalizado();
+
     if (loading) return null; //aqui va el futuro spinner
     if (!user) router.push("/");
 
     return <div className="min-h-[100vh] flex flex-col bg-[var(--seashell)] ">
         <MyHeader ubiHeader="Perfil"></MyHeader>
-        <main className="flex-1 flex flex-col lg:flex-row mx-12 gap-8">
-            <div id="infoUser" className="bg-[var(--linen)] p-4 rounded-xl mt-8 ">
-                <div id="desplegado" className={`${hiddenUser? 'hidden':'flex'} flex-col gap-5`} >
-                    <div id="header" className="flex flex-row justify-between mb-2">
+        <main className="flex-1 flex flex-col lg:flex-row mx-12 gap-8 my-8">
+            <div id="infoUser" className="bg-[var(--linen)] p-4 rounded-xl ">
+                <div id="desplegado" className={`${hiddenUser? 'hidden':'flex'} flex-col gap-7`} >
+                    <div id="header" className="flex flex-row justify-between mb-2 ">
                         <b>{user?.nombre}</b>
                         <img src="/iconos/icono-flecha.png" onClick={() => setHiddenUser(!hiddenUser)} className={`object-contain w-6 lg:hidden rotate-90`}></img>
                     </div>
-                    <div id="info" className="flex flex-col text-[var(--lion)] text-sm ml-2 gap-4">
+                    <div id="info" className="flex flex-col text-[var(--lion)] text-sm ml-2 gap-6">
                         <div className="flex flex-row gap-2"><b>Email:</b>{user.email}</div>
                         <div className="flex flex-row gap-2"><b>Teléfono:</b>{user.telefono}</div>
                         <div className="flex flex-row gap-2"><b>Fecha de registro:</b>{new Date(user.fecha_registro).toLocaleDateString('es-ES')}</div>
-                        <div className="flex flex-row gap-2"><b>Total libros prestados:</b>{new Date(user.fecha_registro).toLocaleDateString('es-ES')}</div>
+                        <div className="flex flex-row gap-2"><b>Total libros prestados:</b>{totalLibrosPrestados}</div>
                     </div>
-                    <div id="moreInfo">
-
+                    <hr className="border-t-2 border-[var(--lion)] m-4 " />
+                    <div id="moreInfo" className="text-[var(--chamoise)] text-sm ml-2 flex flex-col gap-3">
+                        <div className="flex flex-row gap-2"><b>Préstamos máximos simultaneos:</b>{moreUserData.maxLibrosPrestar}</div>
+                        <div className="flex flex-row gap-2 mb-4"><b>Reservas máximas simultaneas:</b>{moreUserData.maxLibrosReservar}</div>
+                        <div className="flex flex-row gap-2"><b>Libros en posesión:</b>{moreUserData.librosEnPosesion.length}</div>
+                        <div className="flex flex-row gap-2"><b>Libros reservados:</b>{moreUserData.librosReservados.length}</div>
                     </div>
-                    <div id="footer">
-
+                    <div id="footer" className="flex flex-row justify-between text-[var(--chamoise)] text-sm">
+                        <div className="flex flex-row items-center gap-3">
+                            <div className={`${!penalizado? "bg-[var(--verde)]": "bg-[var(--rojo)]"} w-5 h-5 rounded-xl `}></div>
+                            <b>
+                            {penalizado 
+                                ? `Penalizado hasta el ${new Date(user.fecha_penalizacion).toLocaleDateString('es-ES')}` 
+                                : "No penalizado"}
+                            </b>
+                        </div>
+                        <img src="/iconos/icono-logout.png" onClick={cerrarSesion} className="object-contain w-14"></img>
                     </div>
                 </div>
                 <div id="plegado" className={`${!hiddenUser? 'hidden':'flex'} flex-row justify-between`}>
@@ -108,7 +145,6 @@ export default function PerfilPage(){
                     <img src="/iconos/icono-flecha.png" onClick={() => setHiddenUser(!hiddenUser)} className="object-contain w-6"></img>
                 </div>
             </div>
-            {/*<img src="/iconos/icono-logout.png" onClick={cerrarSesion}></img>*/}
         </main>
         <MyFooter/>
     </div>
