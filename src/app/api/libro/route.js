@@ -29,7 +29,7 @@ export async function GET(request) {
 
 /**
  * Elimina un libro
- * @param {} request 
+ * @param {id del libro a eliminar} request 
  * @returns 
  */
 export async function DELETE(request){
@@ -54,4 +54,60 @@ export async function DELETE(request){
             { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     }
+}
+
+/**
+ * Añade un Libro
+ * @param body {isbn, autor, ano_publicacion, editorial,
+ * titulo, genero,  descripcion, imagen, valor, 
+ * condicion puede, dias prestamo, estante, balda} request 
+ * @returns
+ */
+export async function POST(request) {
+  const body = await request.json();
+
+  const file = formData.get('imagen');
+
+  let imagen_url = null;
+
+  if (file && typeof file === 'object' && 'arrayBuffer' in file) {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const filename = `libros/${Date.now()}-${file.name}`;
+
+    const { data, error } = await supabase.storage
+      .from('portadas')
+      .upload(filename, buffer, {
+        contentType: file.type,
+    })
+
+    if (error) {
+      return Response.json({ error: 'Error subiendo imagen', details: error.message }, { status: 500 })
+    }
+
+    const { data: publicUrl } = supabase
+      .storage
+      .from('portadas')
+      .getPublicUrl(filename);
+
+    imagen_url = publicUrl.publicUrl;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('libro')
+      .insert([{ ...body, imagen_url }])
+
+    if (error) {
+      return Response.json({ error: error.message }, { status: 500 })
+    }
+
+    return new Response(JSON.stringify(data), {
+        headers: { 'Content-Type': 'application/json' },
+    });
+  } catch (error) {
+    return Response.json(
+      { error: 'Error interno del servidor', details: error.message },
+      { status: 500 }
+    )
+  }
 }
