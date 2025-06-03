@@ -1,5 +1,5 @@
 import { supabase } from "@/app/libs/supabaseClient";
-import { formatearFechaBonita } from "@/app/libs/libro";
+import { formatearFechaBonita, validarDatosNuevoLibro } from "@/app/libs/libro";
 
 /**
  * Devuelve todos los libros.
@@ -64,15 +64,24 @@ export async function DELETE(request){
  * @returns
  */
 export async function POST(request) {
-  const body = await request.json();
+  const formData = await request.formData();
+  const body = Object.fromEntries(formData.entries())
 
-  const file = formData.get('imagen');
+  console.log(body)
+
+  const validacion = validarDatosNuevoLibro(body)
+  if (!validacion.valid){
+    return Response.json({ error: validacion.message }, { status: 500 });
+  } 
+
+  const file = body.imagen;
 
   let imagen_url = null;
 
   if (file && typeof file === 'object' && 'arrayBuffer' in file) {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const filename = `libros/${Date.now()}-${file.name}`;
+    const timestamp = Date.now();
+    const filename = `${file.name}_${timestamp}`
 
     const { data, error } = await supabase.storage
       .from('portadas')
@@ -81,7 +90,8 @@ export async function POST(request) {
     })
 
     if (error) {
-      return Response.json({ error: 'Error subiendo imagen', details: error.message }, { status: 500 })
+      console.log(error)
+      return Response.json({ error: 'Error subiendo la imagen. Vuelve a intentarlo más tarde.'}, { status: 500 })
     }
 
     const { data: publicUrl } = supabase
@@ -90,23 +100,33 @@ export async function POST(request) {
       .getPublicUrl(filename);
 
     imagen_url = publicUrl.publicUrl;
+  }else{
+    return Response.json({ error: 'Error subiendo la imagen. Vuelve a intentarlo más tarde.'}, { status: 500 })
   }
 
   try {
+    delete body.imagen;
+    const insert = [{ ...body, imagen_url: imagen_url }]
+    console.log(insert)
     const { data, error } = await supabase
       .from('libro')
-      .insert([{ ...body, imagen_url }])
+      .insert(insert)
 
     if (error) {
-      return Response.json({ error: error.message }, { status: 500 })
+      console.log(error)
+      return Response.json(
+        { error: 'Error al añadir el nuevo libro. Inténtelo de nuevo más tarde', details: error.message },
+        { status: 500 }
+      )
     }
 
     return new Response(JSON.stringify(data), {
         headers: { 'Content-Type': 'application/json' },
     });
   } catch (error) {
+    console.log(error)
     return Response.json(
-      { error: 'Error interno del servidor', details: error.message },
+      { error: 'Error al añadir el nuevo libro. Inténtelo de nuevo más tarde', details: error.message },
       { status: 500 }
     )
   }
