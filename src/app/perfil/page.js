@@ -35,7 +35,7 @@ export default function PerfilPage(){
         async function fetchDataUser() {
             const res = await fetch("/api/userdata?u=" + user.id);
             if(!res.ok){
-                alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
+                alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
                 router.push("/")
                 return
             }

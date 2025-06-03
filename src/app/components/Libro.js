@@ -8,9 +8,10 @@ export default function Libro({libro, admin, onDelete, user}){
     async function handleClickButton(e){
         e.stopPropagation();
         if(admin){
+            console.log("Eliminar libro")
             try {
-                const res = await deleteLibro();
-            
+                const res = await deleteLibro(libro);
+                console.log(res)
                 if (res.ok) {
                     alert(`${libro.titulo} eliminado correctamente`)
                     onDelete?.(libro.id);

@@ -32,28 +32,63 @@ export async function GET(request) {
  * @param {id del libro a eliminar} request 
  * @returns 
  */
-export async function DELETE(request){
-    const body = await request.json();
-    try{
-         
-        const { data, error } = await supabase
-            .from('libro')
-            .delete()
-            .eq('id', body.id);
+export async function DELETE(request) {
+  const body = await request.json();
+  const libroId = body.id;
+  console.log(body)
 
-        if (error){
-            return Response.json({ error: error.message }, { status: 500 });
-        }
-        
-        return new Response(JSON.stringify(data), {
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }catch (error) {  
-        return new Response(
-            JSON.stringify({ error: 'Error interno del servidor', details: error.message }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
-        );
+  try {
+    // 1. Obtener el libro para acceder a la imagen_url
+    const { data: libro, error: getError } = await supabase
+      .from('libro')
+      .select('imagen_url')
+      .eq('id', libroId)
+      .single();
+
+    if (getError) {
+      console.log(getError)
+      return Response.json({ error: 'Libro no encontrado', details: getError.message }, { status: 404 });
     }
+
+    // 2. Extraer el nombre del archivo del URL
+    const imagenUrl = libro.imagen_url;
+    const partes = imagenUrl.split('/');
+    const nombreArchivo = partes[partes.length - 1];
+
+    // 3. Eliminar la imagen del bucket
+    const { error: deleteImgError } = await supabase
+      .storage
+      .from('portadas')
+      .remove([nombreArchivo]);
+
+    if (deleteImgError) {
+      console.log(deleteImgError)
+      return Response.json({ error: 'Error al eliminar la imagen', details: getError.message }, { status: 404 });
+    }
+
+    // 4. Eliminar el registro del libro
+    const { data, error } = await supabase
+      .from('libro')
+      .delete()
+      .eq('id', libroId);
+
+    if (error) {
+      console.log(error)
+      return Response.json({ error: error.message }, { status: 500 });
+    }
+
+    console.log("Libro eliminado con exito")
+    return new Response(JSON.stringify(data), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.log(error)
+    return new Response(
+      JSON.stringify({ error: 'Error interno del servidor', details: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }
 
 /**

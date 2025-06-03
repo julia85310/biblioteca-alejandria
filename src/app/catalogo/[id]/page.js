@@ -35,7 +35,7 @@ export default function LibroPage(props){
     async function handleClickButton(){
         if(modoAdmin){
             try {
-                const res = await deleteLibro();
+                const res = await deleteLibro(libro);
             
                 if (res.ok) {
                     alert(`${libro.titulo} eliminado correctamente`)

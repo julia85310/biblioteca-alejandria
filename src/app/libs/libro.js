@@ -2,15 +2,17 @@ import { supabase } from "@/app/libs/supabaseClient";
 export async function deleteLibro(libro){
   const confirmed = window.confirm(`¿Estás seguro de que deseas eliminar ${libro.titulo}? Esta acción es irreversible.`);
   if (confirmed) {
-      const res = await fetch("/api/libro", {
-          method: 'DELETE',
-          headers: {
-          'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({'id': libro.id}),
-      });
-  
-      return res;
+    const res = await fetch("/api/libro", {
+      method: 'DELETE',
+      headers: {
+      'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({'id': libro.id}),
+    });
+
+    return res;
+  }else{
+    return null;
   }
 }
 
