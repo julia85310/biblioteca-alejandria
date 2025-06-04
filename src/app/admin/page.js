@@ -25,7 +25,7 @@ export default function AdminPage(){
                     <img src="/iconos/icono-add-evento.png" className="lg:w-20 object-contain p-1"></img>
                     <p className="text-center lg:text-2xl text-lg whitespace-nowrap lg:whitespace-normal">Añadir <br className="hidden lg:block" /> Evento</p>
                 </div>
-                <div onClick={() => alert("No implementado") /*router.push("/admin/verUsuarios")*/} className="lg:justify-around lg:py-4 px-6 col-span-2 flex flex-col p-5 rounded-2xl lg:flex-row bg-[var(--columbiaBlue)] items-center justify-center ">
+                <div onClick={() => router.push("/admin/verUsuarios")} className="lg:justify-around lg:py-4 px-6 col-span-2 flex flex-col p-5 rounded-2xl lg:flex-row bg-[var(--columbiaBlue)] items-center justify-center ">
                     <img src="/iconos/icono-usuarios.png" className="lg:w-20 object-contain p-1"></img>
                     <p className="text-center lg:text-2xl text-lg whitespace-nowrap lg:whitespace-normal">Ver <br className="hidden lg:block" /> Usuarios</p>
                 </div>

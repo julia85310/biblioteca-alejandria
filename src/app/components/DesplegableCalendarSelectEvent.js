@@ -5,7 +5,7 @@ import CalendarSelectEvent from "../components/CalendarSelectEvent"
 export default function LibrosPosesion({ moreUserData, admin }) {
     const [hidden, setHidden] = useState(true)
     const [fechaCalendario, setFechaCalendario] = useState("Selecciona un día marcado")
-    const [descripCalendario, setDescripCalendario] = useState("Para ver que tienes pendiente")
+    const [descripCalendario, setDescripCalendario] = useState("Para ver el evento relacionado")
 
     useEffect(() => {
         if (window.innerWidth >= 1024) {
@@ -14,14 +14,13 @@ export default function LibrosPosesion({ moreUserData, admin }) {
     }, [])
 
     const fondo = admin ? "[var(--columbiaBlue)]" : "[var(--linen)]"
-    const letras = admin ? "[var(--paynesGray)]" : "[var(--cafeNoir)]"
-    const secundario = "[var(--chamoise)]"
+    const letras = admin ? "[var(--paynesGray)]" : "[var(--chamoise)]"
 
     return (
-        <div id="calendario" className={`bg-${fondo} p-4 rounded-xl text-${letras}`}>
-            <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between gap-4`}>
-                <div className={`flex justify-between flex-row text-${letras}`}>
-                    <b className={`text-${letras}`}>Calendario de eventos</b>
+        <div id="calendario" className={`bg-${fondo} p-4 rounded-xl`}>
+            <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between gap-4 pb-4`}>
+                <div className={`flex justify-between flex-row`}>
+                    <b className="text-[var(--cafeNoir)]">Calendario de eventos</b>
                     <img
                         src="/iconos/icono-flecha.png"
                         onClick={() => setHidden(!hidden)}
@@ -43,15 +42,15 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                         }}
                     />
                 </div>
-                <b className={`text-${secundario} text-center text-lg lg:text-sm`}>
+                <b className={`text-${letras} text-center text-lg lg:text-sm`}>
                     {fechaCalendario}
                 </b>
-                <p className={`text-${secundario} text-center lg:text-xs`}>
+                <p className={`text-${letras} text-center lg:text-xs`}>
                     {descripCalendario}
                 </p>
             </div>
             <div id="plegado" className={`${!hidden ? 'hidden' : 'flex'} flex-row justify-between`}>
-                <b className={`text-${letras}`}>Calendario de eventos</b>
+                <b>Calendario de eventos</b>
                 <img
                     src="/iconos/icono-flecha.png"
                     onClick={() => setHidden(!hidden)}

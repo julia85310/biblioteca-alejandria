@@ -19,14 +19,14 @@ export default function LibrosPosesion({ moreUserData, admin }) {
     }, [])
 
     return <div id="historial">
-        <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between p-4 border border-3 border-[var(--seashell)] gap-8 lg:gap-3`}>
+        <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between p-4 gap-8 lg:gap-3`}>
             <div className="flex flex-row justify-between">
                 <b className={`text-${letras}`}>Historial de préstamos</b>
                 <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 rotate-90 lg:hidden" />
             </div>
             {moreUserData.historial.length === 0 ?
-                <p className="text-center text-lg text-[var(--chamoise)] lg:text-xs lg:h-full">
-                    Nada por aquí. Tu historia aún no ha sido escrita.
+                <p className="text-center text-lg text-[var(--chamoise)] lg:h-full">
+                    {admin? 'El usuario no tiene historial.':'Nada por aquí. Tu historia aún no ha sido escrita.'}
                 </p>
                 :
                 <div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
