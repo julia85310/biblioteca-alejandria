@@ -80,20 +80,25 @@ export default function VerUsuariosPage(){
                 cerrarSesion={cerrarSesion}
                 moreUserData={moreUserData}
                 user={user}
+                admin={true}
             />
             <div id="libros" className="flex flex-col lg:gap-1 gap-8 lg:flex-1 lg:w-full lg:justify-between">
                 <LibrosPosesion
                     moreUserData={moreUserData}
+                    admin={true}
                 />
                 <LibrosReservados
                     moreUserData={moreUserData}
+                    admin={true}
                 ></LibrosReservados>
                 <Historial
                     moreUserData={moreUserData}
+                    admin={true}
                 ></Historial>
             </div>
             <DesplegableCalendarSelectEvent 
                 moreUserData={moreUserData}
+                admin={true}
             />
         </div>
         : <p>Selecciona un usuario</p>}

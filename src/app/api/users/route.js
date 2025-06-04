@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const { data, error } = await supabase
       .from("usuario")
-      .select("id, nombre");
+      .select("id, nombre, email, telefono, fecha_registro, fecha_penalizacion");
 
     if (error) {
       console.error("Error consultando usuarios:", error);
