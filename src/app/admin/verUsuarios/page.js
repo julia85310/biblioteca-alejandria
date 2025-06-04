@@ -1,6 +1,7 @@
 'use client'
 import MyHeader from "../components/MyHeader"
 import {useState, useEffect } from "react"
+import { useRouter } from "next/navigation";
 import User from "../components/User"
 import DesplegableCalendarSelectEvent from "../components/DesplegableCalendarSelectEvent"
 import LibrosPosesion from "../components/LibrosPosesion"
@@ -8,9 +9,12 @@ import LibrosReservados from "../components/LibrosReservados"
 import Historial from "../components/Historial"
 
 export default function VerUsuariosPage(){
+    const router = useRouter();
     const [user, setUser] = useState(null)
     const [users, setUsers] = useState(null)
+    const [filtroNombre, setFiltroNombre] = useState("")
     const [moreUserData, setMoreUserData] = useState()
+    const [loading, setLoading] = useState(true) // asumiendo que estaba faltando esto
 
     useEffect(() => {
         async function fetchDataUsers() {
@@ -22,86 +26,103 @@ export default function VerUsuariosPage(){
             }
             const data = await res.json();
             setUsers(data);
+            setLoading(false);
         }
 
         fetchDataUsers();
          
     }, [])
 
-    /*useEffect(() => {
-        if (!user) return;
-
-        async function fetchDataUser() {
-            const res = await fetch("/api/userdata?u=" + user.id);
-            if(!res.ok){
-                alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
-                router.push("/")
-                return
+    async function handleSelectUser(userSeleccionado) {
+        setUser(userSeleccionado)
+        const res = await fetch("/api/userdata?u=" + userSeleccionado.id);
+        if(!res.ok){
+            alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
+            router.push("/")
+            return
+        }
+        const data = await res.json();
+        
+        let totalLibrosPrestados = 0;
+        data.historial.map(libro => {
+            if(libro.condicion != "reservado"){
+                totalLibrosPrestados++;
             }
-            const data = await res.json();
-            
-            //Calculo del totalLibrosPrestados (historial no reservado y en posesion)
-            let totalLibrosPrestados = 0;
-            data.historial.map(libro => {
-                if(libro.condicion != "reservado"){
-                    totalLibrosPrestados++;
-                }
-            })
-            totalLibrosPrestados = totalLibrosPrestados + data.librosEnPosesion.length;
+        })
+        totalLibrosPrestados += data.librosEnPosesion.length;
 
-            //mirar si esta penalizado
-            const hoy = new Date();
-            const fechaPenalizacion = new Date(user.fecha_penalizacion);
+        const hoy = new Date();
+        const fechaPenalizacion = new Date(userSeleccionado.fecha_penalizacion);
+        hoy.setHours(0, 0, 0, 0);
+        const penalizado = hoy < fechaPenalizacion;
 
-            hoy.setHours(0, 0, 0, 0);
+        setMoreUserData({...data, totalLibrosPrestados, penalizado})
+    }
 
-            const penalizado = hoy < fechaPenalizacion;
-            setMoreUserData({...data, totalLibrosPrestados: totalLibrosPrestados, penalizado: penalizado})
-        }
-        fetchDataUser();
-         
-    }, [user])*/
+    function onChangefiltroNombre(e){
+        setFiltroNombre(e.target.value)
+    }
 
+    if (loading) return null;
 
-    useEffect(() => {
-        if (!loading) {
-            router.push("/");
-        }
-    }, [loading]);
+    // Filtrar usuarios por nombre
+    const usuariosFiltrados = users?.filter(u =>
+        u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
+    );
 
-    if (loading) return null; //aqui va el futuro spinner
+    return (
+    <div className="min-h-[100vh] flex flex-col bg-[var(--aliceBlue)]">
+        <MyHeader />
+        <main className="lg:mt-0 lg:mx-4 flex-1 mx-12 gap-8 my-8 flex flex-col">
+            <div className="flex flex-col lg:items-start items-start gap-2 relative lg:ml-12 ml-4">
+                <div className="flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 bg-white w-[250px]">
+                    <img className="w-4 object-contain mx-2" src="/iconos/lupa_icon.png" />
+                    <input 
+                        type="text"
+                        value={filtroNombre}
+                        className="flex-1 placeholder-[var(--lion)] md:text-base lg:text-xs text-xs w-auto" 
+                        placeholder="Buscar por nombre" 
+                        onChange={onChangefiltroNombre}
+                    />
+                </div>
 
-    return <div className="min-h-[100vh] flex flex-col bg-[var(--aliceBlue)] ">
-        <MyHeader></MyHeader>
-        <main className="lg:mt-0 lg:mx-4 flex-1 mx-12 gap-8 my-8">
-        {user? 
-        <div className="flex flex-col lg:flex-row lg:justify-between">
-            <User 
-                cerrarSesion={cerrarSesion}
-                moreUserData={moreUserData}
-                user={user}
-                admin={true}
-            />
-            <div id="libros" className="flex flex-col lg:gap-1 gap-8 lg:flex-1 lg:w-full lg:justify-between">
-                <LibrosPosesion
+                {filtroNombre.length > 0 && usuariosFiltrados?.length > 0 && (
+                    <select
+                        onChange={(e) => {
+                            const selectedId = e.target.value;
+                            const selectedUser = users.find(u => u.id === selectedId);
+                            if (selectedUser) handleSelectUser(selectedUser);
+                        }}
+                        className="border-[var(--chamoise)] border rounded-2xl py-1 px-3 text-xs bg-white text-[var(--lion)] w-[250px]"
+                        defaultValue=""
+                    >
+                        <option value="" disabled>Selecciona un usuario</option>
+                        {usuariosFiltrados.map(user => (
+                            <option key={user.id} value={user.id}>
+                                {user.nombre}
+                            </option>
+                        ))}
+                    </select>
+                )}
+            </div>
+
+            {user ? (
+            <div className="flex flex-col lg:flex-row lg:justify-between">
+                <User 
+                    cerrarSesion={cerrarSesion}
                     moreUserData={moreUserData}
+                    user={user}
                     admin={true}
                 />
-                <LibrosReservados
-                    moreUserData={moreUserData}
-                    admin={true}
-                ></LibrosReservados>
-                <Historial
-                    moreUserData={moreUserData}
-                    admin={true}
-                ></Historial>
+                <div id="libros" className="flex flex-col lg:gap-1 gap-8 lg:flex-1 lg:w-full lg:justify-between">
+                    <LibrosPosesion moreUserData={moreUserData} admin={true} />
+                    <LibrosReservados moreUserData={moreUserData} admin={true} />
+                    <Historial moreUserData={moreUserData} admin={true} />
+                </div>
+                <DesplegableCalendarSelectEvent moreUserData={moreUserData} admin={true} />
             </div>
-            <DesplegableCalendarSelectEvent 
-                moreUserData={moreUserData}
-                admin={true}
-            />
-        </div>
-        : <p>Selecciona un usuario</p>}
+            ) : <p className="ml-12 mt-4 text-[var(--lion)]">Selecciona un usuario</p>}
         </main>
     </div>
+    )
 }
