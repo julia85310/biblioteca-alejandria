@@ -32,7 +32,6 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
 
     async function obtenerNombreLibro(libroId) {
         if (librosInfo[libroId]) return librosInfo[libroId];
-
         try {
             const res = await fetch("/api/libro?id=" + libroId);
             const data = await res.json();

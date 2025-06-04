@@ -11,6 +11,7 @@ export default function LibroUser({texto1, texto2, user_libro, esHistorial}){
         async function fetchData() {
             const res = await fetch("/api/libro?id=" + user_libro.libro);
             const data = await res.json();
+            console.log("llamada")
             if(!res.ok){
                 alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
                 router.push("/perfil")
@@ -19,7 +20,7 @@ export default function LibroUser({texto1, texto2, user_libro, esHistorial}){
             setLibro(data);
         }
         fetchData(); 
-    },[libro])
+    },[user_libro.libro])
     
     const reservaNoRealizada = esHistorial && user_libro.condicion == "reservado";
 
