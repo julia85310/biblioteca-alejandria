@@ -25,22 +25,26 @@ export default function LibroUser({texto1, texto2, user_libro, esHistorial}){
 
     if(!libro) return null;
 
-    return <div className=" flex flex border border-[var(--chamoise)] border-2 mr-2 rounded-xl" onClick={() => router.push(`/catalogo/${libro.id}`)}>
-        <img className=" w-18 m-2 rounded object-contain" src={libro.imagen_url} alt={"Portada de " + libro.titulo}></img>
-        <div className="m-2 flex flex-col justify-between flex-1 flex flex-col">
-            <p className="font-bold">{libro.titulo}</p>
-            <p className="text-xs mb-1">{libro.editorial}</p>
-            <div className="mb-1">
-                <p className="text-[var(--lion)] text-xs">{reservaNoRealizada? "Reservado para": texto1}</p>
-                <p className="text-sm text-right">{new Date(user_libro.fecha_adquisicion).toLocaleDateString('es-ES')}</p>
+    return <div className="pr-3 p-1 flex flex border border-[var(--chamoise)] border-2 mr-2 rounded-xl" onClick={() => router.push(`/catalogo/${libro.id}`)}>
+        <img className=" w-24 m-2 rounded object-contain" src={libro.imagen_url} alt={"Portada de " + libro.titulo}></img>
+        <div className="m-2 flex flex-col justify-between flex-1 flex flex-col gap-5">
+            <div className="flex flex-col gap-1">
+                <p className="font-bold">{libro.titulo}</p>
+                <p className="text-xs">{libro.editorial}</p>
             </div>
-            {reservaNoRealizada?
-                <p>No adquirido</p>
-                :
+            <div className="flex flex-col gap-4 ml-4">
                 <div>
-                    <p className="text-[var(--lion)] text-xs">{texto2}</p>
-                    <p className="text-right min-w-30 mr-1">{new Date(user_libro.fecha_devolucion).toLocaleDateString('es-ES')}</p>
-                </div>}    
+                    <p className="text-[var(--lion)] text-xs">{reservaNoRealizada? "Reservado para": texto1}</p>
+                    <p className="text-sm text-right">{new Date(user_libro.fecha_adquisicion).toLocaleDateString('es-ES')}</p>
+                </div>
+                {reservaNoRealizada?
+                    <p className="text-sm">No adquirido</p>
+                    :
+                    <div>
+                        <p className="text-[var(--lion)] text-xs">{texto2}</p>
+                        <p className="text-right min-w-30 mr-1">{new Date(user_libro.fecha_devolucion).toLocaleDateString('es-ES')}</p>
+                    </div>}  
+            </div>  
         </div>
     </div> 
 }
