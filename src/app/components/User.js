@@ -48,7 +48,7 @@ export default function User({user, moreUserData, cerrarSesion, admin}){
             </div>
         </div>
         <div id="plegado" className={`${!hidden? 'hidden':'flex'} flex-row justify-between`}>
-            <b>{user?.nombre}</b>
+            <b className="text-[var(--cafeNoir)]">{user?.nombre}</b>
             <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 lg:hidden"></img>
         </div>
     </div>

@@ -22,7 +22,8 @@ export default function nuevoPrestamo(){
 
     useEffect(() => {
         async function fetchDataUsers() {
-            const res = await fetch("/api/users")
+            const res = await fetch("/api/users");
+            
             if (!res.ok) {
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
                 router.push("../admin")
@@ -34,8 +35,8 @@ export default function nuevoPrestamo(){
         }
         async function fetchDataLibros() {
             const res = await fetch("/api/libro?d=1");
+            console.log(res)
             if(!res.ok){
-                console.log(res)
                 alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
                 router.push("../admin")
                 return
@@ -96,7 +97,7 @@ export default function nuevoPrestamo(){
 
         const hoy = new Date();
         const fechaDev = new Date(hoy); 
-        fechaDev.setDate(fechaDev.getDate() + libro.dias_prestamo);
+        fechaDev.setDate(fechaDev.getDate() + libro.dias_prestamo -1);
 
         const dia = String(fechaDev.getDate()).padStart(2, '0');
         const mes = String(fechaDev.getMonth() + 1).padStart(2, '0'); 
@@ -141,7 +142,7 @@ export default function nuevoPrestamo(){
                 alert("Préstamo realizado con éxito.")
                 router.push("../admin")
             } else {
-                alert(data.error);
+                alert(data.error.message);
             }
         } catch {
             alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
@@ -212,7 +213,7 @@ export default function nuevoPrestamo(){
                         </div>
                         </div>
                     <div id="libros" className={`${libros.length == 0 && "hidden"}`}>
-                        <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-3 gap-3">
+                        <div className="pr-4 my-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-3 gap-3 max-h-[50vh]">
                             {libros.map((libroMap) =>
                                 <LibroSeleccion
                                     key={libroMap.id}

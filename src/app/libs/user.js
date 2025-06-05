@@ -133,8 +133,9 @@ export async function userValidoPrestamo(idUsuario){
     //usuario sin libros no devueltos
     await filterUsuarioLibrosNoDevueltos(idUsuario)
   }catch(error){
-    if (error == MENSAJE_LIBROS_NO_DEV){
-      throw new Error("El usuario tiene libros cuya fecha de devolución ha pasado"); 
+    console.log(error)
+    if (error.message == MENSAJE_LIBROS_NO_DEV){
+      throw new Error("El usuario tiene libros cuya fecha de devolución ha pasado."); 
     }else{
       throw error
     }
@@ -230,13 +231,15 @@ export async function getHistorial(idUsuario){
 export async function filterUsuarioLibrosNoDevueltos(idUsuario){
   const hoy = new Date().toISOString().split('T')[0];
 
-  //usuario con libros no devueltos (fecha de devolución > hoy)
+  //usuario con libros no devueltos (fecha de devolución < hoy)
   const { data: librosEnPosesion, error2 } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
     .eq('condicion', 'no devuelto')
-    .gt('fecha_devolucion', hoy);
+    .lt('fecha_devolucion', hoy);
+
+  console.log('libros no devueltos ', librosEnPosesion)
 
   if(error2){
     console.log(error2)

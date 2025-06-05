@@ -10,11 +10,13 @@ import { supabase } from "@/app/libs/supabaseClient";
  * }
  */
 export async function POST(request) {
-    const body = await request.json();
-    const id_libro = body.libro;
-    const id_user = body.user;
-
     try{
+        const body = await request.json();
+        const id_libro = body.libro;
+        const id_user = body.user;
+        console.log(1)
+
+    
         //validacion del usuario
         const data = await userValidoPrestamo(id_user)
 
@@ -51,7 +53,7 @@ export async function POST(request) {
 
         if (errorAdq) {
             console.log(errorAdq)
-            throw new Error("Ha ocurrido un error. Intentelo de nuevo más tarde.");
+            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
         }
 
         if (adquisiciones && adquisiciones.length > 0) {
@@ -61,7 +63,7 @@ export async function POST(request) {
         //realizar el prestamo
         const hoy = new Date();
         const fechaDev = new Date(hoy); 
-        fechaDev.setDate(fechaDev.getDate() + body.dias_prestamo);
+        fechaDev.setDate(fechaDev.getDate() + body.dias_prestamo - 1);
 
         const { data: insert, error: insertError } = await supabase
             .from('usuario_libro')
@@ -73,7 +75,7 @@ export async function POST(request) {
 
         if (insertError) {
             console.log(insertError)
-            throw new Error("Ha ocurrido un error. Intentelo de nuevo más tarde.");
+            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
         }
 
         return new Response(JSON.stringify(insert), {

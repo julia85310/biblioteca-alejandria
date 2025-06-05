@@ -38,13 +38,14 @@ export async function GET(request) {
 
       if (librosExcluidos.length > 0){
         //quita esos libros
-        query = query.not('id', 'in', librosExcluidos);
+        query = query.not('id', 'in', `(${librosExcluidos.join(',')})`);
       }
     }
 
     const { data, error } = await query;
 
     if (error) {
+      console.log(error)
       return Response.json({ error: error.message }, { status: 500 });
     }
 
@@ -71,8 +72,7 @@ export async function DELETE(request) {
   const body = await request.json();
   const libroId = body.id;
   console.log(body)
-
-  try {
+  try{
     // 1. Obtener el libro para acceder a la imagen_url
     const { data: libro, error: getError } = await supabase
       .from('libro')
@@ -125,6 +125,7 @@ export async function DELETE(request) {
     );
   }
 }
+
 
 /**
  * Añade un Libro

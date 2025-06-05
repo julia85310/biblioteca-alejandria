@@ -21,13 +21,15 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
         agregar('historial', historial);
         agregar('prestamo', prestamos);
         agregar('reserva', reservas);
-
+        console.log('prestamos:', prestamos)
         return output;
     }, [historial, prestamos, reservas]);
 
     const getInfoDelDia = (date) => {
-        const normalized = new Date(date).setHours(0, 0, 0, 0);
-        return fechasMapeadas.filter(f => f.key === normalized);
+        const normalized = new Date(date);
+        normalized.setHours(0, 0, 0, 0);
+        const time = normalized.getTime();
+        return fechasMapeadas.filter(f => f.key === time);
     };
 
     async function obtenerNombreLibro(libroId) {
@@ -50,11 +52,13 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
     async function handleClickHere(eventos) {
         if (!eventos || eventos.length === 0) return;
 
+        console.log('eventos:', eventos)
+
         const opcionesFecha = { day: 'numeric', month: 'long', year: 'numeric' };
 
-        const fechas = eventos.map(ev =>
-            ev.fecha.toLocaleDateString('es-ES', opcionesFecha)
-        );
+        const fecha = eventos[0].fecha.toLocaleDateString('es-ES', opcionesFecha);
+
+        const entradas = [];
 
         const descripciones = await Promise.all(eventos.map(async (ev) => {
             let entrada = null;
@@ -77,20 +81,22 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
                 id: h.libro
             })));
 
+            const esFechaEvento = (item) => (
+                toLocalDateString(item.fecha_adquisicion) === toLocalDateString(ev.fecha) ||
+                toLocalDateString(item.fecha_devolucion) === toLocalDateString(ev.fecha)
+            );
+
             if (ev.tipo === 'historial') {
                 entrada = historial.find(h =>
-                    toLocalDateString(h.fecha_adquisicion) === toLocalDateString(ev.fecha) ||
-                    toLocalDateString(h.fecha_devolucion) === toLocalDateString(ev.fecha)
+                    esFechaEvento(h) && !entradas.includes(h)
                 );
             } else if (ev.tipo === 'prestamo') {
                 entrada = prestamos.find(p =>
-                    toLocalDateString(p.fecha_adquisicion) === toLocalDateString(ev.fecha) ||
-                    toLocalDateString(p.fecha_devolucion) === toLocalDateString(ev.fecha)
+                    esFechaEvento(p) && !entradas.includes(p)
                 );
             } else if (ev.tipo === 'reserva') {
                 entrada = reservas.find(r =>
-                    toLocalDateString(r.fecha_adquisicion) === toLocalDateString(ev.fecha)||
-                    toLocalDateString(r.fecha_devolucion) === toLocalDateString(ev.fecha)
+                    esFechaEvento(r) && !entradas.includes(r)
                 );
             }
                 
@@ -98,6 +104,8 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
             console.log(entrada)   
 
             if (!entrada) return null;
+
+            entradas.push(entrada)
 
             const nombreLibro = await obtenerNombreLibro(entrada.libro);
             if (!nombreLibro) return null;
@@ -117,13 +125,12 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
             return null;
         }));
 
-        const fechasStr = fechas.join(', ');
         const descripcionesStr = descripciones.join(', ');
 
-        console.log("Fecha:" + fechasStr)
+        console.log("Fecha:" + fecha)
         console.log("Descripcion" + descripcionesStr)
 
-        handleClick(fechasStr, descripcionesStr);
+        handleClick(fecha, descripcionesStr);
     }
 
     return (
@@ -237,10 +244,13 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
                         }
                     }}
                     tileClassName={({ date, view }) => {
+
                         if (view !== 'month') return;
 
                         const info = getInfoDelDia(date);
                         if (info.length === 0) return;
+
+                        console.log("Día:", date.toISOString(), "Eventos:", info);
 
                         return info
                             .map(ev => {
