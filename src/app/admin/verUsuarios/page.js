@@ -42,7 +42,7 @@ export default function VerUsuariosPage() {
             return
         }
         const data = await res.json()
-
+        console.log(data)
         let totalLibrosPrestados = 0
         data.historial.forEach(libro => {
             if (libro.condicion !== "reservado") {
@@ -70,6 +70,8 @@ export default function VerUsuariosPage() {
     const usuariosFiltrados = users?.filter(u =>
         u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
     )
+
+    console.log('userData:', moreUserData)
 
     return (
         <div className="min-h-[100vh] flex flex-col bg-[var(--aliceBlue)]">

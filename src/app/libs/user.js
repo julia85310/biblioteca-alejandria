@@ -1,6 +1,8 @@
 import { supabase } from "@/app/libs/supabaseClient";
 import { formatearFechaBonita } from "./libro";
 
+const MENSAJE_LIBROS_NO_DEV = "Tienes libros no devueltos. Por favor, devuélvelos lo antes posible."
+
 /**
  * Valida los datos del registro:
  * - que existan
@@ -115,6 +117,45 @@ export async function userValidoReserva(idUsuario){
 }
 
 /**
+ * Funcion que determina si un usuario es válido para hacer un préstamo.
+ * Devuelve un error si no es válido con el mensaje descriptivo.
+ * Esto se da cuando:
+ * - Fecha de penalización < hoy
+ * - El usuario no tiene un libro cuya fecha de devolución > hoy y condicion = "no devuelto"
+ * - El usuario tiene libros en posesion < num_max_prestamos
+ */
+export async function userValidoPrestamo(idUsuario){
+  console.log("iduser:" + idUsuario)
+  //usuario no penalizado
+  await filterUsuarioPenalizado(idUsuario)
+  
+  try{
+    //usuario sin libros no devueltos
+    await filterUsuarioLibrosNoDevueltos(idUsuario)
+  }catch(error){
+    if (error == MENSAJE_LIBROS_NO_DEV){
+      throw new Error("El usuario tiene libros cuya fecha de devolución ha pasado"); 
+    }else{
+      throw error
+    }
+  }
+  
+  //maximo de libros para poseer de esta persona
+  let maxLibrosPosesion = await getMaxLibrosPrestados(idUsuario)
+  console.log("max libros que puedes reservar:" + maxLibrosPosesion)
+  console.log(maxLibrosPosesion)
+
+  let librosPosesionCount = (await getLibrosPosesion(idUsuario)).length;
+  console.log("libros en posesion:" + librosPosesionCount)
+
+  if(librosPosesionCount >= maxLibrosPosesion){
+    throw new Error("El usuario ya tiene en posesión " + librosPosesionCount + " de " + maxLibrosPosesion + " libros que puede tener.");
+  }
+
+  return true;
+}
+
+/**
  * Devuelve los libros maximos que una persona puede reservar simultaneamente
  * @param {*} idUsuario 
  * @returns 
@@ -203,7 +244,7 @@ export async function filterUsuarioLibrosNoDevueltos(idUsuario){
   }
 
   if (librosEnPosesion.length > 0){
-    throw new Error("Tienes libros no devueltos. Por favor, devuélvelos lo antes posible.");
+    throw new Error(MENSAJE_LIBROS_NO_DEV);
   }
 
   return true;
@@ -270,15 +311,19 @@ export async function getLibrosReservados(idUsuario) {
  * @param {} idUsuario 
  */
 export async function getLibrosPosesion(idUsuario){
-  const hoy = new Date().toISOString().split('T')[0];
+  const hoy = new Date();
+  const inicioHoy = new Date(hoy.setHours(0, 0, 0, 0)).toISOString();
+  const finHoy = new Date(hoy.setHours(23, 59, 59, 999)).toISOString();
 
   const { data: librosEnPosesion, error} = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
     .eq('condicion', 'no devuelto')
-    .lte('fecha_adquisicion', hoy)
-    .gte('fecha_devolucion', hoy);
+    .lte('fecha_adquisicion', finHoy)
+    .gte('fecha_devolucion', inicioHoy);
+
+  console.log('getLibrosPosesion:', librosEnPosesion)
 
   if(error){
     console.log(error)

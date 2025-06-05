@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import LibroUser from "../components/LibroUser"
 export default function LibrosPosesion({moreUserData, admin}){
-const [hidden, setHidden] = useState(true)
+    const [hidden, setHidden] = useState(true)
 
     let border = "[var(--chamoise)]"
     let letras = "[var(--cafeNoir)]"
@@ -42,7 +42,7 @@ const [hidden, setHidden] = useState(true)
             </div>}
         </div>
         <div id="plegado" className={`${!hidden? 'hidden':'flex'} flex-row justify-between border border-3 border-${border} p-4 rounded-xl`}>
-            <b>Libros en posesion</b>
+            <b className={`text-${letras}`}>Libros en posesion</b>
             <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className={`object-contain w-6 lg:hidden`}></img>
         </div>
     </div>

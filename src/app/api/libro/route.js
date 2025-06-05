@@ -5,26 +5,61 @@ import { formatearFechaBonita, validarDatosNuevoLibro } from "@/app/libs/libro";
  * Devuelve todos los libros.
  */
 export async function GET(request) {
+  try{
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
+    const d = searchParams.get('d')
 
     let query = supabase.from('libro').select('*');
 
     if (id) {
-        query = query.eq('id', id).single();
+      query = query.eq('id', id).single();
+    }
+    if(d){
+      //quita los libros que estan en posesion de alguien
+      query = query.eq('disponibilidad', "Disponible");
+      const today = new Date();
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0)).toISOString();
+      const endOfToday = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+      //obtener los ids de libros reservados para hoy u ayer
+      const { data: reservados, error: errorAdquiridos } = await supabase
+        .from('usuario_libro')
+        .select('libro')
+        .gte('fecha_adquisicion', startOfYesterday)
+        .lte('fecha_adquisicion', endOfToday);
+      const librosExcluidos = reservados?.map(reserva => reserva.libro);
+      
+      if(errorAdquiridos){
+        console.log(errorAdquiridos)
+        return Response.json({ error: errorAdquiridos.message }, { status: 500 });
+      }
+
+      if (librosExcluidos.length > 0){
+        //quita esos libros
+        query = query.not('id', 'in', librosExcluidos);
+      }
     }
 
     const { data, error } = await query;
 
     if (error) {
-        return Response.json({ error: error.message }, { status: 500 });
+      return Response.json({ error: error.message }, { status: 500 });
     }
 
     if (id) {
-        data.fecha_adquisicion = formatearFechaBonita(data.fecha_adquisicion)
+      data.fecha_adquisicion = formatearFechaBonita(data.fecha_adquisicion)
     }
 
     return Response.json(data);
+  } catch (error) {
+    console.log(error)
+    return new Response(
+      JSON.stringify({ error: 'Error interno del servidor', details: error.message }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }
 
 /**

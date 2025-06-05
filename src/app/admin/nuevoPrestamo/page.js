@@ -33,17 +33,18 @@ export default function nuevoPrestamo(){
             setLoading(false)
         }
         async function fetchDataLibros() {
-            const res = await fetch("/api/libro");
+            const res = await fetch("/api/libro?d=1");
             if(!res.ok){
+                console.log(res)
                 alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
                 router.push("../admin")
                 return
             }
             const data = await res.json();
-            setLibros(data)
-            setAllLibros(data)
+            const librosDisponibles = data.filter(libro => libro.disponibilidad == "Disponible")
+            setLibros(librosDisponibles)
+            setAllLibros(librosDisponibles)
         }
-
         fetchDataLibros();
         fetchDataUsers()
     }, [])
@@ -113,8 +114,38 @@ export default function nuevoPrestamo(){
         u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
     )
 
-    function realizarPrestamo(){
-        
+    async function realizarPrestamo(){
+        if(!user){
+            alert("Selecciona el usuario desde el buscador de nombres.")
+            return
+        }
+        if(!libro){
+            alert("Selecciona el libro pulsando \"Seleccionar\".")
+            return
+        }
+
+        try {
+            const response = await fetch("/api/prestamo", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    dias_prestamo: libro.dias_prestamo,
+                    user: user.id,
+                    libro: libro.id
+                }),
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                alert("Préstamo realizado con éxito.")
+                router.push("../admin")
+            } else {
+                alert(data.error);
+            }
+        } catch {
+            alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
+        }
     }
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
