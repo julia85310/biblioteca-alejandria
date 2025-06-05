@@ -25,7 +25,7 @@ const [hidden, setHidden] = useState(true)
             </div>
             {moreUserData.librosEnPosesion.length == 0?
             <p className="text-center text-lg text-[var(--chamoise)] lg:h-full">
-                {admin? "El usuario no posee ningún libro actualmente..":'No tienes libros prestados. ¡Explora el <b onClick={() => router.push("/catalogo")}>}<u>catálogo</u></b>!'}
+                {admin? "El usuario no posee ningún libro actualmente..":'No tienes libros prestados. ¡Explora el <b onClick={() => router.push("/catalogo")}><u>catálogo</u></b>!'}
             </p>
             :<div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
                 {

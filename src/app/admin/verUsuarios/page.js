@@ -22,7 +22,7 @@ export default function VerUsuariosPage() {
             const res = await fetch("/api/users")
             if (!res.ok) {
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
-                router.push("/")
+                router.push("../admin")
                 return
             }
             const data = await res.json()
@@ -59,18 +59,6 @@ export default function VerUsuariosPage() {
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
     }
 
-    function onChangeFiltroNombre(e) {
-        setFiltroNombre(e.target.value)
-    }
-
-    function handleInputFocus() {
-        setMostrarLista(true)
-    }
-
-    function handleInputBlur() {
-        setTimeout(() => setMostrarLista(false), 100)
-    }
-
     function handleUserSelect(user) {
         handleSelectUser(user)
         setFiltroNombre(user.nombre)
@@ -87,22 +75,22 @@ export default function VerUsuariosPage() {
         <div className="min-h-[100vh] flex flex-col bg-[var(--aliceBlue)]">
             <MyHeader />
             <main className="lg:mt-0 mx-4 flex-1  my-8 flex flex-col">
-                <div className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
-                    <div className="flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 bg-white w-full">
+                <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
+                    <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
                         <img className="w-4 object-contain mx-2" src="/iconos/lupa_icon.png" />
                         <input
                             type="text"
                             value={filtroNombre}
-                            className="flex-1 placeholder-[var(--lion)] md:text-base text-sm"
+                            className="flex-1 placeholder-[var(--lion)] md:text-base text-sm "
                             placeholder="Buscar por nombre"
-                            onChange={onChangeFiltroNombre}
-                            onFocus={handleInputFocus}
-                            onBlur={handleInputBlur}
+                            onChange={() => setFiltroNombre(e.target.value)}
+                            onFocus={() => setMostrarLista(true)}
+                            onBlur={() => setTimeout(() => setMostrarLista(false), 100)}
                         />
                     </div>
 
                     {mostrarLista && usuariosFiltrados?.length > 0 && (
-                        <ul className="absolute top-full left-0 mt-1 w-full bg-white border border-[var(--chamoise)] rounded-xl shadow-md z-10 max-h-60 overflow-y-auto">
+                        <ul className="absolute top-full left-0 mt-1 w-full bg-[var(--darkAliceBlue)] border border-[var(--chamoise)] rounded-xl shadow-md z-10 max-h-60 overflow-y-auto">
                             {usuariosFiltrados.map(user => (
                                 <li
                                     key={user.id}
