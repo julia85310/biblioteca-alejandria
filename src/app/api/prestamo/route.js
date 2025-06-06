@@ -5,6 +5,7 @@ import { supabase } from "@/app/libs/supabaseClient";
  * Comprobación de usuario: Devuelve un error si el usuario no puede obtener el libro.
  * Comprobación de libro: Devuelve un error si el libro no puede ser prestado hoy.
  * Realiza el préstamo si pasa estas comprobaciones.
+ * Cambiar el estado del libro a No Disponible
  * body {
  *  libro, user, dias_prestamo
  * }
@@ -79,6 +80,85 @@ export async function POST(request) {
         }
 
         return new Response(JSON.stringify(insert), {
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }catch(error) {  
+        console.log(error)
+        return new Response(
+            JSON.stringify({ error: error.message }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
+    } 
+}
+
+/**
+ * Comprobación de usuario: Devuelve un error si el usuario no puede obtener el libro.
+ * Mirar si el libro esta disponible (por si alguien no lo ha devuelto en la fecha que le tocaba)
+ * Realiza el préstamo si pasa estas comprobaciones:
+ *  - Existe este registro
+ *  - Cambia la condicion de reservado a no devuelto
+ *  - Cambia el libro a No Disponible 
+ * body {
+ *  user_libro
+ * }
+ */
+export async function PUT(request) {
+    try{
+        const body = await request.json();
+        const { id, libro } = body;
+
+        //validacion del usuario
+        const data = await userValidoPrestamo(id_user)
+
+        //mirar si el libro esta disponible
+        const { data: libroDisponible, error: libroError } = await supabase
+            .from('libro')
+            .select('*')
+            .eq('id', libro)
+            .eq('disponibilidad', 'Disponible')
+            .single();
+
+        if (libroError || !libroDisponible) {
+            throw new Error("El libro no se encuentra disponible.");
+        }
+
+        // verificar si existe el registro usuario_libro
+        const { data: userLibro, error: userLibroError } = await supabase
+            .from('usuario_libro')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (userLibroError || !userLibro) {
+            throw new Error("Ha ocurrido un error. Vuelve a intentarlo más tarde.");
+        }
+
+        // Cambiar la condición del usuario_libro a "no devuelto"
+        const { error: updateUserLibroError } = await supabase
+            .from('usuario_libro')
+            .update({ condicion: 'no devuelto' })
+            .eq('id', id);
+
+        if (updateUserLibroError) {
+            throw new Error("Ha ocurrido un error. Vuelve a intentarlo más tarde.");
+        }
+
+        //Cambiar disponibilidad del libro a "No Disponible"
+        const { error: updateLibroError } = await supabase
+            .from('libro')
+            .update({ disponibilidad: 'No Disponible' })
+            .eq('id', libro);
+
+        if (updateLibroError) {
+            //si hay un error intentamos revertir lo anterior
+            const { error: updateUserLibroError } = await supabase
+                .from('usuario_libro')
+                .update({ condicion: 'reservado' })
+                .eq('id', id);
+            throw new Error("Ha ocurrido un error. Vuelve a intentarlo más tarde.");
+        }
+
+        return new Response(JSON.stringify({ success: true }), {
             headers: { 'Content-Type': 'application/json' },
         });
     }catch(error) {  

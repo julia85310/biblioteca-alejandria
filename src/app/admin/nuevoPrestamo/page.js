@@ -19,6 +19,7 @@ export default function nuevoPrestamo(){
     const [loading, setLoading] = useState(true)
     const [mostrarLista, setMostrarLista] = useState(false)
     const [fechaDev, setFechaDev] = useState("")
+    const [reservadoSeleccionado, setReservadoSeleccionado] = useState(null)
 
     useEffect(() => {
         async function fetchDataUsers() {
@@ -92,7 +93,7 @@ export default function nuevoPrestamo(){
         setMostrarLista(false)
     }
 
-    function handleSelectLibro(libro) {
+    function handleSelectLibro(libro, user_libro) {
         setLibro(libro);
 
         const fechaDev = new Date(); 
@@ -107,6 +108,12 @@ export default function nuevoPrestamo(){
 
         setFechaDev(fechaFormateada);
         console.log(libro);
+
+        if(user_libro){
+            setReservadoSeleccionado(user_libro)
+        }else{
+            setReservadoSeleccionado(null)
+        }
     }
 
     if (loading) return null
@@ -126,15 +133,26 @@ export default function nuevoPrestamo(){
         }
 
         try {
-            const response = await fetch("/api/prestamo", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    dias_prestamo: libro.dias_prestamo,
-                    user: user.id,
-                    libro: libro.id
-                }),
-            });
+            let response;
+            if (reservadoSeleccionado){
+                response = await fetch("/api/prestamo", {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        reservadoSeleccionado
+                    }),
+                });
+            }else{
+                response = await fetch("/api/prestamo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        dias_prestamo: libro.dias_prestamo,
+                        user: user.id,
+                        libro: libro.id
+                    }),
+                });
+            }
     
             const data = await response.json();
     

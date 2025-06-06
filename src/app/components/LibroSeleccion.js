@@ -3,8 +3,11 @@ import {useState, useEffect } from "react"
 import { useRouter } from "next/navigation";
 
 export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccionado,libroDado}){
+    
     const [libro, setLibro] = useState(libroDado);
     const router = useRouter();
+
+    if (!user_libro) user_libro = null
 
     useEffect(() => {
         async function fetchData() {
@@ -35,7 +38,7 @@ export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccion
             <div className="flex justify-end">
                 {seleccionado? 
                 <b className="px-1 text-sm text-[var(--chamoise)]">Seleccionado</b>
-                :<button className="bg-[var(--chamoise)] text-[var(--seashell)] px-2 rounded-xl text-sm" onClick={(e) => {e.stopPropagation(); handleSeleccion(libro)}}>Seleccionar</button>}
+                :<button className="bg-[var(--chamoise)] text-[var(--seashell)] px-2 rounded-xl text-sm" onClick={(e) => {e.stopPropagation(); handleSeleccion(libro, user_libro)}}>Seleccionar</button>}
             </div>
         </div>
     </div> 
