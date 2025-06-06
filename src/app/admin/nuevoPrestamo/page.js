@@ -151,7 +151,7 @@ export default function nuevoPrestamo(){
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
         <MyHeader ubiHeader="Perfil"></MyHeader>
-        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10">
+        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
             <div id="buscarUser" className="flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
                     <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
@@ -213,7 +213,7 @@ export default function nuevoPrestamo(){
                         </div>
                         </div>
                     <div id="libros" className={`${libros.length == 0 && "hidden"}`}>
-                        <div className="pr-4 my-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-3 gap-3 max-h-[50vh]">
+                        <div className="pr-4 my-4 overflow-y-auto grid grid-cols-2 gap-3 max-h-[50vh] lg:max-h-[40vh]">
                             {libros.map((libroMap) =>
                                 <LibroSeleccion
                                     key={libroMap.id}
@@ -237,7 +237,7 @@ export default function nuevoPrestamo(){
                 ></LibrosReservadosSeleccion> }
             </div>
             <hr className="border-t-2 border-[var(--paynesGray)] m-12 lg:hidden" />
-            <div id="resumenfinal" className="flex flex-col text-[var(--paynesGray)] pl-4 gap-6">
+            <div id="resumenfinal" className="flex flex-col text-[var(--paynesGray)] pl-4 gap-6 lg:justify-between lg:min-h-[70vh] lg:pt-14">
                 <div id="seleccionados" className="font-admin flex flex-col gap-2">
                     <div className="flex flex-col text-xl ">
                         <p>Usuario seleccionado</p>

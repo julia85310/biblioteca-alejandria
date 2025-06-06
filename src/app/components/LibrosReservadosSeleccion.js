@@ -35,7 +35,7 @@ export default function LibrosReservadosSeleccion({ moreUserData, userName,handl
                 <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 rotate-90 lg:hidden" />
             </div>
             {librosReservadosHoy.length === 0 ?
-                <p className="text-center text-lg text-[var(--chamoise)] lg:h-full">
+                <p className="text-center text-lg lg:text-base text-[var(--chamoise)] lg:h-full">
                     El usuario no tiene ningún libro reservado para ayer u hoy.
                 </p>
                 :
