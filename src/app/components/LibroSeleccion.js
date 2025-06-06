@@ -2,7 +2,7 @@
 import {useState, useEffect } from "react"
 import { useRouter } from "next/navigation";
 
-export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccionado,libroDado}){
+export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccionado,libroDado, mostrarDevolucion}){
     const [libro, setLibro] = useState(libroDado);
     const router = useRouter();
 
@@ -24,6 +24,7 @@ export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccion
     },[user_libro?.libro, libro])
 
     const seleccionado = libro.id == idSeleccionado;
+    const hoy = new Date()
 
     return <div className={` flex flex border border-${seleccionado? "[var(--cafeNoir)]": "[var(--lion)]"} border-${seleccionado? "4": "2"} rounded-xl`} onClick={() => router.push(`/catalogo/${libro.id}`)}>
         <img className=" w-14 m-2 rounded object-contain" src={libro.imagen_url} alt={"Portada de " + libro.titulo}></img>
@@ -32,6 +33,14 @@ export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccion
                 <p className="font-bold">{libro.titulo}</p>
                 <p className="text-xs">{libro.editorial}</p>
             </div>
+            {mostrarDevolucion && 
+            <div >
+                <p className="text-[var(--lion)] text-xs">Devolución hasta</p>
+                <div className={`${user_libro.fecha_devolucion > hoy && "text-[var(--rojoOscuro)]"} flex justify-end`}>
+                    <b>{user_libro.fecha_devolucion}</b>
+                </div>
+            </div>
+            }
             <div className="flex justify-end">
                 {seleccionado? 
                 <b className="px-1 text-sm text-[var(--chamoise)]">Seleccionado</b>

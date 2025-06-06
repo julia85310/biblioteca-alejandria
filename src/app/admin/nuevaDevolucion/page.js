@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import User from "../../components/User"
 import LibrosReservadosSeleccion from "../../components/LibrosReservadosSeleccion"
 import LibroSeleccion from "@/app/components/LibroSeleccion";
+import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
 
 export default function nuevaDevolucion(){
     const router = useRouter()
@@ -15,6 +16,7 @@ export default function nuevaDevolucion(){
     const [moreUserData, setMoreUserData] = useState()
     const [loading, setLoading] = useState(true)
     const [mostrarLista, setMostrarLista] = useState(false)
+    const [devolucionData, setDevolucionData] = useState(null)
 
     useEffect(() => {
         async function fetchDataUsers() {
@@ -74,6 +76,12 @@ export default function nuevaDevolucion(){
         
     }
 
+    function handleSelectLibro(libro) {
+        setLibro(libro);
+
+        
+    }
+
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
         <MyHeader></MyHeader>
         <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
@@ -122,33 +130,38 @@ export default function nuevaDevolucion(){
                     />}
                 </div>
             </div>
-            <div id="col2" className="flex flex-col">
-                <div id="librosPosesion">
-
-                </div>
-                <div id="formulario">
-
-                </div>
-            </div>
-            <hr className="border-t-2 border-[var(--paynesGray)] m-12 lg:hidden" />
-            <div id="resumenfinal" className="flex flex-col text-[var(--paynesGray)] pl-4 gap-6 lg:justify-between lg:min-h-[70vh] lg:pt-6">
-                <div id="seleccionados" className="font-admin flex flex-col gap-2">
-                    <div className="flex flex-col text-xl ">
-                        <p>Usuario seleccionado</p>
-                        <p className="ml-6 text-[var(--cafeNoir)] text-lg">{user? user.nombre: "Sin seleccionar"}</p>
+            <div id="noUser" className="flex flex-col">
+                <div id="posesionYSelecciones" className="flex flex-col lg:flex-row">
+                    <div id="posesion">
+                        {moreUserData && <LibrosPosesionSeleccion
+                            handleSeleccion={handleSelectLibro}
+                            idSeleccionado={libro?.id}
+                            userName={user.nombre}
+                            libroDado={null}
+                            moreUserData={moreUserData}
+                        ></LibrosPosesionSeleccion>}
                     </div>
-                    <div className="flex flex-col text-xl">
-                        <p>Libro seleccionado</p>
-                        <p className="ml-6 text-[var(--cafeNoir)] text-lg">{libro? libro.titulo: "Sin seleccionar"}</p>
+                    <div id="seleccionados" className="font-admin flex flex-col gap-2">
+                        <div className="flex flex-col text-xl ">
+                            <p>Usuario seleccionado</p>
+                            <p className="ml-6 text-[var(--cafeNoir)] text-lg">{user? user.nombre: "Sin seleccionar"}</p>
+                        </div>
+                        <div className="flex flex-col text-xl">
+                            <p>Libro seleccionado</p>
+                            <p className="ml-6 text-[var(--cafeNoir)] text-lg">{libro? libro.titulo: "Sin seleccionar"}</p>
+                        </div>
                     </div>
-                </div>
-                <div id="penalizacion" className="flex flex-col items-end">
+                </div>        
+                <div id="resumenfinal" className="flex flex-col text-[var(--paynesGray)] pl-4 gap-6 lg:justify-between lg:min-h-[70vh] lg:pt-6">
                     
-                </div>
-                <div id="botonFinal" className="font-admin flex justify-end">
-                    <button onClick={realizarDevolucion} className="text-xl px-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
-                        Finalizar devolución
-                    </button>
+                    <div id="penalizacion" className="flex flex-col items-end">
+                        
+                    </div>
+                    <div id="botonFinal" className="font-admin flex justify-end">
+                        <button onClick={realizarDevolucion} className="text-xl px-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
+                            Finalizar devolución
+                        </button>
+                    </div>
                 </div>
             </div>
         </main>
