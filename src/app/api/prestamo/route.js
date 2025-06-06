@@ -70,7 +70,8 @@ export async function POST(request) {
             .insert([{
                 fecha_devolucion: fechaDev, 
                 libro: id_libro,
-                usuario: id_user
+                usuario: id_user,
+                condicion: "no devuelto"
             }]);
 
         if (insertError) {
