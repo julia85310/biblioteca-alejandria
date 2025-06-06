@@ -199,7 +199,7 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
                         gap: 0.6rem;
                     }
 
-                    .react-calendar__tile--now {
+                    .react-calendar__tile--now:not(.bg-historial):not(.bg-reserva):not(.bg-prestamo-adquisicion):not(.bg-prestamo-devolucion) {
                         background-color: var(--darkSeashell) !important;
                         color: inherit !important;
                     }

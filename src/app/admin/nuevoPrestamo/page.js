@@ -95,9 +95,9 @@ export default function nuevoPrestamo(){
     function handleSelectLibro(libro) {
         setLibro(libro);
 
-        const hoy = new Date();
-        const fechaDev = new Date(hoy); 
+        const fechaDev = new Date(); 
         fechaDev.setDate(fechaDev.getDate() + libro.dias_prestamo -1);
+        console.log(fechaDev)
 
         const dia = String(fechaDev.getDate()).padStart(2, '0');
         const mes = String(fechaDev.getMonth() + 1).padStart(2, '0'); 
