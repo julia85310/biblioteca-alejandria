@@ -1,0 +1,93 @@
+import { supabase } from "@/app/libs/supabaseClient";
+
+/**
+ * Realiza la devolucion de un libro:
+ * - 
+ * body{
+        dias_penalizacion: devolucionData.diasPenalizacionTotal,
+        condicion_nueva: nuevaCondicion,
+        libro: libro.id,
+        user_libro_id: user_libro.id
+    }¡
+ */
+export async function POST(request) {
+    try{
+        const body = await request.json();
+        const id_libro = body.libro;
+        const id_user = body.user;
+        console.log(1)
+
+    
+        //validacion del usuario
+        const data = await userValidoPrestamo(id_user)
+
+        //validacion del libro
+        //Buscar el libro
+        const { data: libro, error: errorLibro } = await supabase
+            .from('libro')
+            .select('*')
+            .eq('id', id_libro)
+            .single();
+
+        if (errorLibro || !libro) {
+            throw new Error("El libro no existe.");
+        }
+
+        //Verificar disponibilidad
+        if (libro.disponibilidad !== "Disponible") {
+            throw new Error("El libro no está disponible.");
+        }
+
+        //Comprobar si fue adquirido hoy o ayer (esta en una reserva)
+        const today = new Date();
+        const yesterday = new Date(today);
+        yesterday.setDate(today.getDate() - 1);
+        const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0)).toISOString();
+        const endOfToday = new Date(today.setHours(23, 59, 59, 999)).toISOString();
+
+        const { data: adquisiciones, error: errorAdq } = await supabase
+            .from('usuario_libro')
+            .select('*')
+            .eq('libro', id_libro)
+            .gte('fecha_adquisicion', startOfYesterday)
+            .lte('fecha_adquisicion', endOfToday);
+
+        if (errorAdq) {
+            console.log(errorAdq)
+            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
+        }
+
+        if (adquisiciones && adquisiciones.length > 0) {
+            throw new Error("El libro está reservado");
+        }
+
+        //realizar el prestamo
+        const hoy = new Date();
+        const fechaDev = new Date(hoy); 
+        fechaDev.setDate(fechaDev.getDate() + body.dias_prestamo - 1);
+
+        const { data: insert, error: insertError } = await supabase
+            .from('usuario_libro')
+            .insert([{
+                fecha_devolucion: fechaDev, 
+                libro: id_libro,
+                usuario: id_user,
+                condicion: "no devuelto"
+            }]);
+
+        if (insertError) {
+            console.log(insertError)
+            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
+        }
+
+        return new Response(JSON.stringify(insert), {
+            headers: { 'Content-Type': 'application/json' },
+        });
+    }catch(error) {  
+        console.log(error)
+        return new Response(
+            JSON.stringify({ error: error.message }),
+            { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
+    } 
+}

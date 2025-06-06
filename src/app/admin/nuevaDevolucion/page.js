@@ -1,6 +1,6 @@
 'use client'
 import MyHeader from "../../components/MyHeader";
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import User from "../../components/User"
 import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
@@ -9,6 +9,7 @@ export default function nuevaDevolucion(){
     const router = useRouter()
     const [user, setUser] = useState(null)
     const [libro, setLibro] = useState(null)
+    const [user_libro, setUser_libro] = useState(null)
     const [users, setUsers] = useState(null)
     const [filtroNombre, setFiltroNombre] = useState("")
     const [moreUserData, setMoreUserData] = useState()
@@ -17,13 +18,43 @@ export default function nuevaDevolucion(){
     const [devolucionData, setDevolucionData] = useState({
         diasAtraso: 0,
         penalizacionAtraso: false,
-        condicionActual: null,
+        condicionActual: '',
         penalizacionCondicion: false,
         diasPenalizacionAtraso: 0,
         diasPenalizacionCondicion: 0,
-        diasPenalizaciionTotal: 0
+        diasPenalizacionTotal: 0
     })
-    const hoy = new Date()
+    
+    useEffect(() => {
+        let diasTotales = 0;
+        if(devolucionData.penalizacionAtraso){
+            diasTotales += Number(devolucionData.diasPenalizacionAtraso)
+        }
+        if(devolucionData.penalizacionCondicion){
+            diasTotales += Number(devolucionData.diasPenalizacionCondicion)
+        }
+        setDevolucionData({...devolucionData, diasPenalizacionTotal: diasTotales})
+    }, [devolucionData.penalizacionAtraso, devolucionData.penalizacionCondicion, devolucionData.diasPenalizacionCondicion])
+
+    const aplicadoRef = useRef(false);
+
+    //cuando escribes una nueva condicion
+    useEffect(() => {
+        //solo se aplica la primera vez que se escribe 
+        if (aplicadoRef.current == false){
+            aplicadoRef.current = true
+            if (devolucionData.diasPenalizacionCondicion == 0){
+                setDevolucionData({...devolucionData, penalizacionCondicion: true, diasPenalizacionCondicion: 3}) //por defecto
+            }else{
+                setDevolucionData({...devolucionData, penalizacionCondicion: true})
+            }
+        }
+        //se resetea la primera vez
+        if(devolucionData.condicionActual == ''){
+            aplicadoRef.current = false
+            setDevolucionData({...devolucionData, penalizacionCondicion: false})
+        }
+    }, [devolucionData.condicionActual])
 
     useEffect(() => {
         async function fetchDataUsers() {
@@ -40,6 +71,10 @@ export default function nuevaDevolucion(){
         }
         fetchDataUsers()
     }, [])
+
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0);
+
 
     async function handleSelectUser(userSeleccionado) {
         setUser(userSeleccionado)
@@ -61,10 +96,10 @@ export default function nuevaDevolucion(){
 
         
         const fechaPenalizacion = new Date(userSeleccionado.fecha_penalizacion)
-        hoy.setHours(0, 0, 0, 0)
         const penalizado = hoy < fechaPenalizacion
 
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
+        console.log('moreUserData: ', { ...data, totalLibrosPrestados, penalizado })
     }
 
     function handleUserSelect(user) {
@@ -80,14 +115,71 @@ export default function nuevaDevolucion(){
     )
 
     async function realizarDevolucion(){
-        
+        if(!user){
+            alert("Selecciona el usuario desde el buscador de nombres.")
+            return
+        }
+        if(!libro){
+            alert("Selecciona el libro pulsando \"Seleccionar\".")
+            return
+        }
+        try {
+            const nuevaCondicion = () => {
+                if (devolucionData.condicionActual != libro.condicion){
+                    return devolucionData.condicionActual
+                }else{
+                    return ''
+                }
+            } 
+            const body = {
+                dias_penalizacion: devolucionData.diasPenalizacionTotal,
+                condicion_nueva: nuevaCondicion,
+                libro: libro.id,
+                user_libro_id: user_libro.id
+            }
+            const response = await fetch("/api/devolucion", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body),
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                alert("Préstamo realizado con éxito.")
+                router.push("../admin")
+            } else {
+                alert(data.error.message);
+            }
+        } catch {
+            alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
+        }
     }
 
     function handleSelectLibro(libro, user_libro) {
         setLibro(libro);
-        const diasAtraso = 
+        setUser_libro(user_libro)
+
+        //Calculo de los dias de atraso
+        const fechaDevolucion = new Date(user_libro.fecha_devolucion);
+        let diferenciaMs = hoy - fechaDevolucion;
+        if (diferenciaMs < 0){
+            diferenciaMs = 0
+        }
+        const diasAtraso = Math.floor(diferenciaMs / (1000 * 60 * 60 * 24));    
         
+        setDevolucionData(prev => ({
+            ...prev,
+            diasAtraso: diasAtraso,
+            diasPenalizacionAtraso: diasAtraso * 3,
+            penalizacionAtraso: diasAtraso > 0,
+            diasPenalizacionTotal: diasAtraso * 3,
+        }));
+        console.log('dias atraso: ' + diasAtraso)
     }
+
+    
+
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
         <MyHeader></MyHeader>
@@ -137,8 +229,8 @@ export default function nuevaDevolucion(){
                     />}
                 </div>
             </div>
-            <div id="noUser" className="flex flex-col">
-                <div id="posesionYSelecciones" className="flex flex-col lg:flex-row">
+            <div id="noUser" className="flex flex-col gap-16">
+                <div id="posesionYSelecciones" className="flex flex-col lg:flex-row gap-10">
                     <div id="posesion">
                         {moreUserData && <LibrosPosesionSeleccion
                             handleSeleccion={handleSelectLibro}
@@ -148,42 +240,75 @@ export default function nuevaDevolucion(){
                             moreUserData={moreUserData}
                         ></LibrosPosesionSeleccion>}
                     </div>
-                    <div id="seleccionados" className="font-admin flex flex-col gap-2 text-[var(--paynesGray)]">
+                    <div id="seleccionados" className="font-admin flex flex-col gap-2 text-[var(--paynesGray)] items-end mr-4 text-end lg:text-start">
+                        <div>
                         <div className="flex flex-col text-xl ">
                             <p>Usuario seleccionado</p>
-                            <p className="ml-6 text-[var(--cafeNoir)] text-lg">{user? user.nombre: "Sin seleccionar"}</p>
+                            <p className="ml-6 mr-6 text-[var(--cafeNoir)] text-lg ">{user? user.nombre: "Sin seleccionar"}</p>
                         </div>
                         <div className="flex flex-col text-xl">
                             <p>Libro seleccionado</p>
-                            <p className="ml-6 text-[var(--cafeNoir)] text-lg">{libro? libro.titulo: "Sin seleccionar"}</p>
+                            <p className="ml-6 mr-6 text-[var(--cafeNoir)] text-lg " >{libro? libro.titulo: "Sin seleccionar"}</p>
+                        </div>
                         </div>
                     </div>
                 </div>        
-                <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)]">
-                    <div id="izq" className="flex flex-col gap-3">
-                        <div id="atraso">
-                            <p>Días de atraso: {devolucionData.diasAtraso}</p>
+                {libro && <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)] text-lg gap-10">
+                    <div id="izq" className="flex flex-col gap-4">
+                        <div id="atraso" className="flex flex-col ">
+                            <p className="text-xl">Días de atraso: {devolucionData.diasAtraso}</p>
                             {devolucionData.diasAtraso > 0 &&
                             <div className="flex text-[var(--columbiaBlue)] gap-2">
                                 <input
                                     type="checkbox"
                                     checked={devolucionData.penalizacionAtraso}
-                                    onChange={() => setDevolucionData({...setDevolucionData, penalizacionAtraso: !devolucionData.penalizacionAtraso})}
+                                    onChange={() => setDevolucionData({...devolucionData, penalizacionAtraso: !devolucionData.penalizacionAtraso})}
+                                    className={`accent-[var(--columbiaBlue)] rounded p-2 w-4 h-4`}
                                 ></input>
                                 <p>Aplicar penalización por retraso</p>   
                             </div>}
                         </div>
-                        <div id="condicion" className="flex gap-2">
+                        <div id="condicion" className="flex flex-col gap-2">
                             <p>Condición anterior: {libro.condicion}</p>
                             <p>Condición actual:</p>
+                            <input 
+                                type="text" 
+                                value={devolucionData.condicionActual} 
+                                placeholder={libro.condicion} 
+                                onChange={(e) => setDevolucionData({ ...devolucionData, condicionActual : e.target.value })} 
+                                className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-max-[50vw] ml-4" 
+                            />
+                            {devolucionData.condicionActual &&
+                            <div className="flex text-[var(--columbiaBlue)] gap-2 items-center">
+                                <input
+                                    type="checkbox"
+                                    checked={devolucionData.penalizacionCondicion}
+                                    className={`accent-[var(--columbiaBlue)] rounded p-2 w-4 h-4`}
+                                    onChange={() => setDevolucionData({...devolucionData, penalizacionCondicion: !devolucionData.penalizacionCondicion})}
+                                ></input>
+                                <p>Aplicar penalización por deterioro</p>   
+                            </div>}
                         </div>
                     </div>
-                    <div id="der" className="flex flex-col items-end">
-                        <button onClick={realizarDevolucion} className="text-xl px-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
+                    <div id="der" className="flex flex-col justify-end items-end text-end gap-4">
+                        <div className="flex text-[var(--columbiaBlue)] flex-col gap-3">
+                            <p>Días de penalizacion por retraso: {devolucionData.diasPenalizacionAtraso}</p>
+                            <div className="flex gap-2 items-center">
+                                <p>Días de penalización por deterioro: </p>
+                                <input 
+                                    type="number" 
+                                    value={devolucionData.penalizacionCondicion? devolucionData.diasPenalizacionCondicion:0} 
+                                    onChange={(e) => setDevolucionData({ ...devolucionData, diasPenalizacionCondicion : e.target.value })} 
+                                    className="border rounded-xl border-[var(--columbiaBlue)] p-1 pl-2 w-18" 
+                                />
+                            </div>
+                        </div>
+                        <p className="text-xl font-bold">Días totales de penalización: {devolucionData.diasPenalizacionTotal}</p>
+                        <button onClick={realizarDevolucion} className="text-xl px-6 my-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
                             Finalizar devolución
                         </button>
                     </div>
-                </div>
+                </div>}
             </div>
         </main>
     </div>    
