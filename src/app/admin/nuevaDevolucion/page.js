@@ -17,6 +17,7 @@ export default function nuevaDevolucion(){
     const [loading, setLoading] = useState(true)
     const [mostrarLista, setMostrarLista] = useState(false)
     const [devolucionData, setDevolucionData] = useState(null)
+    const hoy = new Date()
 
     useEffect(() => {
         async function fetchDataUsers() {
@@ -52,7 +53,7 @@ export default function nuevaDevolucion(){
         })
         totalLibrosPrestados += data.librosEnPosesion.length
 
-        const hoy = new Date()
+        
         const fechaPenalizacion = new Date(userSeleccionado.fecha_penalizacion)
         hoy.setHours(0, 0, 0, 0)
         const penalizado = hoy < fechaPenalizacion
@@ -78,7 +79,7 @@ export default function nuevaDevolucion(){
 
     function handleSelectLibro(libro) {
         setLibro(libro);
-
+        const diasAtraso = 
         
     }
 
