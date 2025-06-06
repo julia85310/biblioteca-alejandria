@@ -3,8 +3,6 @@ import MyHeader from "../../components/MyHeader";
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import User from "../../components/User"
-import LibrosReservadosSeleccion from "../../components/LibrosReservadosSeleccion"
-import LibroSeleccion from "@/app/components/LibroSeleccion";
 import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
 
 export default function nuevaDevolucion(){
@@ -16,7 +14,15 @@ export default function nuevaDevolucion(){
     const [moreUserData, setMoreUserData] = useState()
     const [loading, setLoading] = useState(true)
     const [mostrarLista, setMostrarLista] = useState(false)
-    const [devolucionData, setDevolucionData] = useState(null)
+    const [devolucionData, setDevolucionData] = useState({
+        diasAtraso: 0,
+        penalizacionAtraso: false,
+        condicionActual: null,
+        penalizacionCondicion: false,
+        diasPenalizacionAtraso: 0,
+        diasPenalizacionCondicion: 0,
+        diasPenalizaciionTotal: 0
+    })
     const hoy = new Date()
 
     useEffect(() => {
@@ -77,7 +83,7 @@ export default function nuevaDevolucion(){
         
     }
 
-    function handleSelectLibro(libro) {
+    function handleSelectLibro(libro, user_libro) {
         setLibro(libro);
         const diasAtraso = 
         
@@ -142,7 +148,7 @@ export default function nuevaDevolucion(){
                             moreUserData={moreUserData}
                         ></LibrosPosesionSeleccion>}
                     </div>
-                    <div id="seleccionados" className="font-admin flex flex-col gap-2">
+                    <div id="seleccionados" className="font-admin flex flex-col gap-2 text-[var(--paynesGray)]">
                         <div className="flex flex-col text-xl ">
                             <p>Usuario seleccionado</p>
                             <p className="ml-6 text-[var(--cafeNoir)] text-lg">{user? user.nombre: "Sin seleccionar"}</p>
@@ -153,12 +159,26 @@ export default function nuevaDevolucion(){
                         </div>
                     </div>
                 </div>        
-                <div id="resumenfinal" className="flex flex-col text-[var(--paynesGray)] pl-4 gap-6 lg:justify-between lg:min-h-[70vh] lg:pt-6">
-                    
-                    <div id="penalizacion" className="flex flex-col items-end">
-                        
+                <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)]">
+                    <div id="izq" className="flex flex-col gap-3">
+                        <div id="atraso">
+                            <p>Días de atraso: {devolucionData.diasAtraso}</p>
+                            {devolucionData.diasAtraso > 0 &&
+                            <div className="flex text-[var(--columbiaBlue)] gap-2">
+                                <input
+                                    type="checkbox"
+                                    checked={devolucionData.penalizacionAtraso}
+                                    onChange={() => setDevolucionData({...setDevolucionData, penalizacionAtraso: !devolucionData.penalizacionAtraso})}
+                                ></input>
+                                <p>Aplicar penalización por retraso</p>   
+                            </div>}
+                        </div>
+                        <div id="condicion" className="flex gap-2">
+                            <p>Condición anterior: {libro.condicion}</p>
+                            <p>Condición actual:</p>
+                        </div>
                     </div>
-                    <div id="botonFinal" className="font-admin flex justify-end">
+                    <div id="der" className="flex flex-col items-end">
                         <button onClick={realizarDevolucion} className="text-xl px-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
                             Finalizar devolución
                         </button>
