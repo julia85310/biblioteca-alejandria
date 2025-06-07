@@ -2,6 +2,7 @@
 import CalendarSelectFecha from "@/app/components/CalendarSelectFecha";
 import MyFooter from "@/app/components/MyFooter";
 import MyHeader from "@/app/components/MyHeader";
+import Loader from "@/app/components/loader/Loader";
 
 import { format } from 'date-fns';
 import { useRouter } from "next/navigation";
@@ -20,6 +21,7 @@ export default function ReservaPage(props){
     const [librosEnReserva, setLibrosEnReserva] = useState(0)
     const [alertaHidden, setAlertaHidden] = useState(true)
     const [intervalosRestringidos, setIntervalosRestrigidos] = useState([])
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         async function fetchDataLibro() {
@@ -31,6 +33,11 @@ export default function ReservaPage(props){
             }
             const data = await res.json();
             setLibro(data)
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 800);
+
+            return () => clearTimeout(timer);
         }
         fetchDataLibro();
     }, [])
@@ -110,14 +117,16 @@ export default function ReservaPage(props){
         setFechaDevolucion(fechaFin);
     }
     
-    return <div className="min-h-[100vh] flex flex-col">
+    return <div className="min-h-[100vh] flex flex-col bg-[var(--seashell)]">
         <MyHeader></MyHeader>
-        {libro? <main className="flex-1 flex flex-col bg-[var(--seashell)] lg:pt-4">
-            <div className="flex flex-col lg:flex-row mx-6 gap-4 lg:justify-between lg:gap-2">
-                <div id="infoLibro" className="flex flex-col gap-4 lg:ml-6">
+        {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
+        libro? <main className="flex-1 flex flex-col bg-[var(--seashell)] lg:pt-4">
+            <div className="flex flex-col lg:flex-row mx-6 gap-4 lg:justify-around lg:gap-2">
+                <div id="infoLibro" className="flex flex-col gap-4 lg:ml-6 lg:gap-[10vh]">
                     <h1 className="text-xl lg:ml-14"><b>Reserva de <i>{libro.titulo}</i></b></h1>
                     <div className="flex flex-row ml-4 relative">
-                        <div id="imgydescrip" className="flex flex-col lg:gap-4 ">
+                        <div id="imgydescrip" className="flex flex-col lg:gap-[8vh] ">
                             <div id="imgydescripMovil" className="flex flex-row gap-5 ">
                                 <img className="object-contain w-[37vw] lg:w-[14vw]" src={libro.imagen_url}></img>
                                 <div id="descrip" className="flex flex-col justify-between my-4">
@@ -125,13 +134,13 @@ export default function ReservaPage(props){
                                         <div className="flex gap-2"><p className="text-[var(--chamoise)]">Editorial:</p><p>{libro.editorial}</p></div>
                                         <div className="flex gap-2"><p className="text-[var(--chamoise)]">Autor:</p><p> {libro.autor}</p></div>
                                     </div>
-                                    <div id="importanteMovil" className="lg:hidden flex flex-col text-sm text-[var(--chamoise)] mr-10">
+                                    <div id="importanteMovil" className="lg:hidden flex flex-col text-sm text-[var(--chamoise)] mr-10 ">
                                         <b>IMPORTANTE: </b> Si usted pierde o deteriora el libro, 
                                         su reposición corre a su cuenta por el costo de <b className="text-[var(--cafeNoir)]">{libro.valor}€</b>
                                     </div>
                                 </div>
                             </div>
-                            <div id="importanteOrdenador" className="lg:w-[35vw] ml-1 hidden lg:block flex-col text-[var(--chamoise)] mr-10">
+                            <div id="importanteOrdenador" className="lg:w-[35vw] ml-1 hidden lg:block flex-col text-[var(--chamoise)] pr-20">
                                 <b>IMPORTANTE: </b> Si usted pierde o deteriora el libro, 
                                 su reposición corre a su cuenta por el costo de <b className="text-[var(--cafeNoir)]">{libro.valor}€</b>
                             </div>
@@ -141,7 +150,7 @@ export default function ReservaPage(props){
                         </div>
                     </div>
                 </div>
-                <div id="useryreservainfo" className="flex flex-col lg:flex-row lg:justify-between">
+                <div id="useryreservainfo" className="flex flex-col lg:flex-row lg:justify-between lg:gap-4">
                     <div id="userInfoyPCFecha" className="flex flex-col p-4 lg:justify-between">
                         <div id="userInfo" className="flex flex-col gap-1">
                             <div className="flex gap-2"><p className="text-[var(--chamoise)]">Usuario:</p> <p>{user.nombre} </p></div>
@@ -209,9 +218,9 @@ export default function ReservaPage(props){
                 </div>
             </div>
             <div className="flex justify-end my-8 mr-4 lg:mt-0">
-                <button id="finalizarReserva" onClick={reservar} className="lg:px-4 lg:text-base px-5 py-1 rounded-3xl text-xl text-white bg-[var(--chamoise)] ">Finalizar Reserva</button>
+                <button id="finalizarReserva" onClick={reservar} className="lg:px-4 lg:mr-[2vw] lg:mt-[4vh] lg:text-lg px-5 py-1 rounded-3xl text-xl text-white bg-[var(--chamoise)] ">Finalizar Reserva</button>
             </div>
         </main>: <main>Libro no encontrado</main>}
-        <MyFooter></MyFooter>
+        {!loading && <MyFooter></MyFooter>}
     </div>
 }

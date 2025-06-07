@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { deleteLibro } from "../libs/libro";
 
-export default function Libro({libro, admin, onDelete, user}){
+export default function Libro({libro, admin, onDelete, user, setLoading}){
     const router = useRouter();
 
     async function handleClickButton(e){
@@ -22,6 +22,7 @@ export default function Libro({libro, admin, onDelete, user}){
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
             }
         }else{
+            setLoading(true)
             if(user){
                 const res = await fetch("/api/reserva?u=" + user.id);
                 if(res.ok){

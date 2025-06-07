@@ -138,6 +138,7 @@ export default function CatalogoPage() {
                                 onDelete={onDelete}
                                 key={libro.id} 
                                 libro={libro}
+                                setLoading={setLoading}
                                 admin={modoAdmin}></Libro>
                         )}
                     </div>

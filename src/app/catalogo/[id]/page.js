@@ -53,6 +53,7 @@ export default function LibroPage(props){
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
             }
         }else{
+            setLoading(true)
             if(user){
                 const res = await fetch("/api/reserva?u=" + user.id);
                 if(res.ok){
