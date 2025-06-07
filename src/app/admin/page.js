@@ -1,17 +1,24 @@
 'use client'
 import { AuthContext } from "../contexts/AuthContext"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { useRouter } from "next/navigation";
 import MyHeader from "../components/MyHeader";
 
 export default function AdminPage(){
     const router = useRouter();
-    const {logout} = useContext(AuthContext)
+    const {user, modoAdmin, logout} = useContext(AuthContext)
 
     function cerrarSesion(){
         logout();
         router.push("/")
     }
+
+    useEffect(() => {
+        if(!user || !modoAdmin){
+            router.push("/");
+        }
+    }, [])
+    
 
     return <div className="h-[100vh] flex flex-col font-admin">
         <MyHeader ubiHeader="Perfil"></MyHeader>

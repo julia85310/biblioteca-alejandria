@@ -70,11 +70,11 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (response.status === 200) {
-        setUser(data.user);
+          setUser(data.user);
         if (recuerdame){
           guardarUsuario(data.user);
         } 
-        return { success: true, message: data.message };
+        return { success: true, message: data.message, admin: data.user.admin };
       } else {
         return { success: false, message: data.message };
       }

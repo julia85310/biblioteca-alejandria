@@ -8,7 +8,7 @@ import {validarDatosLogin} from "@/app/libs/user";
 
 export default function loginPage(){
     const router = useRouter();
-    const { login, user } = useContext(AuthContext);
+    const { login } = useContext(AuthContext);
     const [formData, setFormData] = useState({ email: "", password:"", recuerdame:true});
     const [mensaje, setMensaje] = useState('');
 
@@ -20,17 +20,23 @@ export default function loginPage(){
         if (!valid) {
             setMensaje(message)
         }else{
-            const { success, message } = await login(formData.email, formData.password, formData.recuerdame)
+            const { success, message, admin } = await login(formData.email, formData.password, formData.recuerdame)
             if (!success){
                 setMensaje(message)
             }else{
                 //alerta personalizada
                 alert("¡Bienvenido de nuevo!")
-                router.push("/");
+                if(admin){
+                    router.push("../../admin")
+                }else{
+                    router.push("/");
+                }
             }
         }
         
     }
+
+    
 
     return <div className="min-h-[100vh] flex flex-col">
         <MyHeader ubiHeader="Perfil"></MyHeader>
