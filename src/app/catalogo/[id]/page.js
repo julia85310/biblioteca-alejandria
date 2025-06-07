@@ -5,6 +5,7 @@ import { AuthContext } from "@/app/contexts/AuthContext";
 import MyFooter from "@/app/components/MyFooter";
 import DescripcionLibro from "@/app/components/DescripcionLibro";
 import { useRouter } from "next/navigation";
+import Loader from "../../components/loader/Loader";
 
 export default function LibroPage(props){
     const params = use(props.params);
@@ -12,6 +13,7 @@ export default function LibroPage(props){
     const [libro, setLibro] = useState(null);
     const {user, modoAdmin} = useContext(AuthContext);
     const router = useRouter();
+    const [loading, setLoading] = useState(true)
 
     const fondo = modoAdmin? 
             "bg-[var(--aliceBlue)]"
@@ -27,6 +29,11 @@ export default function LibroPage(props){
             }
             const data = await res.json();
             setLibro(data);
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 700);
+
+            return () => clearTimeout(timer);
         }
         
         fetchData(); 
@@ -63,11 +70,13 @@ export default function LibroPage(props){
 
     return <div className={`${fondo} min-h-[100vh] flex flex-col`}>
         <MyHeader ubiHeader=""/>
-        {libro?<main className="flex-1 flex flex-col p-6 lg:pt-4 gap-4 lg:pl-16">
+        {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
+        libro?<main className="lg:pt-0 flex-1 flex flex-col p-6 gap-4 lg:pl-16 lg:justify-center lg:gap-[10vh]">
             <h1 className="text-2xl font-bold lg:text-3xl">{libro.titulo}</h1>
-            <div className="flex flex-col lg:flex-row pl-4 lg:pl-2 gap-8">
+            <div className="flex flex-col lg:flex-row pl-4 lg:pl-2 gap-8 justify-around">
                 <div className="flex flex-col gap-2 lg:gap-3 ">
-                    <div className="flex flex-row gap-4 lg:gap-8 items-start">
+                    <div className="flex flex-row gap-4 lg:gap-8 items-start ">
                         <img className="object-contain lg:w-34 w-[38vw]" src={libro.imagen_url}></img>
                         <div id="descripPC" 
                             className="hidden w-[37vw] pr-12 mt-4 pb-8 text-sm text-[var(--lion)] lg:block h-[28vh] overflow-y-auto elemento-con-scroll">
@@ -111,6 +120,6 @@ export default function LibroPage(props){
                 </div>
             </div>
         </main>: <main className="flex justify-center items-center"> Libro no encontrado </main>}
-        { !modoAdmin && <MyFooter/> }
+        { !loading && !modoAdmin && <MyFooter/> }
     </div>
 }
