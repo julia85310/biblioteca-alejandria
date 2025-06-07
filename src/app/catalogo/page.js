@@ -3,7 +3,9 @@ import MyFooter from "../components/MyFooter";
 import Libro from "../components/Libro"
 import MyHeader from "../components/MyHeader"
 import { useState, useEffect, useContext } from "react"
+import Loader from "../components/loader/Loader";
 import { AuthContext } from "../contexts/AuthContext";
+
 
 export default function CatalogoPage() {
     const [filtroTitulo, setFiltroTitulo] = useState("")
@@ -16,6 +18,7 @@ export default function CatalogoPage() {
     const [filtroAutor, setFiltroAutor] = useState("all");
     const [filtroDisponible, setFiltroDisponible] = useState("all");
     const { modoAdmin, user } = useContext(AuthContext);
+    const [loading, setLoading] = useState(true)
     const bgFilters = modoAdmin? 'bg-[var(--darkAliceBlue)]': 'bg-[var(--darkSeashell)]';
 
     useEffect(() => {
@@ -38,6 +41,11 @@ export default function CatalogoPage() {
             setGeneros(generosUnicos);
             setAutores(autoresUnicos);
             setDisponibilidades(disponibilidadesUnicas);
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 800);
+
+            return () => clearTimeout(timer);
         }
         fetchData();
     }, []);
@@ -67,8 +75,10 @@ export default function CatalogoPage() {
         setAllLibros(prev => prev.filter(libro => libro.id !== id));
     }
 
-    return <div className="min-h-[100vh] flex flex-col">
+    return <div className={`min-h-[100vh] flex flex-col ${modoAdmin? "bg-[var(--aliceBlue)]": "bg-[var(--seashell)]"}`}>
         <MyHeader ubiHeader="Catalogo"></MyHeader>
+        {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
         <main className={`flex flex-col flex-1 ${modoAdmin? "bg-[var(--aliceBlue)]": "bg-[var(--seashell)]"}`}>
             <div className="flex lg:flex-row flex-col justify-between">
                 <div className="flex lg:justify-center lg:items-center ">
@@ -121,7 +131,7 @@ export default function CatalogoPage() {
                     {modoAdmin && libros.length == 0 && <h1 className="pb-20 text-center px-14">Libro no encontrado</h1>}
                 </div>
                 <div className={`${libros.length == 0 && "hidden"}`}>
-                    <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-5 md:grid-cols-3 gap-3">
+                    <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-3">
                         {libros.map((libro) =>
                             <Libro
                                 user={user}
@@ -133,7 +143,7 @@ export default function CatalogoPage() {
                     </div>
                 </div>
             </div>
-        </main>
-        {!modoAdmin && <MyFooter/>}
+        </main>}
+        {!loading && !modoAdmin && <MyFooter/>}
     </div>
 }
