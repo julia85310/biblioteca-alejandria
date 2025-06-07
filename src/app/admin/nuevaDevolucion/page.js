@@ -189,7 +189,7 @@ export default function nuevaDevolucion(){
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
         <MyHeader></MyHeader>
-        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
+        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-1 justify-between">
             <div id="buscarUser" className="flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
                     <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
@@ -235,8 +235,8 @@ export default function nuevaDevolucion(){
                     />}
                 </div>
             </div>
-            <div id="noUser" className="flex flex-col gap-16">
-                <div id="posesionYSelecciones" className="flex flex-col lg:flex-row gap-10">
+            <div id="noUser" className="flex flex-col gap-16 lg:gap-4">
+                <div id="posesionYSelecciones" className="flex flex-col lg:flex-row gap-10 lg:mt-6">
                     <div id="posesion">
                         {moreUserData && <LibrosPosesionSeleccion
                             handleSeleccion={handleSelectLibro}
@@ -246,8 +246,8 @@ export default function nuevaDevolucion(){
                             moreUserData={moreUserData}
                         ></LibrosPosesionSeleccion>}
                     </div>
-                    <div id="seleccionados" className="font-admin flex flex-col gap-2 text-[var(--paynesGray)] items-end mr-4 text-end lg:text-start">
-                        <div>
+                    <div id="seleccionados" className="font-admin flex flex-col gap-2 text-[var(--paynesGray)] items-end mr-4 text-end lg:text-start whitespace-nowrap">
+                        <div className="flex flex-col lg:gap-5">
                         <div className="flex flex-col text-xl ">
                             <p>Usuario seleccionado</p>
                             <p className="ml-6 mr-6 text-[var(--cafeNoir)] text-lg ">{user? user.nombre: "Sin seleccionar"}</p>
@@ -259,7 +259,7 @@ export default function nuevaDevolucion(){
                         </div>
                     </div>
                 </div>        
-                {libro && <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)] text-lg gap-10 mx-6">
+                {libro && <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)] text-lg lg:text-base gap-10 mx-6">
                     <div id="izq" className="flex flex-col gap-4">
                         <div id="atraso" className="flex flex-col ">
                             <p className="text-xl">Días de atraso: {devolucionData.diasAtraso}</p>

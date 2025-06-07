@@ -17,8 +17,8 @@ export default function LibrosPosesionSeleccion({moreUserData, userName,handleSe
         }
     }, [idSeleccionado]);
 
-    return <div id="reservados">
-        <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between p-4 gap-8 lg:gap-3 mx-6`}>
+    return <div id="reservados" className="lg:w-full">
+        <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between p-4 gap-8 lg:gap-3 mx-6 lg:mx-0`}>
             <div className="flex flex-row justify-between">
                 <b className={`text-[var(--paynesGray)]`}>Libros en posesión de {userName}</b>
                 <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 rotate-90 lg:hidden" />
@@ -28,7 +28,7 @@ export default function LibrosPosesionSeleccion({moreUserData, userName,handleSe
                     El usuario no tiene ningún libro para ser devuelto.
                 </p>
                 :
-                <div className="flex lg:flex-row flex-col px-18 gap-4 overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
+                <div className="flex lg:flex-row flex-col px-18 lg:px-0 gap-4 overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
                     {
                         moreUserData.librosEnPosesion.map((userLibro) =>
                             <LibroSeleccion
