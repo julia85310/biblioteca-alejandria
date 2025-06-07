@@ -2,11 +2,13 @@
 import MyFooter from "./components/MyFooter"
 import MyHeader from "./components/MyHeader"
 import Evento from "./components/Evento"
+import Loader from "./components/loader/Loader"
 import { useState, useEffect } from "react"
 
 export default function Home() {
   const [eventos, setEventos] = useState([])
-  const [indexEvento, setIndexEvento] = useState(1)
+  const [indexEvento, setIndexEvento] = useState(1) 
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchData() {
@@ -18,18 +20,24 @@ export default function Home() {
       const data = await res.json();
       setEventos(data)
       console.log(data)
+      const timer = setTimeout(() => {
+        setLoading(false)
+      }, 1000);
+
+      return () => clearTimeout(timer);
     }
   
     fetchData(); 
   }, []);
 
-  return <div className="lg:h-[100vh] w-[100%] h-[100%] flex flex-col bg-[var(--seashell)] ">
+  return <div className="min-h-[100vh] w-[100%] flex flex-col bg-[var(--seashell)] ">
     <MyHeader ubiHeader="Home"></MyHeader>
-    <main className="flex-1 flex flex-col lg:flex-row justify-around px-2">
+    {loading? <Loader tailwind="w-screen h-[60vh]"></Loader>:<main className="flex-1 flex flex-col lg:flex-row justify-around px-2">
       <h2 className="lg:hidden block font-bold text-xl ml-6 mt-2">Bienvenido a nuestra <br/> querida biblioteca</h2>
       <div id="eventos">
         {!eventos? 
-          <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>:
+          <p>La sala de eventos está en pausa. ¡Vuelve pronto a hojear nuevas actividades!</p>
+          :
           <div className="flex flex-row items-center">
             <img src="/iconos/icono-flecha.png" className={`mr-2 ${indexEvento == 1 && "invisible"} w-6 h-6 rotate-180`} onClick={() => setIndexEvento(indexEvento-1)}></img>
             {eventos.map((evento) => {
@@ -49,7 +57,7 @@ export default function Home() {
           <b>¡Descubre tu próximo libro con nosotros!</b>
         </p>
       </div>
-    </main>
-    <MyFooter></MyFooter>
+    </main>}
+    {!loading && <MyFooter></MyFooter>}
   </div>
 }
