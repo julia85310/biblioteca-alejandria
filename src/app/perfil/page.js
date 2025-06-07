@@ -9,11 +9,13 @@ import DesplegableCalendarSelectEvent from "../components/DesplegableCalendarSel
 import LibrosPosesion from "../components/LibrosPosesion"
 import LibrosReservados from "../components/LibrosReservados"
 import Historial from "../components/Historial"
+import Loader from "../components/loader/Loader"
 
 export default function PerfilPage(){
     const router = useRouter();
-    const {logout, user, loading} = useContext(AuthContext)
+    const {logout, user} = useContext(AuthContext)
     const [moreUserData, setMoreUserData] = useState()
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         if (!user) return;
@@ -44,6 +46,11 @@ export default function PerfilPage(){
 
             const penalizado = hoy < fechaPenalizacion;
             setMoreUserData({...data, totalLibrosPrestados: totalLibrosPrestados, penalizado: penalizado})
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 800);
+
+            return () => clearTimeout(timer);
         }
         fetchDataUser();
          
@@ -56,17 +63,15 @@ export default function PerfilPage(){
     }
 
     useEffect(() => {
-        if (!loading && !user) {
+        if (!loading && !user && !moreUserData) {
             router.push("/");
         }
     }, [loading, user]);
 
-    if (loading) return null; //aqui va el futuro spinner
-    if (!user) return null;
-    if (!moreUserData) return null;
-
     return <div className="min-h-[100vh] flex flex-col bg-[var(--seashell)] ">
         <MyHeader ubiHeader="Perfil"></MyHeader>
+        {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
         <main className="lg:mt-0 lg:mx-4 flex-1 flex flex-col lg:flex-row mx-12 gap-8 my-8 lg:justify-between">
             <User 
                 cerrarSesion={cerrarSesion}
@@ -87,7 +92,7 @@ export default function PerfilPage(){
             <DesplegableCalendarSelectEvent 
                 moreUserData={moreUserData}
             />
-        </main>
-        <MyFooter/>
+        </main>}
+        {!loading && <MyFooter/>}
     </div>
 }
