@@ -58,8 +58,9 @@ export default function PerfilPage(){
 
 
     function cerrarSesion(){
-        logout();
+        setLoading(true)
         router.push("/")
+        logout();
     }
 
     useEffect(() => {
