@@ -2,6 +2,49 @@ import { supabase } from "@/app/libs/supabaseClient";
 import bcrypt from "bcryptjs"; // ← CAMBIADO
 import { validarDatosLogin } from "@/app/libs/user";
 
+//Coger los datos del user con el id
+export async function GET(request) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const userId = searchParams.get("id");
+
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ message: "Falta el parámetro id" }),
+        { status: 400, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    const { data: user, error } = await supabase
+      .from("usuario")
+      .select("*")
+      .eq("id", userId)
+      .single();
+
+    if (error) {
+      return new Response(
+        JSON.stringify({ message: "Usuario no encontrado" }),
+        { status: 404, headers: { "Content-Type": "application/json" } }
+      );
+    }
+
+    // Eliminar la propiedad password antes de enviar la respuesta
+    if (user.password) {
+      delete user.password;
+    }
+
+    return new Response(
+      JSON.stringify({ user }),
+      { status: 200, headers: { "Content-Type": "application/json" } }
+    );
+  } catch (error) {
+    return new Response(
+      JSON.stringify({ message: "Error interno del servidor" }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  }
+}
+
 /**
  * Inicio de sesión de un usuario.
  */

@@ -3,9 +3,11 @@ import MyHeader from "@/app/components/MyHeader"
 import { useState, useRef } from "react"
 import { validarDatosNuevoLibro } from "@/app/libs/libro"
 import { useRouter } from "next/navigation";
+import Loader from "@/app/components/loader/Loader";
 
 export default function NuevoLibroPage() {
     const router = useRouter();
+    const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         isbn: '',
         titulo: '',
@@ -34,6 +36,7 @@ export default function NuevoLibroPage() {
     }
 
     const handleSubmit = async (e) => {
+        setLoading(true)
         e.preventDefault()
 
         const validacion = validarDatosNuevoLibro(formData)
@@ -52,10 +55,13 @@ export default function NuevoLibroPage() {
             body: formDataToSend,
         });
 
+
+
         if (res.ok) {
             alert('Libro añadido con éxito.');
             router.push("/admin")
         } else {
+            setLoading(false)
             const errorData = await res.json();
             alert(errorData.error);
         }
@@ -63,7 +69,9 @@ export default function NuevoLibroPage() {
 
   return <div className="min-h-[100vh] bg-[var(--aliceBlue)]">
     <MyHeader></MyHeader>
-    <form onSubmit={handleSubmit} className="font-admin flex lg:flex-row flex-col  text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-sm lg:justify-around lg:gap-1 lg:p-0">
+    {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
+        <form onSubmit={handleSubmit} className="font-admin flex lg:flex-row flex-col  text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-sm lg:justify-around lg:gap-1 lg:p-0">
         <div className="flex flex-col gap-4 lg:w-[27vw] lg:justify-around">
             <div>
                 <label htmlFor="isbn" className="block mb-1">ISBN</label>
@@ -173,7 +181,7 @@ export default function NuevoLibroPage() {
                 </button>
             </div>
         </div>
-    </form>
+    </form>}
   </div>
 }
 

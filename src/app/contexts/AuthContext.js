@@ -39,9 +39,9 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
 
         if (response.status === 201) {
-          setUser({nombre, email, telefono, admin: false}); //Aun no se pueden crear cuentas de admin
+          setUser(data.user); //Aun no se pueden crear cuentas de admin
           if (recuerdame){
-              guardarUsuario({nombre, email, telefono, admin: false})
+            guardarUsuario(data.user)
           }
           return { success: true, message: data.message };
         } else {
@@ -52,6 +52,27 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: "Error al registrar usuario" };
     }
   };
+
+  async function refreshUserData() {
+    if (!user?.id) return;  // Si no hay usuario o id, no hace nada
+
+    try {
+      const response = await fetch(`/api/login?id=${user.id}`);
+      if (!response.ok) {
+        console.error("Error al refrescar usuario");
+        return null;
+      }
+      const data = await response.json();
+
+      setUser(data.user);                // Actualiza estado
+      localStorage.setItem('usuario', JSON.stringify(data.user));  // Actualiza localStorage
+
+      return data.user;
+    } catch (error) {
+      console.error("Error en refreshUserData:", error);
+      return null;
+    }
+  }
 
   async function login(email, password, recuerdame) {
     try {
@@ -96,7 +117,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{loading, user, signup, logout, login, modoAdmin }}>
+    <AuthContext.Provider value={{loading, user, signup, logout, login, modoAdmin, refreshUserData }}>
       {children}
     </AuthContext.Provider>
   );

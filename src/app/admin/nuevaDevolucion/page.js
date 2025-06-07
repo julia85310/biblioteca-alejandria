@@ -1,11 +1,13 @@
 'use client'
 import MyHeader from "../../components/MyHeader";
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useContext } from "react"
 import { useRouter } from "next/navigation"
+import {AuthContext} from "../../contexts/AuthContext.js"
 import User from "../../components/User"
 import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
 
 export default function nuevaDevolucion(){
+    const { refreshUserData } = useContext(AuthContext);
     const router = useRouter()
     const [user, setUser] = useState(null)
     const [libro, setLibro] = useState(null)
@@ -152,6 +154,7 @@ export default function nuevaDevolucion(){
             const data = await response.json();
     
             if (response.status === 200) {
+                refreshUserData()
                 alert("Devolución realizada con éxito.")
                 router.push("../admin")
             } else {

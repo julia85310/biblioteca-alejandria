@@ -1,14 +1,17 @@
 'use client'
 import { AuthContext } from "../contexts/AuthContext"
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/navigation";
 import MyHeader from "../components/MyHeader";
+import Loader from "../components/loader/Loader";
 
 export default function AdminPage(){
     const router = useRouter();
     const {user, modoAdmin, logout} = useContext(AuthContext)
+    const [loading, setLoading] = useState(true)
 
     function cerrarSesion(){
+        setLoading(true)
         logout();
         router.push("/")
     }
@@ -17,11 +20,14 @@ export default function AdminPage(){
         if(!user || !modoAdmin){
             router.push("/");
         }
+        setLoading(false)
     }, [])
     
 
     return <div className="h-[100vh] flex flex-col font-admin">
         <MyHeader ubiHeader="Perfil"></MyHeader>
+        {loading? 
+        <Loader tailwind="w-screen h-[60vh]"></Loader>:
         <main className="bg-[var(--aliceBlue)] flex-1 flex flex-col p-8  text-[var(--paynesGray)] ">
             <div className="flex-1 grid gap-8 lg:gap-x-12 lg:mx-24 grid-cols-4 md:grid-cols-6 m-6 py-12 lg:py-0 justify-center">
                 <div onClick={() => router.push("/admin/addLibro")} className="lg:justify-around lg:py-4 px-6 col-span-2 flex flex-col p-5 rounded-2xl lg:flex-row bg-[var(--columbiaBlue)] items-center justify-center">
@@ -48,7 +54,6 @@ export default function AdminPage(){
             <div className="flex justify-end">
                 <img src="/iconos/icono-logout-azul.png" onClick={cerrarSesion} className="w-16 object-contain"></img>
             </div>
-        </main>
-        
+        </main>}
     </div>
 }

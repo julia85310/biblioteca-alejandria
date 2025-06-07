@@ -30,6 +30,7 @@ export default function Libro({libro, admin, onDelete, user, setLoading}){
                 }else{
                     const errorData = await res.json();
                     alert(errorData.error);
+                    setLoading(false)
                 }
             }else{
                 router.push(`/auth/login`)

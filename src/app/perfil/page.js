@@ -19,6 +19,7 @@ export default function PerfilPage(){
 
     useEffect(() => {
         if (!user) return;
+        console.log('usuario:', user)
 
         async function fetchDataUser() {
             const res = await fetch("/api/userdata?u=" + user.id);

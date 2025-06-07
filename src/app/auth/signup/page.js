@@ -48,7 +48,7 @@ export default function signupPage(){
                 <form onSubmit={(e) => signupRequest(e)} className="flex flex-col lg:flex-row lg:gap-32 border rounded p-6 gap-6">
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col">
-                            <label>Nombre</label>
+                            <label>Nombre Completo</label>
                             <input 
                                 className="inputsignup"
                                 type="text"
