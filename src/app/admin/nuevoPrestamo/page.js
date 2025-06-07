@@ -160,7 +160,7 @@ export default function nuevoPrestamo(){
                 alert("Préstamo realizado con éxito.")
                 router.push("../admin")
             } else {
-                alert(data.error.message);
+                alert(typeof data.error === 'string' ? data.error : data.error.message || "Error desconocido");
             }
         } catch {
             alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
@@ -168,7 +168,7 @@ export default function nuevoPrestamo(){
     }
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
-        <MyHeader ubiHeader="Perfil"></MyHeader>
+        <MyHeader></MyHeader>
         <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
             <div id="buscarUser" className="flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
@@ -272,7 +272,7 @@ export default function nuevoPrestamo(){
                 </div>
                 <div id="botonFinal" className="font-admin flex justify-end">
                     <button onClick={realizarPrestamo} className="text-xl px-6 py-2 rounded font-bold bg-[var(--columbiaBlue)] rounded-3xl">
-                        Finalizar Préstamo
+                        Finalizar préstamo
                     </button>
                 </div>
             </div>

@@ -58,7 +58,7 @@ export async function POST(request) {
         }
 
         if (adquisiciones && adquisiciones.length > 0) {
-            throw new Error("El libro está reservado");
+            throw new Error("El libro está reservado.");
         }
 
         //realizar el prestamo
@@ -71,7 +71,8 @@ export async function POST(request) {
             .insert([{
                 fecha_devolucion: fechaDev, 
                 libro: id_libro,
-                usuario: id_user
+                usuario: id_user,
+                condicion: "no devuelto"
             }]);
 
         if (insertError) {
@@ -85,8 +86,8 @@ export async function POST(request) {
     }catch(error) {  
         console.log(error)
         return new Response(
-            JSON.stringify({ error: error.message }),
-            { status: 500, headers: { 'Content-Type': 'application/json' } }
+            JSON.stringify({ error: error?.message || "Ha ocurrido un error. Inténtelo de nuevo más tarde." }),
+                { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
     } 
 }

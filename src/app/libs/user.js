@@ -3,6 +3,7 @@ import { formatearFechaBonita } from "./libro";
 
 const MENSAJE_LIBROS_NO_DEV = "Tienes libros no devueltos. Por favor, devuélvelos lo antes posible."
 
+
 /**
  * Valida los datos del registro:
  * - que existan
@@ -197,7 +198,7 @@ export async function getMaxLibrosPrestados(idUsuario){
 }
 
 /**
- * Devuelve los libros que un usuario ha tenido en el pasado (devolucion menor que hoy)
+ * Devuelve los libros que un usuario ha tenido en el pasado (devolucion menor o igual que hoy)
  * Excepcion: los libros que aun tengan la condicion reservado (no se ha realizado el prestamo)
  * y hayan pasado mas de dos dias desde la fecha de adquisicion
  * @param {*} idUsuario 
@@ -212,7 +213,7 @@ export async function getHistorial(idUsuario){
     .select('*')
     .eq('usuario', idUsuario)
     .or(
-      `and(fecha_devolucion.lt.${today},condicion.neq.reservado),and(condicion.eq.reservado,fecha_adquisicion.lt.${haceDosDias})`
+      `and(fecha_devolucion.lte.${today},condicion.neq.reservado),and(condicion.eq.reservado,fecha_adquisicion.lt.${haceDosDias})`
     );
 
   if(error){
@@ -273,31 +274,32 @@ export async function filterUsuarioPenalizado(idUsuario){
   }
 
   if (user.fecha_penalizacion >= hoy){
-    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
+    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion) + ".");
   }
 
   return true;
 }
 
 /**
- * Funcion que devuelve el numero de libros que tiene una persona en reserva.
- * - Solo valida la condicion "reservado", para evitar libros adquiridos
+ * Devuelve libros reservados que todavía se consideran activos.
+ * Es decir, aquellos cuya fecha_adquisicion + 1 día ≥ hoy.
  * @param {} idUsuario 
- * @returns 
+ * @returns {} Libros reservados activos
  */
 export async function getLibrosReservados(idUsuario) {
   const hoy = new Date();
-  const limite = new Date(hoy);
-  limite.setDate(hoy.getDate() - 2);
+  hoy.setHours(0, 0, 0, 0);
 
-  const limiteStr = limite.toISOString().split('T')[0]; // YYYY-MM-DD
+  const ayer = new Date(hoy);
+  ayer.setDate(hoy.getDate() - 1);
+  const ayerStr = ayer.toISOString().split('T')[0]; // fecha_adquisicion >= ayer
 
   const { data: librosReservados, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
     .eq('condicion', 'reservado')
-    .gt('fecha_adquisicion', limiteStr); // fecha_adquisicion > limite
+    .gte('fecha_adquisicion', ayerStr); // aún cuentan como reservados
 
   if (error) {
     console.error(error);
@@ -308,28 +310,19 @@ export async function getLibrosReservados(idUsuario) {
 }
 
 /**
- * Devuelve los libros en posesion, que son libros con fecha_adquisicion <= hoy
- * y fecha_devolucion >= hoy. 
- * - Solo valida la condicion "no devuelto", para evitar libros no adquiridos(ya devueltos o en reserva)
+ * Devuelve los libros en posesión (condición = "no devuelto").
  * @param {} idUsuario 
+ * @returns {} Libros en posesión
  */
-export async function getLibrosPosesion(idUsuario){
-  const hoy = new Date();
-  const inicioHoy = new Date(hoy.setHours(0, 0, 0, 0)).toISOString();
-  const finHoy = new Date(hoy.setHours(23, 59, 59, 999)).toISOString();
-
-  const { data: librosEnPosesion, error} = await supabase
+export async function getLibrosPosesion(idUsuario) {
+  const { data: librosEnPosesion, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
-    .eq('condicion', 'no devuelto')
-    .lte('fecha_adquisicion', finHoy)
-    .gte('fecha_devolucion', inicioHoy);
+    .eq('condicion', 'no devuelto');
 
-  console.log('getLibrosPosesion:', librosEnPosesion)
-
-  if(error){
-    console.log(error)
+  if (error) {
+    console.error(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
@@ -337,26 +330,35 @@ export async function getLibrosPosesion(idUsuario){
 }
 
 /**
- * Devuelve los libros en posesion, que son libros con fecha_adquisicion <= hoy
- * y fecha_devolucion >= hoy. 
- * - Solo valida la condicion "no devuelto", para evitar libros no adquiridos(ya devueltos o en reserva)
+ * Devuelve los libros del historial (condición !== "no devuelto").
+ * Si son reservas, solo se consideran historial si su fecha_adquisicion + 1 día < hoy.
  * @param {} idUsuario 
+ * @returns {} Libros del historial
  */
-export async function getLibrosHistorial(idUsuario){
-  const hoy = new Date().toISOString().split('T')[0];
+export async function getLibrosHistorial(idUsuario) {
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
 
-  const { data: librosEnPosesion, error} = await supabase
+  const { data: libros, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('usuario', idUsuario)
-    .eq('condicion', 'no devuelto')
-    .lte('fecha_adquisicion', hoy)
-    .gte('fecha_devolucion', hoy);
+    .neq('condicion', 'no devuelto');
 
-  if(error){
-    console.log(error)
+  if (error) {
+    console.error(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
-  return librosEnPosesion.length;
+  const historialFiltrado = libros.filter(libro => {
+    if (libro.condicion !== 'reservado') return true;
+
+    const fechaAdq = new Date(libro.fecha_adquisicion);
+    fechaAdq.setDate(fechaAdq.getDate() + 1);
+    fechaAdq.setHours(0, 0, 0, 0);
+
+    return fechaAdq < hoy;
+  });
+
+  return historialFiltrado;
 }
