@@ -26,12 +26,13 @@ export default function LibroSeleccion({user_libro, handleSeleccion, idSeleccion
         if (!libro){
             fetchData();
         }
-
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
-        const fechaDevolucion = new Date(user_libro.fecha_devolucion);
-        fechaDevolucion.setHours(0, 0, 0, 0);
-        fechaDevCad = hoy > fechaDevolucion
+        if (user_libro){
+            const hoy = new Date();
+            hoy.setHours(0, 0, 0, 0);
+            const fechaDevolucion = new Date(user_libro.fecha_devolucion);
+            fechaDevolucion.setHours(0, 0, 0, 0);
+            fechaDevCad = hoy > fechaDevolucion
+        }
     },[])
 
 

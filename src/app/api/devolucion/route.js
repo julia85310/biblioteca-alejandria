@@ -2,92 +2,101 @@ import { supabase } from "@/app/libs/supabaseClient";
 
 /**
  * Realiza la devolucion de un libro:
- * - 
+ * - Cambia la disponibilidad del libro a Disponible
+ * - Si la fecha de devolucion no es hoy, actualizar el registro
+ * - Cambia el registro usuario-libro (actualiza la condicion y los dias de penalizacion)
+ * - Si hay dias de penalizacion, penaliza al usuario.
  * body{
-        dias_penalizacion: devolucionData.diasPenalizacionTotal,
-        condicion_nueva: nuevaCondicion,
-        libro: libro.id,
-        user_libro_id: user_libro.id
+        dias_penalizacion:
+        condicion_nueva: 
+        libro: 
+        user_libro_id: 
+        usuario: 
     }¡
  */
 export async function POST(request) {
-    try{
+    try {
         const body = await request.json();
-        const id_libro = body.libro;
-        const id_user = body.user;
-        console.log(1)
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
 
-    
-        //validacion del usuario
-        const data = await userValidoPrestamo(id_user)
+        // Penalizar al usuario si hay días de penalización
+        if (body.dias_penalizacion > 0) {
+            const fecha_penalizacion = new Date(hoy);
+            fecha_penalizacion.setDate(fecha_penalizacion.getDate() + body.dias_penalizacion);
 
-        //validacion del libro
-        //Buscar el libro
-        const { data: libro, error: errorLibro } = await supabase
+            const { error: penalizarError } = await supabase
+                .from('usuario')
+                .update({ fecha_penalizacion: fecha_penalizacion })
+                .eq('id', body.usuario);
+
+            console.log("Penalización al usuario");
+
+            if (penalizarError) {
+                console.error('Error penalizando usuario:', penalizarError);
+                return new Response(JSON.stringify({ error: "Error penalizando usuario" }), { status: 500 });
+            }
+        }
+
+        // Cambiar disponibilidad del libro a "Disponible"
+        const { error: libroError } = await supabase
             .from('libro')
-            .select('*')
-            .eq('id', id_libro)
+            .update({ disponibilidad: 'Disponible' })
+            .eq('id', body.libro);
+
+        console.log("Libro actualizado a Disponible");
+
+        if (libroError) {
+            console.error('Error actualizando libro:', libroError);
+            return new Response(JSON.stringify({ error: "Error actualizando disponibilidad del libro" }), { status: 500 });
+        }
+
+        // Obtener el registro de usuario_libro para verificar la fecha de devolución
+        const { data: registro, error: fetchError } = await supabase
+            .from('usuario_libro')
+            .select('fecha_devolucion')
+            .eq('id', body.user_libro_id)
             .single();
 
-        if (errorLibro || !libro) {
-            throw new Error("El libro no existe.");
+        if (fetchError || !registro) {
+            console.error('Error obteniendo el registro de usuario_libro:', fetchError);
+            return new Response(JSON.stringify({ error: "No se encontró el registro de préstamo" }), { status: 500 });
         }
 
-        //Verificar disponibilidad
-        if (libro.disponibilidad !== "Disponible") {
-            throw new Error("El libro no está disponible.");
+        // Si la fecha de devolución no es hoy, actualizarla
+        const fechaDev = new Date(registro.fecha_devolucion);
+        fechaDev.setHours(0, 0, 0, 0);
+
+        const updateFields = {
+            condicion: body.condicion_nueva,
+            dias_penalizacion: body.dias_penalizacion
+        };
+
+        if (fechaDev.getTime() !== hoy.getTime()) {
+            updateFields.fecha_devolucion = hoy;
+            console.log("Fecha de devolución actualizada a hoy");
         }
 
-        //Comprobar si fue adquirido hoy o ayer (esta en una reserva)
-        const today = new Date();
-        const yesterday = new Date(today);
-        yesterday.setDate(today.getDate() - 1);
-        const startOfYesterday = new Date(yesterday.setHours(0, 0, 0, 0)).toISOString();
-        const endOfToday = new Date(today.setHours(23, 59, 59, 999)).toISOString();
-
-        const { data: adquisiciones, error: errorAdq } = await supabase
+        // Actualizar el registro en usuario_libro
+        const { error: updateUsuarioLibroError } = await supabase
             .from('usuario_libro')
-            .select('*')
-            .eq('libro', id_libro)
-            .gte('fecha_adquisicion', startOfYesterday)
-            .lte('fecha_adquisicion', endOfToday);
+            .update(updateFields)
+            .eq('id', body.user_libro_id);
 
-        if (errorAdq) {
-            console.log(errorAdq)
-            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
+        console.log("Registro usuario_libro actualizado");
+
+        if (updateUsuarioLibroError) {
+            console.error('Error actualizando usuario_libro:', updateUsuarioLibroError);
+            return new Response(JSON.stringify({ error: "Error actualizando el registro de usuario_libro" }), { status: 500 });
         }
 
-        if (adquisiciones && adquisiciones.length > 0) {
-            throw new Error("El libro está reservado");
-        }
+        return new Response(JSON.stringify({ success: true }), { status: 200 });
 
-        //realizar el prestamo
-        const hoy = new Date();
-        const fechaDev = new Date(hoy); 
-        fechaDev.setDate(fechaDev.getDate() + body.dias_prestamo - 1);
-
-        const { data: insert, error: insertError } = await supabase
-            .from('usuario_libro')
-            .insert([{
-                fecha_devolucion: fechaDev, 
-                libro: id_libro,
-                usuario: id_user,
-                condicion: "no devuelto"
-            }]);
-
-        if (insertError) {
-            console.log(insertError)
-            throw new Error("Ha ocurrido un error. Inténtelo de nuevo más tarde.");
-        }
-
-        return new Response(JSON.stringify(insert), {
-            headers: { 'Content-Type': 'application/json' },
-        });
-    }catch(error) {  
-        console.log(error)
+    } catch (error) {
+        console.log(error);
         return new Response(
             JSON.stringify({ error: error.message }),
             { status: 500, headers: { 'Content-Type': 'application/json' } }
         );
-    } 
+    }
 }

@@ -3,6 +3,7 @@ import { formatearFechaBonita } from "./libro";
 
 const MENSAJE_LIBROS_NO_DEV = "Tienes libros no devueltos. Por favor, devuélvelos lo antes posible."
 
+
 /**
  * Valida los datos del registro:
  * - que existan
@@ -197,7 +198,7 @@ export async function getMaxLibrosPrestados(idUsuario){
 }
 
 /**
- * Devuelve los libros que un usuario ha tenido en el pasado (devolucion menor que hoy)
+ * Devuelve los libros que un usuario ha tenido en el pasado (devolucion menor o igual que hoy)
  * Excepcion: los libros que aun tengan la condicion reservado (no se ha realizado el prestamo)
  * y hayan pasado mas de dos dias desde la fecha de adquisicion
  * @param {*} idUsuario 
@@ -212,7 +213,7 @@ export async function getHistorial(idUsuario){
     .select('*')
     .eq('usuario', idUsuario)
     .or(
-      `and(fecha_devolucion.lt.${today},condicion.neq.reservado),and(condicion.eq.reservado,fecha_adquisicion.lt.${haceDosDias})`
+      `and(fecha_devolucion.lte.${today},condicion.neq.reservado),and(condicion.eq.reservado,fecha_adquisicion.lt.${haceDosDias})`
     );
 
   if(error){
@@ -273,7 +274,7 @@ export async function filterUsuarioPenalizado(idUsuario){
   }
 
   if (user.fecha_penalizacion >= hoy){
-    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion));
+    throw new Error("Su penalización finaliza el " + formatearFechaBonita(user.fecha_penalizacion) + ".");
   }
 
   return true;

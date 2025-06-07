@@ -57,6 +57,7 @@ export default function VerUsuariosPage() {
         const penalizado = hoy < fechaPenalizacion
 
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
+        console.log('moreUserData:', { ...data, totalLibrosPrestados, penalizado })
     }
 
     function handleUserSelect(user) {
@@ -85,7 +86,7 @@ export default function VerUsuariosPage() {
                             value={filtroNombre}
                             className="flex-1 placeholder-[var(--lion)] md:text-base text-sm "
                             placeholder="Buscar por nombre"
-                            onChange={() => setFiltroNombre(e.target.value)}
+                            onChange={(e) => setFiltroNombre(e.target.value)}
                             onFocus={() => setMostrarLista(true)}
                             onBlur={() => setTimeout(() => setMostrarLista(false), 100)}
                         />

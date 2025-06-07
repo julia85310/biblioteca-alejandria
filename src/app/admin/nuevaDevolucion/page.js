@@ -123,20 +123,26 @@ export default function nuevaDevolucion(){
             alert("Selecciona el libro pulsando \"Seleccionar\".")
             return
         }
+        if(!user_libro){
+            alert("Ha ocurrido un error. Inténtalo más tarde.")
+            return
+        }
         try {
-            const nuevaCondicion = () => {
-                if (devolucionData.condicionActual != libro.condicion){
-                    return devolucionData.condicionActual
-                }else{
-                    return ''
-                }
-            } 
+            let nuevaCondicion;
+            if (devolucionData.condicionActual != libro.condicion){
+                nuevaCondicion = devolucionData.condicionActual
+            }else{
+                nuevaCondicion = libro.condicion
+            }
+            
             const body = {
                 dias_penalizacion: devolucionData.diasPenalizacionTotal,
                 condicion_nueva: nuevaCondicion,
                 libro: libro.id,
-                user_libro_id: user_libro.id
+                user_libro_id: user_libro.id,
+                usuario: user_libro.usuario
             }
+            console.log('body: ', body)
             const response = await fetch("/api/devolucion", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -146,10 +152,10 @@ export default function nuevaDevolucion(){
             const data = await response.json();
     
             if (response.status === 200) {
-                alert("Préstamo realizado con éxito.")
+                alert("Devolución realizada con éxito.")
                 router.push("../admin")
             } else {
-                alert(data.error.message);
+                alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
             }
         } catch {
             alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
@@ -253,7 +259,7 @@ export default function nuevaDevolucion(){
                         </div>
                     </div>
                 </div>        
-                {libro && <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)] text-lg gap-10">
+                {libro && <div id="forms" className="flex flex-col lg:flex-row font-admin text-[var(--paynesGray)] text-lg gap-10 mx-6">
                     <div id="izq" className="flex flex-col gap-4">
                         <div id="atraso" className="flex flex-col ">
                             <p className="text-xl">Días de atraso: {devolucionData.diasAtraso}</p>

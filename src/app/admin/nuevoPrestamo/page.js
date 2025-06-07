@@ -142,7 +142,7 @@ export default function nuevoPrestamo(){
                 alert("Préstamo realizado con éxito.")
                 router.push("../admin")
             } else {
-                alert(data.error.message);
+                alert(typeof data.error === 'string' ? data.error : data.error.message || "Error desconocido");
             }
         } catch {
             alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
