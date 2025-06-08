@@ -1,7 +1,7 @@
 
 export default function DescripcionLibro({libro}){
 
-    return <div className="lg:-mt-4 flex flex-col justify-between text-[2.3vw] lg:text-sm lg:gap-4 gap-6 py-4">
+    return <div className="lg:-mt-4 flex flex-col justify-between text-[2.3vw] lg:text-[2vh] lg:gap-4 gap-6 py-4">
         <div className="flex flex-col gap-3 lg:gap-1">
             <div id="editorial" className="flex gap-1">
                 <p className="text-[var(--lion)]">Editorial: </p>
