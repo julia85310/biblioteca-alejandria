@@ -1,6 +1,7 @@
 'use client'
 import {useState, useEffect } from "react"
 import { useRouter } from "next/navigation";
+import { parseDateWithoutTimezone } from "../libs/libro";
 
 export default function LibroUser({texto1, texto2, user_libro, esHistorial}){
     
@@ -36,14 +37,14 @@ export default function LibroUser({texto1, texto2, user_libro, esHistorial}){
             <div className="flex flex-col gap-4 lg:gap-1 ml-4 lg:ml-2">
                 <div>
                     <p className="text-[var(--lion)] text-xs">{reservaNoRealizada? "Reservado para": texto1}</p>
-                    <p className="text-sm text-right">{new Date(user_libro.fecha_adquisicion).toLocaleDateString('es-ES')}</p>
+                    <p className="text-sm text-right">{parseDateWithoutTimezone(user_libro.fecha_adquisicion).toLocaleDateString('es-ES')}</p>
                 </div>
                 {reservaNoRealizada?
                     <p className="text-sm">No adquirido</p>
                     :
                     <div>
                         <p className="text-[var(--lion)] text-xs">{texto2}</p>
-                        <p className="text-right min-w-30 mr-1">{new Date(user_libro.fecha_devolucion).toLocaleDateString('es-ES')}</p>
+                        <p className="text-right min-w-30 mr-1">{parseDateWithoutTimezone(user_libro.fecha_devolucion).toLocaleDateString('es-ES')}</p>
                     </div>}  
             </div>  
         </div>

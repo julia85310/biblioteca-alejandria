@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from "react"
 import LibroSeleccion from "./LibroSeleccion";
+import { parseDateWithoutTimezone } from "../libs/libro";
 
 export default function LibrosReservadosSeleccion({ moreUserData, userName,handleSeleccion, idSeleccionado }) {
     const [hidden, setHidden] = useState(true)
@@ -18,7 +19,7 @@ export default function LibrosReservadosSeleccion({ moreUserData, userName,handl
         ayer.setHours(0, 0, 0, 0);
 
         librosReservados = moreUserData.librosReservados.filter(libro => {
-            const fecha = new Date(libro.fecha_adquisicion);
+            const fecha = parseDateWithoutTimezone(libro.fecha_adquisicion);
             fecha.setHours(0, 0, 0, 0);
             return fecha.getTime() === hoy.getTime() || fecha.getTime() === ayer.getTime();
         });

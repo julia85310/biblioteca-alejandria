@@ -35,6 +35,16 @@ export function formatearFechaBonita(fecha) {
   return `${dia} de ${mes} de ${anio}`;
 }
 
+//Parsea la fecha quedandose como la fecha sin la hora
+export function parseDateWithoutTimezone(dateStr) {
+  if (!dateStr) return null;
+  const parts = dateStr.split('T')[0].split('-'); // solo parte fecha
+  const year = parseInt(parts[0], 10);
+  const month = parseInt(parts[1], 10) - 1; // mes base 0
+  const day = parseInt(parts[2], 10);
+  return new Date(year, month, day);
+}
+
 /**
  * Devuelve las fechas en las que un libro no puede ser reservado. 
  * Estas fechas son las fechas adquisicion - fecha devolucion de los libros cuya
@@ -63,19 +73,19 @@ export async function getFechasInvalidas(idLibro) {
 
   const registrosFiltrados = registrosLibro
     .filter((registro) => {
-      const fechaAdq = new Date(registro.fecha_adquisicion);
+      const fechaAdq = parseDateWithoutTimezone(registro.fecha_adquisicion);
       fechaAdq.setHours(0, 0, 0, 0);
       const diferenciaDias = (hoy - fechaAdq) / (1000 * 60 * 60 * 24);
       const excluir = diferenciaDias >= 2 && registro.condicion !== "reservado";
       return !excluir;
     })
     .map((registro) => {
-      const fechaAdq = new Date(registro.fecha_adquisicion);
+      const fechaAdq = parseDateWithoutTimezone(registro.fecha_adquisicion);
       fechaAdq.setHours(0, 0, 0, 0);
 
       // Parsear fecha_devolucion manualmente (evitar interpretación como UTC)
       const [year, month, day] = registro.fecha_devolucion.split('-').map(Number);
-      const fechaDev = new Date(year, month - 1, day, 12); 
+      const fechaDev = parseDateWithoutTimezone(year, month - 1, day, 12); 
 
       return [fechaAdq, fechaDev];
     });

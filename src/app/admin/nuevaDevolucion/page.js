@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import User from "../../components/User"
 import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
 import Loader from "@/app/components/loader/Loader";
+import { parseDateWithoutTimezone } from "@/app/libs/libro";
 
 export default function nuevaDevolucion(){
     const router = useRouter()
@@ -102,7 +103,7 @@ export default function nuevaDevolucion(){
         totalLibrosPrestados += data.librosEnPosesion.length
 
         
-        const fechaPenalizacion = new Date(userSeleccionado.fecha_penalizacion)
+        const fechaPenalizacion = parseDateWithoutTimezone(userSeleccionado.fecha_penalizacion)
         const penalizado = hoy < fechaPenalizacion
 
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
@@ -183,7 +184,7 @@ export default function nuevaDevolucion(){
 
 
         //Calculo de los dias de atraso
-        const fechaDevolucion = new Date(user_libro.fecha_devolucion);
+        const fechaDevolucion = parseDateWithoutTimezone(user_libro.fecha_devolucion);
         let diferenciaMs = hoy - fechaDevolucion;
         if (diferenciaMs < 0){
             diferenciaMs = 0

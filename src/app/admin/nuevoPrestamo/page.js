@@ -6,6 +6,7 @@ import User from "../../components/User"
 import LibrosReservadosSeleccion from "../../components/LibrosReservadosSeleccion"
 import LibroSeleccion from "@/app/components/LibroSeleccion";
 import Loader from "@/app/components/loader/Loader";
+import { parseDateWithoutTimezone } from "@/app/libs/libro";
 
 export default function nuevoPrestamo(){
     const router = useRouter()
@@ -86,7 +87,7 @@ export default function nuevoPrestamo(){
         totalLibrosPrestados += data.librosEnPosesion.length
 
         const hoy = new Date()
-        const fechaPenalizacion = new Date(userSeleccionado.fecha_penalizacion)
+        const fechaPenalizacion = parseDateWithoutTimezone(userSeleccionado.fecha_penalizacion)
         hoy.setHours(0, 0, 0, 0)
         const penalizado = hoy < fechaPenalizacion
 

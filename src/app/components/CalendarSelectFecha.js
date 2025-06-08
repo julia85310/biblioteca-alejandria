@@ -65,9 +65,14 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
         return rango;
     };
 
-    function handleClick (date){
-        if (isInDisabledRange(date)) return;
+    function handleClick (timezone){
+        const year = timezone.getFullYear();
+        const month = (timezone.getMonth() + 1).toString().padStart(2, '0'); 
+        const day = timezone.getDate().toString().padStart(2, '0');
+        const date = `${year}-${month}-${day}`;
 
+        if (isInDisabledRange(date)) return;
+        console.log(date)
         const rango = calcularRango(date);
         if (!rango) return;
 
