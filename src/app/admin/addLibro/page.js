@@ -41,6 +41,7 @@ export default function NuevoLibroPage() {
 
         const validacion = validarDatosNuevoLibro(formData)
         if (!validacion.valid){
+            setLoading(false)
             alert(validacion.message)
             return
         } 
@@ -54,8 +55,6 @@ export default function NuevoLibroPage() {
             method: "POST",
             body: formDataToSend,
         });
-
-
 
         if (res.ok) {
             alert('Libro añadido con éxito.');
