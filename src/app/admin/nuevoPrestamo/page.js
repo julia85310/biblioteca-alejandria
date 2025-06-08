@@ -90,6 +90,7 @@ export default function nuevoPrestamo(){
         hoy.setHours(0, 0, 0, 0)
         const penalizado = hoy < fechaPenalizacion
 
+        console.log('moreuserdata:', { ...data, totalLibrosPrestados, penalizado })
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
     }
 

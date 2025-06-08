@@ -4,9 +4,11 @@ import LibroSeleccion from "./LibroSeleccion";
 
 export default function LibrosReservadosSeleccion({ moreUserData, userName,handleSeleccion, idSeleccionado }) {
     const [hidden, setHidden] = useState(true)
+    const [librosReservadosHoy, setLibrosReservadosHoy] = useState([])
 
     //libros cuya fecha de adquisicion fue hoy o ayer
-    const librosReservadosHoy = () => {
+    useEffect(() => {
+        let librosReservados;
         if (!moreUserData?.librosReservados) return [];
 
         const hoy = new Date();
@@ -15,12 +17,16 @@ export default function LibrosReservadosSeleccion({ moreUserData, userName,handl
         ayer.setDate(hoy.getDate() - 1);
         ayer.setHours(0, 0, 0, 0);
 
-        return moreUserData.librosReservados.filter(libro => {
+        librosReservados = moreUserData.librosReservados.filter(libro => {
             const fecha = new Date(libro.fecha_adquisicion);
             fecha.setHours(0, 0, 0, 0);
             return fecha.getTime() === hoy.getTime() || fecha.getTime() === ayer.getTime();
         });
-    }
+
+        setLibrosReservadosHoy(librosReservados)
+
+        console.log('librosReservadosHoy:', librosReservadosHoy)
+    }, [moreUserData?.librosReservados])
     
     useEffect(() => {
         if (window.innerWidth >= 1024) { 
@@ -34,7 +40,7 @@ export default function LibrosReservadosSeleccion({ moreUserData, userName,handl
                 <b className={`text-[var(--paynesGray)]`}>Libros reservados de {userName}</b>
                 <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 rotate-90 lg:hidden" />
             </div>
-            {librosReservadosHoy.length === 0 ?
+            {librosReservadosHoy && librosReservadosHoy?.length === 0 ?
                 <p className="text-center text-lg lg:text-base text-[var(--chamoise)] lg:h-full">
                     El usuario no tiene ningún libro reservado para ayer u hoy.
                 </p>
