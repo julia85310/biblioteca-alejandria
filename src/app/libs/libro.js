@@ -58,11 +58,13 @@ export async function getFechasInvalidas(idLibro) {
   const hoy = new Date();
   hoy.setHours(0, 0, 0, 0);
 
+  const hoyStr = hoy.toISOString().split('T')[0];
+
   const { data: registrosLibro, error } = await supabase
     .from('usuario_libro')
     .select('*')
     .eq('libro', idLibro)
-    .gt('fecha_devolucion', hoy.toISOString().split('T')[0]);
+    .gt('fecha_devolucion', hoyStr);
 
   if (error) {
     console.log(error);
@@ -73,21 +75,18 @@ export async function getFechasInvalidas(idLibro) {
 
   const registrosFiltrados = registrosLibro
     .filter((registro) => {
-      const fechaAdq = parseDateWithoutTimezone(registro.fecha_adquisicion);
+      const fechaAdqStr = registro.fecha_adquisicion.split('T')[0];
+      const fechaAdq = new Date(fechaAdqStr);
       fechaAdq.setHours(0, 0, 0, 0);
       const diferenciaDias = (hoy - fechaAdq) / (1000 * 60 * 60 * 24);
+
       const excluir = diferenciaDias >= 2 && registro.condicion !== "reservado";
       return !excluir;
     })
     .map((registro) => {
-      const fechaAdq = parseDateWithoutTimezone(registro.fecha_adquisicion);
-      fechaAdq.setHours(0, 0, 0, 0);
-
-      // Parsear fecha_devolucion manualmente (evitar interpretación como UTC)
-      const [year, month, day] = registro.fecha_devolucion.split('-').map(Number);
-      const fechaDev = parseDateWithoutTimezone(year, month - 1, day, 12); 
-
-      return [fechaAdq, fechaDev];
+      const fechaAdqStr = registro.fecha_adquisicion.split('T')[0];
+      const fechaDevStr = registro.fecha_devolucion;
+      return [fechaAdqStr, fechaDevStr]; // Devolver solo strings limpias
     });
 
   console.log("Registros filtrados:", registrosFiltrados);

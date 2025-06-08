@@ -34,8 +34,10 @@ export default function Libro({libro, admin, onDelete, user, setLoading, onChang
             setLoading(true)
             if(user){
                 const res = await fetch("/api/reserva?u=" + user.id);
+                console.log(res)
                 if(res.ok){
                     router.push(`/catalogo/${libro.id}/reserva`);
+                    console.log('a reservar')
                 }else{
                     const errorData = await res.json();
                     alert(errorData.error);

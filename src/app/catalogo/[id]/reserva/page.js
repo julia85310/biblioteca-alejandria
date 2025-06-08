@@ -26,11 +26,13 @@ export default function ReservaPage(props){
     useEffect(() => {
         async function fetchDataLibro() {
             const res = await fetch("/api/libro?id=" + id);
+            console.log('res', res)
             if(!res.ok){
                 alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
                 router.push("/catalogo")
                 return
             }
+            console.log('Todo bien')
             const data = await res.json();
             setLibro(data)
             const timer = setTimeout(() => {
@@ -49,7 +51,7 @@ export default function ReservaPage(props){
             const res = await fetch("/api/reserva?l=" + libro.id);
             if(!res.ok){
                 alert("Ha ocurrido un error. Intentelo de nuevo mas tarde")
-                router.push("/catalogo")
+                router.push("../../catalogo")
                 return
             }
             const data = await res.json();
@@ -113,6 +115,7 @@ export default function ReservaPage(props){
     }
 
     function handleClickCalendarDay(fechaInicio, fechaFin) {
+        console.log(fechaInicio, fechaFin)
         setFechaAdquisicion(fechaInicio);
         setFechaDevolucion(fechaFin);
     }

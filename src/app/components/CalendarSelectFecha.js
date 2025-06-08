@@ -20,13 +20,13 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
 
     const intervalosDate = useMemo(() =>
         intervalosRestringidos.map(([start, end]) => {
-            const fechaStart = new Date(start.slice(0, 10)); // solo 'YYYY-MM-DD'
-            const fechaEnd = new Date(end.slice(0, 10));
+            const startNoTZ = new Date(start);
+            startNoTZ.setHours(0, 0, 0, 0);
 
-            return {
-                start: new Date(fechaStart.setHours(0, 0, 0, 0)),
-                end: new Date(fechaEnd.setHours(0, 0, 0, 0)),
-            };
+            const endNoTZ = new Date(end);
+            endNoTZ.setHours(0, 0, 0, 0);
+
+            return { start: startNoTZ, end: endNoTZ };
         }),
         [intervalosRestringidos]
     );
