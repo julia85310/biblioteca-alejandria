@@ -35,7 +35,7 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                             <LibroUser
                                 key={userLibro.id}
                                 esHistorial={false}
-                                texto1="Reservado para"
+                                texto1="Reservado para el"
                                 user_libro={userLibro}
                                 texto2="Devolución hasta"
                             />
