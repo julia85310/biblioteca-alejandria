@@ -151,8 +151,8 @@ export default function CatalogoPage() {
                     {!modoAdmin && libros.length == 0 && <h1 className="pb-20 text-center px-14">Lamentablemente, <b>no tenemos este libro</b>, pero nuestras páginas están llenas de otros títulos. ¡Echa un vistazo!</h1>}
                     {modoAdmin && libros.length == 0 && <h1 className="pb-20 text-center px-14">Libro no encontrado</h1>}
                 </div>
-                <div className={`${libros.length == 0 && "hidden"}`}>
-                    <div className="m-4 overflow-y-auto grid grid-cols-2 lg:grid-cols-4 md:grid-cols-3 gap-3">
+                <div className={`${libros.length == 0 && "hidden"} flex flex-1`}>
+                    <div className="lg:m-4 flex-1 w-full overflow-y-auto grid grid-cols-2 mx-2 lg:grid-cols-[repeat(auto-fit,_minmax(250px,_1fr))] gap-3">
                         {libros.map((libro) =>
                             <Libro
                                 user={user}

@@ -50,7 +50,7 @@ export default function Libro({libro, admin, onDelete, user, setLoading, onChang
         }
     }
 
-    return <div className=" flex flex border border-[var(--lion)] border-2 rounded-xl" onClick={() => router.push(`/catalogo/${libro.id}`)}>
+    return <div className=" flex flex border border-[var(--lion)] border-2 rounded-xl lg:max-h-[20vh]" onClick={() => router.push(`/catalogo/${libro.id}`)}>
         <img className=" w-18 m-2 rounded object-contain" src={libro.imagen_url} alt={"Portada de " + libro.titulo}></img>
         <div className="m-2 flex flex-col justify-between flex-1">
             <div>
