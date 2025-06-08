@@ -69,6 +69,7 @@ export default function nuevoPrestamo(){
     }, [filtroLibro, allLibros]);
 
     async function handleSelectUser(userSeleccionado) {
+        console.log('usuario:', userSeleccionado)
         setUser(userSeleccionado)
         const res = await fetch("/api/userdata?u=" + userSeleccionado.id)
         if (!res.ok) {
@@ -134,7 +135,7 @@ export default function nuevoPrestamo(){
     )
 
     async function realizarPrestamo(){
-        if(!user){
+        if(!user || user == undefined){
             alert("Selecciona el usuario desde el buscador de nombres.")
             return
         }

@@ -266,3 +266,4 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
         </div>
     );
 }
+ 

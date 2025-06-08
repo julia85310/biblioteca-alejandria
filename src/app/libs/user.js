@@ -262,14 +262,14 @@ export async function filterUsuarioLibrosNoDevueltos(idUsuario){
 export async function filterUsuarioPenalizado(idUsuario){
   const hoy = new Date().toISOString().split('T')[0];
   const { data: user, error } = await supabase.from('usuario').select('*').eq('id', idUsuario).single();
-
-  if(error){
-    console.log(error)
-    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
-  }
   
   if (!user){
     console.log("Usuario no encontrado")
+    throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
+  }
+
+  if(error){
+    console.log(error)
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 

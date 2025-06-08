@@ -106,16 +106,16 @@ export async function POST(request) {
 export async function PUT(request) {
     try{
         const body = await request.json();
-        const { id, libro } = body;
-
+        const reservadoSeleccionado = body.reservadoSeleccionado;
+        console.log(body)
         //validacion del usuario
-        const data = await userValidoPrestamo(id_user)
+        const data = await userValidoPrestamo(reservadoSeleccionado.usuario)
 
         //mirar si el libro esta disponible
         const { data: libroDisponible, error: libroError } = await supabase
             .from('libro')
             .select('*')
-            .eq('id', libro)
+            .eq('id', reservadoSeleccionado.libro)
             .eq('disponibilidad', 'Disponible')
             .single();
 
@@ -127,7 +127,7 @@ export async function PUT(request) {
         const { data: userLibro, error: userLibroError } = await supabase
             .from('usuario_libro')
             .select('*')
-            .eq('id', id)
+            .eq('id', reservadoSeleccionado.id)
             .single();
 
         if (userLibroError || !userLibro) {
@@ -138,7 +138,7 @@ export async function PUT(request) {
         const { error: updateUserLibroError } = await supabase
             .from('usuario_libro')
             .update({ condicion: 'no devuelto' })
-            .eq('id', id);
+            .eq('id', reservadoSeleccionado.id);
 
         if (updateUserLibroError) {
             throw new Error("Ha ocurrido un error. Vuelve a intentarlo más tarde.");
@@ -148,14 +148,14 @@ export async function PUT(request) {
         const { error: updateLibroError } = await supabase
             .from('libro')
             .update({ disponibilidad: 'No Disponible' })
-            .eq('id', libro);
+            .eq('id', reservadoSeleccionado.libro);
 
         if (updateLibroError) {
             //si hay un error intentamos revertir lo anterior
             const { error: updateUserLibroError } = await supabase
                 .from('usuario_libro')
                 .update({ condicion: 'reservado' })
-                .eq('id', id);
+                .eq('id', reservadoSeleccionado.id);
             throw new Error("Ha ocurrido un error. Vuelve a intentarlo más tarde.");
         }
 
