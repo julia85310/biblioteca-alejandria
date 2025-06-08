@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
 
         if (response.status === 201) {
-          setUser(data.user); //Aun no se pueden crear cuentas de admin
+            setUser(data.user); //Aun no se pueden crear cuentas de admin
           if (recuerdame){
             guardarUsuario(data.user)
           }
@@ -58,9 +58,9 @@ export const AuthProvider = ({ children }) => {
     if (!user?.id) return;  // Si no hay usuario o id, no hace nada
 
     try {
-      const response = await fetch(`/api/login?id=${user.id}`);
+      const response = await fetch(`/api/auth/login?id=${user.id}`);
       if (!response.ok) {
-        console.error("Error al refrescar usuario");
+        console.log("Error al refrescar usuario");
         return null;
       }
       const data = await response.json();
@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
 
       return data.user;
     } catch (error) {
-      console.error("Error en refreshUserData:", error);
+      console.log("Error en refreshUserData:", error);
       return null;
     }
   }

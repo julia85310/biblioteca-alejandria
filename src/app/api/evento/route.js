@@ -51,7 +51,7 @@ export async function POST(request) {
       });
 
     if (error) {
-      console.error("Error subiendo imagen:", error);
+      console.log("Error subiendo imagen:", error);
       return Response.json(
         { error: "Error subiendo la imagen. Inténtelo de nuevo más tarde." },
         { status: 500 }
@@ -77,7 +77,7 @@ export async function POST(request) {
     const { data, error } = await supabase.from("evento").insert(insert);
 
     if (error) {
-      console.error("Error insertando evento:", error);
+      console.log("Error insertando evento:", error);
       return Response.json(
         {
           error: "Error al añadir el evento. Inténtelo de nuevo más tarde.",
@@ -91,7 +91,7 @@ export async function POST(request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Excepción insertando evento:", error);
+    console.log("Excepción insertando evento:", error);
     return Response.json(
       {
         error: "Error inesperado al añadir el evento.",

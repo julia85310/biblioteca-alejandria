@@ -302,7 +302,7 @@ export async function getLibrosReservados(idUsuario) {
     .gte('fecha_adquisicion', ayerStr); // aún cuentan como reservados
 
   if (error) {
-    console.error(error);
+    console.log(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
@@ -322,7 +322,7 @@ export async function getLibrosPosesion(idUsuario) {
     .eq('condicion', 'no devuelto');
 
   if (error) {
-    console.error(error);
+    console.log(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 
@@ -346,7 +346,7 @@ export async function getLibrosHistorial(idUsuario) {
     .neq('condicion', 'no devuelto');
 
   if (error) {
-    console.error(error);
+    console.log(error);
     throw new Error("Hubo un error. Inténtelo de nuevo más tarde.");
   }
 

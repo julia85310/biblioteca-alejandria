@@ -7,8 +7,10 @@ export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("id");
+    console.log("ID recibido:", userId);
 
     if (!userId) {
+      console.log('Falta el parámetro id')
       return new Response(
         JSON.stringify({ message: "Falta el parámetro id" }),
         { status: 400, headers: { "Content-Type": "application/json" } }
@@ -18,10 +20,11 @@ export async function GET(request) {
     const { data: user, error } = await supabase
       .from("usuario")
       .select("*")
-      .eq("id", userId)
+      .eq("id", Number(userId))
       .single();
 
     if (error) {
+      console.log(error)
       return new Response(
         JSON.stringify({ message: "Usuario no encontrado" }),
         { status: 404, headers: { "Content-Type": "application/json" } }
@@ -38,6 +41,7 @@ export async function GET(request) {
       { status: 200, headers: { "Content-Type": "application/json" } }
     );
   } catch (error) {
+    console.log(error)
     return new Response(
       JSON.stringify({ message: "Error interno del servidor" }),
       { status: 500, headers: { "Content-Type": "application/json" } }
@@ -102,7 +106,7 @@ export async function POST(req) {
     });
 
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+    console.log("Error al iniciar sesión:", error);
     return new Response(JSON.stringify({ message: "Error interno del servidor" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

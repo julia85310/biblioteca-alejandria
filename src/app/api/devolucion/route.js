@@ -33,7 +33,7 @@ export async function POST(request) {
             console.log("Penalización al usuario");
 
             if (penalizarError) {
-                console.error('Error penalizando usuario:', penalizarError);
+                console.log('Error penalizando usuario:', penalizarError);
                 return new Response(JSON.stringify({ error: "Error penalizando usuario" }), { status: 500 });
             }
         }
@@ -47,7 +47,7 @@ export async function POST(request) {
         console.log("Libro actualizado a Disponible");
 
         if (libroError) {
-            console.error('Error actualizando libro:', libroError);
+            console.log('Error actualizando libro:', libroError);
             return new Response(JSON.stringify({ error: "Error actualizando disponibilidad del libro" }), { status: 500 });
         }
 
@@ -59,7 +59,7 @@ export async function POST(request) {
             .single();
 
         if (fetchError || !registro) {
-            console.error('Error obteniendo el registro de usuario_libro:', fetchError);
+            console.log('Error obteniendo el registro de usuario_libro:', fetchError);
             return new Response(JSON.stringify({ error: "No se encontró el registro de préstamo" }), { status: 500 });
         }
 
@@ -86,7 +86,7 @@ export async function POST(request) {
         console.log("Registro usuario_libro actualizado");
 
         if (updateUsuarioLibroError) {
-            console.error('Error actualizando usuario_libro:', updateUsuarioLibroError);
+            console.log('Error actualizando usuario_libro:', updateUsuarioLibroError);
             return new Response(JSON.stringify({ error: "Error actualizando el registro de usuario_libro" }), { status: 500 });
         }
 

@@ -51,7 +51,7 @@ export async function POST(request) {
         .single();
 
     if (insertError) {
-        console.error(insertError);
+        console.log(insertError);
         return new Response(JSON.stringify({ message: "Error al crear usuario" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },

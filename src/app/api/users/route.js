@@ -11,7 +11,7 @@ export async function GET() {
       .eq('admin', false);
 
     if (error) {
-      console.error("Error consultando usuarios:", error);
+      console.log("Error consultando usuarios:", error);
       return new Response(
         JSON.stringify({ error: "Error al obtener usuarios", details: error.message }),
         { status: 500, headers: { 'Content-Type': 'application/json' } }
@@ -23,7 +23,7 @@ export async function GET() {
     });
 
   } catch (error) {
-    console.error("Excepción al obtener usuarios:", error);
+    console.log("Excepción al obtener usuarios:", error);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
