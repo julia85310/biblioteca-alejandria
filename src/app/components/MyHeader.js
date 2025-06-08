@@ -51,7 +51,7 @@ export default function MyHeader({ubiHeader}){
             <img className={`${menuHidden && 'hidden'} w-4 absolute top-3 right-3`} onClick={() => setMenuHidden(!menuHidden)} src="/iconos/icono-close.png"></img>
             <p className={` w-full underline-animate ${ubiHeader === "Home" ? "active" : ""} ${animating === "Home" ? "animate" : ""}`} onClick={()=>handleClickNav("Home", ubiHeader)}>Conócenos</p>
             <p className={` w-full underline-animate ${ubiHeader === "Catalogo" ? "active" : ""} ${animating === "Catalogo" ? "animate" : ""}`} onClick={()=>handleClickNav("Catalogo", ubiHeader)}>Catálogo</p>
-            <p className={` w-full underline-animate ${ubiHeader === "Perfil" ? "active" : ""} ${animating === "Perfil" ? "animate" : ""}`} onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?.admin ? "Panel de Administración" : "Mi perfil"}</p>
+            <p className={` w-full whitespace-nowrap underline-animate ${ubiHeader === "Perfil" ? "active" : ""} ${animating === "Perfil" ? "animate" : ""}`} onClick={()=>handleClickNav("Perfil", ubiHeader)}>{user?.admin ? "Panel de Administración" : "Mi perfil"}</p>
         </nav>
     </header>
 }

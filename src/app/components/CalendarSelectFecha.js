@@ -20,13 +20,13 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
 
     const intervalosDate = useMemo(() =>
         intervalosRestringidos.map(([start, end]) => {
-            const fechaStart = new Date(start.slice(0, 10)); // solo 'YYYY-MM-DD'
-            const fechaEnd = new Date(end.slice(0, 10));
+            const startNoTZ = new Date(start);
+            startNoTZ.setHours(0, 0, 0, 0);
 
-            return {
-                start: new Date(fechaStart.setHours(0, 0, 0, 0)),
-                end: new Date(fechaEnd.setHours(0, 0, 0, 0)),
-            };
+            const endNoTZ = new Date(end);
+            endNoTZ.setHours(0, 0, 0, 0);
+
+            return { start: startNoTZ, end: endNoTZ };
         }),
         [intervalosRestringidos]
     );
@@ -65,9 +65,14 @@ export default function CalendarSelectFecha({handleDateClick, diasLibro, interva
         return rango;
     };
 
-    function handleClick (date){
-        if (isInDisabledRange(date)) return;
+    function handleClick (timezone){
+        const year = timezone.getFullYear();
+        const month = (timezone.getMonth() + 1).toString().padStart(2, '0'); 
+        const day = timezone.getDate().toString().padStart(2, '0');
+        const date = `${year}-${month}-${day}`;
 
+        if (isInDisabledRange(date)) return;
+        console.log(date)
         const rango = calcularRango(date);
         if (!rango) return;
 

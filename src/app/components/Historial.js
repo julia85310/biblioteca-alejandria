@@ -1,0 +1,52 @@
+'use client'
+import { useState, useEffect } from "react"
+import LibroUser from "../components/LibroUser"
+
+export default function LibrosPosesion({ moreUserData, admin }) {
+    const [hidden, setHidden] = useState(true)
+
+    let border = "[var(--chamoise)]"
+    let letras = "[var(--cafeNoir)]"
+    if (admin) {
+        letras = "[var(--paynesGray)]"
+        border = "[var(--columbiaBlue)]"
+    }
+
+    useEffect(() => {
+        if (window.innerWidth >= 1024) {
+            setHidden(false)
+        }
+    }, [])
+
+    return <div id="historial">
+        <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between p-4 gap-8 lg:gap-3`}>
+            <div className="flex flex-row justify-between">
+                <b className={`text-${letras}`}>Historial de préstamos</b>
+                <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 rotate-90 lg:hidden" />
+            </div>
+            {moreUserData.historial.length === 0 ?
+                <p className="text-center text-lg text-[var(--chamoise)] lg:h-full">
+                    {admin? 'El usuario no tiene historial.':'Nada por aquí. Tu historia aún no ha sido escrita.'}
+                </p>
+                :
+                <div className="flex lg:flex-row flex-col gap-5  overflow-y-auto mx-[-2em] justify-center lg:justify-start lg:gap-[0.7vw] elemento-con-scroll">
+                    {
+                        moreUserData.historial.map((userLibro) =>
+                            <LibroUser
+                                key={userLibro.id}
+                                esHistorial={true}
+                                texto1="Adquirido"
+                                user_libro={userLibro}
+                                texto2="Devuelto el"
+                            />
+                        )
+                    }
+                </div>
+            }
+        </div>
+        <div id="plegado" className={`${!hidden ? 'hidden' : 'flex'} flex-row justify-between border border-3 border-${border} p-4 rounded-xl`}>
+            <b className={`text-${letras}`}>Historial de préstamos</b>
+            <img src="/iconos/icono-flecha.png" onClick={() => setHidden(!hidden)} className="object-contain w-6 lg:hidden" />
+        </div>
+    </div>
+}

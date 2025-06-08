@@ -13,6 +13,7 @@
   --lion: #BD9B83;
   --verde: #31B855;
   --rojo: #d45e60;
+  --rojoOscuro: #AA5253;
   --rojoTransparente: #9f000355;
   --aliceBlue: #E8F1F2;
   --columbiaBlue: #a7c6da;
@@ -25,11 +26,31 @@
   --scroll: #E6D3C8;
 }
 
+button,
+input[type="submit"] {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+
+button:hover,
+input[type="submit"]:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
+}
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-lora); 
+}
+
+button {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+button:hover {
+  transform: scale(1.1);
+  opacity: 0.85;
 }
 
 html, body {
