@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import User from "../../components/User"
 import LibrosReservadosSeleccion from "../../components/LibrosReservadosSeleccion"
 import LibroSeleccion from "@/app/components/LibroSeleccion";
+import Loader from "@/app/components/loader/Loader";
 
 export default function nuevoPrestamo(){
     const router = useRouter()
@@ -32,7 +33,9 @@ export default function nuevoPrestamo(){
             }
             const data = await res.json()
             setUsers(data)
-            setLoading(false)
+            if(libros){
+               setLoading(false) 
+            }
         }
         async function fetchDataLibros() {
             const res = await fetch("/api/libro?d=1");
@@ -46,6 +49,9 @@ export default function nuevoPrestamo(){
             const librosDisponibles = data.filter(libro => libro.disponibilidad == "Disponible")
             setLibros(librosDisponibles)
             setAllLibros(librosDisponibles)
+            if(users){
+               setLoading(false) 
+            }
         }
         fetchDataLibros();
         fetchDataUsers()
@@ -88,9 +94,13 @@ export default function nuevoPrestamo(){
     }
 
     function handleUserSelect(user) {
+        setLoading(true)
         handleSelectUser(user)
         setFiltroNombre(user.nombre)
+        setLibro(null)
+        setFechaDev("")
         setMostrarLista(false)
+        setLoading(false)
     }
 
     function handleSelectLibro(libro, user_libro) {
@@ -116,7 +126,6 @@ export default function nuevoPrestamo(){
         }
     }
 
-    if (loading) return null
 
     const usuariosFiltrados = users?.filter(u =>
         u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
@@ -133,6 +142,7 @@ export default function nuevoPrestamo(){
         }
 
         try {
+            setLoading(true)
             let response;
             if (reservadoSeleccionado){
                 response = await fetch("/api/prestamo", {
@@ -160,6 +170,7 @@ export default function nuevoPrestamo(){
                 alert("Préstamo realizado con éxito.")
                 router.push("../admin")
             } else {
+                setLoading(false)
                 alert(typeof data.error === 'string' ? data.error : data.error.message || "Error desconocido");
             }
         } catch {
@@ -168,8 +179,10 @@ export default function nuevoPrestamo(){
     }
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
-        <MyHeader></MyHeader>
-        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
+        {!loading && <MyHeader></MyHeader>}
+        {loading? 
+            <Loader tailwind="w-screen h-[90vh]"></Loader>:
+            <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-4">
             <div id="buscarUser" className="flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
                     <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
@@ -276,6 +289,6 @@ export default function nuevoPrestamo(){
                     </button>
                 </div>
             </div>
-        </main>
+        </main>}
     </div>    
 }
