@@ -243,7 +243,7 @@ export default function nuevoPrestamo(){
                         </div>
                     </div>
                 </div>:
-                <p>La biblioteca no cuenta con libros. Añade libros <b onClick={() => router.push("../addLibro")}><u>aquí</u></b>.</p>
+                <p>La biblioteca no cuenta con libros. Añade libros <b onClick={() => router.push("../admin/addLibro")}><u>aquí</u></b>.</p>
                 }
                 {moreUserData && 
                 <LibrosReservadosSeleccion

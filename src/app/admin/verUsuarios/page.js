@@ -7,6 +7,7 @@ import DesplegableCalendarSelectEvent from "../../components/DesplegableCalendar
 import LibrosPosesion from "../../components/LibrosPosesion"
 import LibrosReservados from "../../components/LibrosReservados"
 import Historial from "../../components/Historial"
+import Loader from "@/app/components/loader/Loader"
 
 export default function VerUsuariosPage() {
     const router = useRouter()
@@ -27,7 +28,11 @@ export default function VerUsuariosPage() {
             }
             const data = await res.json()
             setUsers(data)
-            setLoading(false)
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 700);
+
+            return () => clearTimeout(timer);
         }
 
         fetchDataUsers()
@@ -58,15 +63,19 @@ export default function VerUsuariosPage() {
 
         setMoreUserData({ ...data, totalLibrosPrestados, penalizado })
         console.log('moreUserData:', { ...data, totalLibrosPrestados, penalizado })
+        
     }
 
     function handleUserSelect(user) {
+        setLoading(true)
         handleSelectUser(user)
         setFiltroNombre(user.nombre)
         setMostrarLista(false)
+        setTimeout(() => {
+            setLoading(false)
+        }, 500);
     }
 
-    if (loading) return null
 
     const usuariosFiltrados = users?.filter(u =>
         u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
@@ -76,7 +85,9 @@ export default function VerUsuariosPage() {
 
     return (
         <div className="min-h-[100vh] flex flex-col bg-[var(--aliceBlue)]">
-            <MyHeader />
+            {!loading && <MyHeader />}
+            {loading? 
+            <Loader tailwind="w-screen h-[90vh]"></Loader>:
             <main className="lg:mt-0 mx-4 flex-1  my-8 flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
                     <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
@@ -129,7 +140,7 @@ export default function VerUsuariosPage() {
                         <DesplegableCalendarSelectEvent moreUserData={moreUserData} admin={true} />
                     </div>
                 )}
-            </main>
+            </main>}
         </div>
     )
 }
