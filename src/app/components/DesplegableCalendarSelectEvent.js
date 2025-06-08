@@ -17,8 +17,8 @@ export default function LibrosPosesion({ moreUserData, admin }) {
     const letras = admin ? "[var(--paynesGray)]" : "[var(--chamoise)]"
 
     return (
-        <div id="calendario" className={`bg-${fondo} p-4 rounded-xl`}>
-            <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col justify-between gap-4 pb-4`}>
+        <div id="calendario" className={`bg-${fondo} p-4 rounded-xl h-full flex lg:min-h-[80vh]`}>
+            <div id="desplegado" className={`${hidden ? 'hidden' : 'flex'} flex-col flex-1 justify-around gap-4 pb-4`}>
                 <div className={`flex justify-between flex-row`}>
                     <b className="text-[var(--cafeNoir)]">Calendario de eventos</b>
                     <img
@@ -42,12 +42,14 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                         }}
                     />
                 </div>
-                <b className={`text-${letras} text-center text-lg lg:text-sm`}>
-                    {fechaCalendario}
-                </b>
-                <p className={`text-${letras} text-center lg:text-xs`}>
-                    {descripCalendario}
-                </p>
+                <div className="flex items-center flex-col gap-5">
+                    <b className={`text-${letras} text-center text-lg lg:text-sm`}>
+                        {fechaCalendario}
+                    </b>
+                    <p className={`text-${letras} text-center lg:text-xs`}>
+                        {descripCalendario}
+                    </p>
+                </div>
             </div>
             <div id="plegado" className={`${!hidden ? 'hidden' : 'flex'} flex-row justify-between`}>
                 <b>Calendario de eventos</b>

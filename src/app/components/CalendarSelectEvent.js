@@ -134,7 +134,7 @@ export default function CalendarSelectEvent({ reservas, historial, prestamos, ha
     }
 
     return (
-        <div className="m-4 lg:w-[24vw] max-w-md mx-auto border border-[var(--lion)] rounded-2xl border-5">
+        <div className="m-4 lg:w-[20vw] max-w-md mx-auto border border-[var(--lion)] rounded-2xl border-5">
             <div className='border border-[var(--darkSeashell)] rounded-2xl border-3'>
                 <style>{`
                     .react-calendar {

@@ -29,7 +29,7 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                     {admin? 'El usuario no tiene historial.':'Nada por aquí. Tu historia aún no ha sido escrita.'}
                 </p>
                 :
-                <div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
+                <div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-start lg:gap-[0.7vw] elemento-con-scroll">
                     {
                         moreUserData.historial.map((userLibro) =>
                             <LibroUser

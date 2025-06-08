@@ -29,7 +29,7 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                     {admin? "El usuario no tiene ningún libro reservado.":'¡Reserva un libro para el momento que desees!'}
                 </p>
                 :
-                <div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-between elemento-con-scroll">
+                <div className="flex flex-row overflow-y-auto mx-[-2em] justify-center lg:justify-start lg:gap-[0.4vw] elemento-con-scroll">
                     {
                         moreUserData.librosReservados.map((userLibro) =>
                             <LibroUser
