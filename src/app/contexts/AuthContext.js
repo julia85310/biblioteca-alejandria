@@ -16,6 +16,7 @@ export const AuthProvider = ({ children }) => {
       console.log("usuario cargado de localStorage:")
       console.log(JSON.parse(storedUser))
       setUser(JSON.parse(storedUser));
+      refreshUserData();
     }
     setLoading(false);
   }, []);

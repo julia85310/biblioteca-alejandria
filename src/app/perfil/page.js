@@ -13,7 +13,7 @@ import Loader from "../components/loader/Loader"
 
 export default function PerfilPage(){
     const router = useRouter();
-    const {logout, user} = useContext(AuthContext)
+    const {logout, user, refreshUserData} = useContext(AuthContext)
     const [moreUserData, setMoreUserData] = useState()
     const [loading, setLoading] = useState(true)
 
@@ -22,6 +22,7 @@ export default function PerfilPage(){
         console.log('usuario:', user)
 
         async function fetchDataUser() {
+            await refreshUserData()
             const res = await fetch("/api/userdata?u=" + user.id);
             if(!res.ok){
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde.")
@@ -47,6 +48,7 @@ export default function PerfilPage(){
 
             const penalizado = hoy < fechaPenalizacion;
             setMoreUserData({...data, totalLibrosPrestados: totalLibrosPrestados, penalizado: penalizado})
+
             const timer = setTimeout(() => {
                 setLoading(false)
             }, 800);
