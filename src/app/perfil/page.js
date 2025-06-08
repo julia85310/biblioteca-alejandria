@@ -57,7 +57,7 @@ export default function PerfilPage(){
         }
         fetchDataUser();
          
-    }, [user])
+    }, [user?.id])
 
 
     function cerrarSesion(){
