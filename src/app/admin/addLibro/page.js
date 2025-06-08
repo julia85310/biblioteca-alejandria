@@ -70,7 +70,7 @@ export default function NuevoLibroPage() {
     <MyHeader></MyHeader>
     {loading? 
         <Loader tailwind="w-screen h-[60vh]"></Loader>:
-        <form onSubmit={handleSubmit} className="font-admin flex lg:flex-row flex-col  text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-sm lg:justify-around lg:gap-1 lg:p-0">
+        <form onSubmit={handleSubmit} className="font-admin flex lg:flex-row flex-col  text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-[2.5vh] lg:justify-around lg:gap-1 lg:p-0 lg:min-h-[70vh]">
         <div className="flex flex-col gap-4 lg:w-[27vw] lg:justify-around">
             <div>
                 <label htmlFor="isbn" className="block mb-1">ISBN</label>
@@ -97,7 +97,7 @@ export default function NuevoLibroPage() {
                 <input value={formData.valor} id="valor" name="valor" placeholder="Valor" onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
             </div>
         </div>
-        <div className="flex flex-col gap-4 lg:w-[27vw]">
+        <div className="flex flex-col gap-4 lg:w-[27vw] lg:justify-around">
             <div>
                 <label htmlFor="condicion" className="block mb-1">Condición</label>
                 <input value={formData.condicion} id="condicion" name="condicion" placeholder="nuevo" onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
@@ -118,7 +118,7 @@ export default function NuevoLibroPage() {
                 <input value={formData.dias_prestamo} id="dias_prestamo" name="dias_prestamo" placeholder="4" onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
             </div>
 
-            <div className="flex flex-row gap-6">
+            <div className="flex flex-row gap-6 ">
                 <div>
                     <label htmlFor="estante" className="block mb-1">Estante</label>
                     <input value={formData.estante} id="estante" name="estante" placeholder="Estante" onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
@@ -129,7 +129,7 @@ export default function NuevoLibroPage() {
                 </div>
             </div>
         </div>
-        <div className="flex flex-col gap-10 lg:gap-2 lg:justify-between lg:w-[23vw]">
+        <div className="flex flex-col gap-10 lg:gap-2 lg:justify-around lg:w-[23vw]">
             <div className="lg:flex lg:flex-col ">
                 <label htmlFor="descripcion" className="block mb-1">Descripción</label>
                 <textarea className=" text-sm min-h-[19vh] border rounded-xl border-[var(--columbiaBlue)] p-2 w-full focus:outline-none focus:ring-0" value={formData.descripcion} id="descripcion" name="descripcion" placeholder="Descripción" onChange={(e) => setFormData({ ...formData, [e.target.name]: e.target.value })} />

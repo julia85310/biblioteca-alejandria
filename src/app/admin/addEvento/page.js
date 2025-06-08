@@ -58,10 +58,10 @@ export default function NuevoEventoPage() {
     };
 
     return (
-        <div className="min-h-[100vh] bg-[var(--aliceBlue)] flex flex-col lg:gap-8">
+        <div className="min-h-[100vh] bg-[var(--aliceBlue)] flex flex-col lg:gap-8 ">
             <MyHeader />
-            <form onSubmit={handleSubmit} className="lg:min-h-[60vh] font-admin flex lg:flex-row flex-col text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-sm lg:justify-around lg:gap-1 lg:p-0">
-                <div className="flex flex-col lg:gap-8 gap-4 lg:w-[27vw] lg:justify-start ">
+            <form onSubmit={handleSubmit} className="lg:min-h-[60vh] font-admin flex lg:flex-row flex-col text-[var(--paynesGray)] p-12 gap-4 pt-4 text-[1.2em] lg:text-[2.5vh] lg:justify-around lg:gap-1 lg:p-0 lg:min-h-[70vh]">
+                <div className="flex flex-col lg:gap-8 gap-4 lg:w-[27vw] lg:justify-around ">
                     <div>
                         <label htmlFor="titulo" className="block mb-1">Título</label>
                         <input value={formData.titulo} id="titulo" name="titulo" placeholder="Título" onChange={(e) => setFormData({ ...formData, titulo: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
@@ -73,7 +73,7 @@ export default function NuevoEventoPage() {
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-10 lg:gap-8 lg:justify-start lg:w-[27vw]">
+                <div className="flex flex-col gap-10 lg:gap-8 lg:justify-around lg:w-[27vw]">
                     <div>
                         <label htmlFor="fecha" className="block mb-1">Fecha</label>
                         <input type="date" min={new Date().toISOString().split('T')[0]} value={formData.fecha} id="fecha" name="fecha" onChange={(e) => setFormData({ ...formData, fecha: e.target.value })} className="border rounded-xl border-[var(--columbiaBlue)] p-2 w-full" />
