@@ -6,6 +6,7 @@ import MyFooter from "@/app/components/MyFooter";
 import DescripcionLibro from "@/app/components/DescripcionLibro";
 import { useRouter } from "next/navigation";
 import Loader from "../../components/loader/Loader";
+import { deleteLibro } from "@/app/libs/libro";
 
 export default function LibroPage(props){
     const params = use(props.params);
@@ -43,11 +44,19 @@ export default function LibroPage(props){
         if(modoAdmin){
             try {
                 const res = await deleteLibro(libro);
-            
-                if (res.ok) {
-                    alert(`${libro.titulo} eliminado correctamente`)
-                } else {
-                    alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
+                console.log(res)
+                if(res != null){
+                    if(res.status == 202){
+                        alert("El libro no se pudo eliminar por su uso por los usuarios. Marcado como no disponible.")
+                        router.push('../catalogo')
+                    }else{
+                        if (res.ok) {
+                            alert(`${libro.titulo} eliminado correctamente`)
+                            router.push('../catalogo')
+                        } else {
+                            alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
+                        }
+                    }
                 }
             } catch (error) {
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");

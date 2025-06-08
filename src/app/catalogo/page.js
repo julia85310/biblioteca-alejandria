@@ -75,6 +75,27 @@ export default function CatalogoPage() {
         setAllLibros(prev => prev.filter(libro => libro.id !== id));
     }
 
+    function onChangeDisponibilidad(id){
+        setLibros(prev => prev.map(libro => 
+        {
+            if (libro.id == id){
+                return {...libro, disponibilidad: "No Disponible"}
+            }else{
+                return libro
+            }
+        }
+        ));
+        setAllLibros(prev => prev.map(libro => 
+        {
+            if (libro.id == id){
+                return {...libro, disponibilidad: "No Disponible"}
+            }else{
+                return libro
+            }
+        }
+        ));
+    }
+
     return <div className={`min-h-[100vh] flex flex-col ${modoAdmin? "bg-[var(--aliceBlue)]": "bg-[var(--seashell)]"}`}>
         <MyHeader ubiHeader="Catalogo"></MyHeader>
         {loading? 
@@ -138,6 +159,7 @@ export default function CatalogoPage() {
                                 onDelete={onDelete}
                                 key={libro.id} 
                                 libro={libro}
+                                onChangeDisponibilidad = {onChangeDisponibilidad}
                                 setLoading={setLoading}
                                 admin={modoAdmin}></Libro>
                         )}

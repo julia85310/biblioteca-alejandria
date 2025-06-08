@@ -79,16 +79,21 @@ export async function DELETE(request) {
       .select('imagen_url')
       .eq('id', libroId)
       .single();
+    
+    
 
     if (getError) {
       console.log(getError)
       return Response.json({ error: 'Libro no encontrado', details: getError.message }, { status: 404 });
     }
+    console.log("Imgurl obtenida")
 
     // 2. Extraer el nombre del archivo del URL
     const imagenUrl = libro.imagen_url;
     const partes = imagenUrl.split('/');
     const nombreArchivo = partes[partes.length - 1];
+
+    console.log("2")
 
     // 3. Eliminar la imagen del bucket
     const { error: deleteImgError } = await supabase
@@ -100,6 +105,8 @@ export async function DELETE(request) {
       console.log(deleteImgError)
       return Response.json({ error: 'Error al eliminar la imagen', details: getError.message }, { status: 404 });
     }
+    console.log("3")
+
 
     // 4. Eliminar el registro del libro
     const { data, error } = await supabase
@@ -109,8 +116,33 @@ export async function DELETE(request) {
 
     if (error) {
       console.log(error)
+
+       // Si el error es por clave foránea (libro referenciado en usuario_libro)
+      if (error.code === '23502') {
+        console.log("El libro está referenciado. Cambiando disponibilidad...");
+
+        // Actualizar la disponibilidad a "No disponible"
+        const { error: updateError } = await supabase
+          .from('libro')
+          .update({ disponibilidad: 'No Disponible' })
+          .eq('id', libroId);
+
+        if (updateError) {
+          console.log("Error actualizando disponibilidad:", updateError);
+          return Response.json({ error: 'Error actualizando disponibilidad', details: updateError.message }, { status: 500 });
+        }
+
+        return Response.json(
+          { message: 'El libro está en uso. Se marcó como no disponible.' },
+          { status: 202 }
+        );
+      }
+
+      // Otro tipo de error
       return Response.json({ error: error.message }, { status: 500 });
     }
+    console.log("4")
+
 
     console.log("Libro eliminado con exito")
     return new Response(JSON.stringify(data), {

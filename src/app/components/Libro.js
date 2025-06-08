@@ -2,7 +2,7 @@
 import { useRouter } from "next/navigation";
 import { deleteLibro } from "../libs/libro";
 
-export default function Libro({libro, admin, onDelete, user, setLoading}){
+export default function Libro({libro, admin, onDelete, user, setLoading, onChangeDisponibilidad}){
     const router = useRouter();
 
     async function handleClickButton(e){
@@ -12,12 +12,21 @@ export default function Libro({libro, admin, onDelete, user, setLoading}){
             try {
                 const res = await deleteLibro(libro);
                 console.log(res)
-                if (res.ok) {
-                    alert(`${libro.titulo} eliminado correctamente`)
-                    onDelete?.(libro.id);
-                } else {
-                    alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
+
+                if(res != null){
+                    if(res.status == 202){
+                        alert("El libro no se pudo eliminar por su uso por los usuarios. Marcado como no disponible.")
+                        onChangeDisponibilidad?.(libro.id)
+                    }else{
+                        if (res.ok) {
+                            alert(`${libro.titulo} eliminado correctamente`)
+                            onDelete?.(libro.id);
+                        } else {
+                            alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
+                        }
+                    }
                 }
+                
             } catch (error) {
                 alert("Ha ocurrido un error. Inténtelo de nuevo más tarde");
             }
