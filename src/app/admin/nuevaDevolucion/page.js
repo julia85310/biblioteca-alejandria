@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import User from "../../components/User"
 import LibrosPosesionSeleccion from "@/app/components/LibrosPosesionSeleccion";
+import Loader from "@/app/components/loader/Loader";
 
 export default function nuevaDevolucion(){
     const router = useRouter()
@@ -15,7 +16,8 @@ export default function nuevaDevolucion(){
     const [moreUserData, setMoreUserData] = useState()
     const [loading, setLoading] = useState(true)
     const [mostrarLista, setMostrarLista] = useState(false)
-    const [devolucionData, setDevolucionData] = useState({
+
+    const devolucionDataVacio = {
         diasAtraso: 0,
         penalizacionAtraso: false,
         condicionActual: '',
@@ -23,7 +25,9 @@ export default function nuevaDevolucion(){
         diasPenalizacionAtraso: 0,
         diasPenalizacionCondicion: 0,
         diasPenalizacionTotal: 0
-    })
+    };
+
+    const [devolucionData, setDevolucionData] = useState(devolucionDataVacio)
     
     useEffect(() => {
         let diasTotales = 0;
@@ -67,7 +71,10 @@ export default function nuevaDevolucion(){
             }
             const data = await res.json()
             setUsers(data)
-            setLoading(false)
+            const timer = setTimeout(() => {
+                setLoading(false)
+            }, 700);
+            return () => clearTimeout(timer);
         }
         fetchDataUsers()
     }, [])
@@ -103,12 +110,17 @@ export default function nuevaDevolucion(){
     }
 
     function handleUserSelect(user) {
+        setLoading(true)
         handleSelectUser(user)
         setFiltroNombre(user.nombre)
         setMostrarLista(false)
+        setLibro(null)
+        setUser_libro(null)
+        setDevolucionData(devolucionDataVacio)
+        setTimeout(() => {
+            setLoading(false)
+        }, 500);
     }
-
-    if (loading) return null
 
     const usuariosFiltrados = users?.filter(u =>
         u.nombre.toLowerCase().includes(filtroNombre.toLowerCase())
@@ -128,6 +140,7 @@ export default function nuevaDevolucion(){
             return
         }
         try {
+            setLoading(true)
             let nuevaCondicion;
             if (devolucionData.condicionActual != libro.condicion){
                 nuevaCondicion = devolucionData.condicionActual
@@ -155,9 +168,11 @@ export default function nuevaDevolucion(){
                 alert("Devolución realizada con éxito.")
                 router.push("../admin")
             } else {
+                setLoading(false)
                 alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
             }
         } catch {
+            setLoading(false)
             alert("Ha ocurrido un error realizando la reserva. Inténtelo de nuevo más tarde.");
         }
     }
@@ -165,6 +180,7 @@ export default function nuevaDevolucion(){
     function handleSelectLibro(libro, user_libro) {
         setLibro(libro);
         setUser_libro(user_libro)
+
 
         //Calculo de los dias de atraso
         const fechaDevolucion = new Date(user_libro.fecha_devolucion);
@@ -188,8 +204,10 @@ export default function nuevaDevolucion(){
 
 
     return <div className="min-h-screen bg-[var(--aliceBlue)]">
-        <MyHeader></MyHeader>
-        <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-1 justify-between">
+        {!loading && <MyHeader></MyHeader>}
+        {loading? 
+            <Loader tailwind="w-screen h-[90vh]"></Loader>:
+            <main className="p-4 pt-1 flex flex-col lg:flex-row pb-10 lg:gap-1 justify-between">
             <div id="buscarUser" className="flex flex-col">
                 <div id="buscadorFuncional" className="flex flex-col lg:items-start items-start relative lg:ml-4 ml-4 w-[250px]">
                     <div className="bg-[var(--darkAliceBlue)] flex border-[var(--chamoise)] border rounded-2xl py-1 px-2 w-full">
@@ -316,6 +334,6 @@ export default function nuevaDevolucion(){
                     </div>
                 </div>}
             </div>
-        </main>
+        </main>}
     </div>    
 }

@@ -3,6 +3,7 @@ import MyHeader from "@/app/components/MyHeader"
 import { useState, useRef } from "react"
 import { useRouter } from "next/navigation";
 import { validarDatosNuevoEvento } from "@/app/libs/evento";
+import Loader from "@/app/components/loader/Loader";
 
 export default function NuevoEventoPage() {
     const router = useRouter();
@@ -14,6 +15,7 @@ export default function NuevoEventoPage() {
     });
 
     const fileInputRef = useRef(null);
+    const [loading, setLoading] = useState(false)
     const [imagenPreview, setImagenPreview] = useState(null);
 
     const handleImageChange = (e) => {
@@ -25,10 +27,12 @@ export default function NuevoEventoPage() {
     };
 
     const handleSubmit = async (e) => {
+        setLoading(true)
         e.preventDefault();
 
         const validacion = validarDatosNuevoEvento(formData)
         if (!validacion.valid){
+            setLoading(false)
             alert(validacion.message)
             return
         } 
@@ -47,6 +51,7 @@ export default function NuevoEventoPage() {
             alert('Evento añadido con éxito.');
             router.push("/admin");
         } else {
+            setLoading(false)
             const errorData = await res.json();
             alert(errorData.error);
         }
