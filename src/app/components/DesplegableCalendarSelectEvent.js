@@ -51,7 +51,7 @@ export default function LibrosPosesion({ moreUserData, admin }) {
                     </p>
                 </div>
             </div>
-            <div id="plegado" className={`${!hidden ? 'hidden' : 'flex'} flex-row justify-between`}>
+            <div id="plegado" className={`${!hidden ? 'hidden' : 'flex'} flex-row justify-between w-full`}>
                 <b>Calendario de eventos</b>
                 <img
                     src="/iconos/icono-flecha.png"
